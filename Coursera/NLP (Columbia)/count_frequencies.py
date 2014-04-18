@@ -13,9 +13,28 @@ def word_count():
     for line in lines:
         wordCountDict[tuple(line)] += 1
 
-    for word in wordCountDict:
-        print wordCountDict[word], "WORDTAG", word[1], word[0]
+    f.close()
+    return wordCountDict
 
+def one_gram(wordCountDict):
+
+    I_GENE = 0
+    ZERO   = 0
+
+    for word in wordCountDict:
+        if word[1] == 'I-GENE':
+            I_GENE += wordCountDict[word]
+        else:
+            ZERO += wordCountDict[word]
+
+    print ZERO
+    print I_GENE
 
 if __name__ == '__main__':
-    word_count()
+
+    wordCountDict = word_count()
+
+    #for word in wordCountDict:
+    #   print wordCountDict[word], "WORDTAG", word[1], word[0]
+
+    one_gram(word_count())
