@@ -4,8 +4,26 @@ import nltk
 
 f = open('reuters21578/reut2-000.sgm','r')
 
-text = f.readlines()[:100]
+raw_text = f.readlines()[:100]
 
-for line in text:
-    print line, line.find('BODY')
-    
+body_text = []
+current_body = []
+in_body = False
+
+for line in raw_text:
+
+    if in_body == True:
+        if line.find('</BODY>') > 0:
+            end_index = line.find('<BODY>')
+            current_body.append(line[:end_index])
+            body_text.append(current_body[:-2]) # -2 to strip out "Reuter" and "&#3;</BODY></TEXT>"
+            current_body = []
+            in_body = False
+        else:
+            current_body.append(line)
+
+    if in_body == False:
+        if line.find('<BODY>') > 0:
+            start_index = line.find('<BODY>')
+            current_body.append(line[start_index+len('<BODY>'):])
+            in_body = True
