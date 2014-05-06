@@ -9,9 +9,21 @@ from pybrain.structure import TanhLayer
 
 from scipy.io import loadmat
 
-train_subjects = range(1,1)
+def create_features(x, tmin, tmax, sfreq, tmin_orginal=-0.5):
+    beginning = np.round((tmin-tmin_orginal)*sfreq).astype(np.int)
+    end       = np.round((tmax-tmin_orginal)*sfreq).astype(np.int)
+    x = x[:,:,beginning:end].copy()
+    x = x.reshape(x.shape[0], x.shape[1] * x.shape[2])
+    x -= x.mean(0)
+    x = np.nan_to_num(x / x.std(0))
+    return x
+
+train_subjects = range(1,3)
 train_x = []
 train_y = []
+
+tmin = 0.0
+tmax = 0.500
 
 for subject in train_subjects:
     filename = 'train_01_16/train_subject%02d.mat' % subject
@@ -19,20 +31,34 @@ for subject in train_subjects:
     data = loadmat(filename, squeeze_me=True)
     subject_x = data['X']
     subject_y = data['y']
+    tmin_original = data['tmin']
+    sfreq = data['sfreq']
+    subject_x = create_features(subject_x, tmin, tmax, sfreq)
     train_x.append(subject_x)
     train_y.append(subject_y)
 
+train_x = np.vstack(train_x)
+train_y = np.concatenate(train_y)
 
+print "Trainset:", train_x.shape
 
-net = buildNetwork(2,3,1, bias=True, hiddenclass=TanhLayer)
-ds = SupervisedDataSet(2,1)
+net = buildNetwork(38250,3,1, bias=True, hiddenclass=TanhLayer)
+ds = SupervisedDataSet(38250,1)
 
-ds.addSample((0,0),(0,))
-ds.addSample((0,1),(1,))
-ds.addSample((1,0),(1,))
-ds.addSample((1,1),(0,))
+for inp, target in zip(train_x, train_y):
+    ds.addSample(inp, target)
 
-trainer = BackpropTrainer(net, ds)
+#trainer = BackpropTrainer(net, ds)
 
-print trainer.train()
-print trainer.trainUntilConvergence()
+#print trainer.train()
+
+data = loadmat('train_01_16/train_subject16.mat')
+valid_x = data['X']
+valid_y = data['y']
+tmin_original = data['tmin']
+sfreq = data['sfreq']
+
+valid_x = create_features(valid_x, tmin, tmax, sfreq, tmin_original)
+valid_x = np.vstack(valid_x)
+
+print net.activateOnDataset(valid_x[0:3])
