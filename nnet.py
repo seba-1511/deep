@@ -18,7 +18,7 @@ def create_features(x, tmin, tmax, sfreq, tmin_orginal=-0.5):
     x = np.nan_to_num(x / x.std(0))
     return x
 
-train_subjects = range(1,4)
+train_subjects = range(1,2)
 train_x = []
 train_y = []
 
@@ -40,17 +40,17 @@ for subject in train_subjects:
 train_x = np.vstack(train_x)
 train_y = np.concatenate(train_y)
 
-print "Trainset:", train_x.shape
-
 net = buildNetwork(38250,3,1, bias=True, hiddenclass=TanhLayer)
 ds = SupervisedDataSet(38250,1)
 
+print "Loading training set:", train_x.shape
 for inp, target in zip(train_x, train_y):
     ds.addSample(inp, target)
 
 trainer = BackpropTrainer(net, ds)
 
-trainer.trainUntilConvergence(verbose=True)
+print trainer.train()
+print trainer.testOnData()
 
 data = loadmat('train_01_16/train_subject16.mat')
 valid_x = data['X']
@@ -63,10 +63,9 @@ valid_x = np.vstack(valid_x)
 
 predict_y = []
 
-for sample in valid_x:
-    predict_y.append(net.activate(sample))
+valid_ds = SupervisedDataSet(38250,1)
+print "Loading validation set:", valid_x.shape
+for inp, target in zip(valid_x, valid_y):
+    valid_ds.addSample(inp, target)
 
-predict_y = predict_y > .5
-
-diff = predict_y - valid_y
-print (len(valid_y) - np.count_nonzero(diff)) / float(len(valid_y))
+print trainer.testOnData(valid_ds)
