@@ -18,7 +18,7 @@ def create_features(x, tmin, tmax, sfreq, tmin_orginal=-0.5):
     x = np.nan_to_num(x / x.std(0))
     return x
 
-train_subjects = range(1,3)
+train_subjects = range(1,4)
 train_x = []
 train_y = []
 
@@ -48,9 +48,9 @@ ds = SupervisedDataSet(38250,1)
 for inp, target in zip(train_x, train_y):
     ds.addSample(inp, target)
 
-#trainer = BackpropTrainer(net, ds)
+trainer = BackpropTrainer(net, ds)
 
-#print trainer.train()
+trainer.trainUntilConvergence(verbose=True)
 
 data = loadmat('train_01_16/train_subject16.mat')
 valid_x = data['X']
@@ -61,4 +61,12 @@ sfreq = data['sfreq']
 valid_x = create_features(valid_x, tmin, tmax, sfreq, tmin_original)
 valid_x = np.vstack(valid_x)
 
-print net.activateOnDataset(valid_x[0:3])
+predict_y = []
+
+for sample in valid_x:
+    predict_y.append(net.activate(sample))
+
+predict_y = predict_y > .5
+
+diff = predict_y - valid_y
+print (len(valid_y) - np.count_nonzero(diff)) / float(len(valid_y))
