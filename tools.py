@@ -4,17 +4,15 @@ import numpy as np
 from scipy.io import loadmat
 from pylab import plot, show
 
-def create_features(x, tmin, tmax, sfreq, tmin_orginal=-0.5):
-    beginning = np.round((tmin - tmin_orginal)*sfreq).astype(np.int)
-    end       = np.round((tmax - tmin_orginal)*sfreq).astype(np.int)
-    x = x[:,:,beginning:end].copy()
-    x = x.reshape(x.shape[0], x.shape[1]*x.shape[2])
-    x -= x.mean(0)
-    x = np.nan_to_num(x/x.std(0))
-    return x
+def load_data(subject_range = range(1,17), test=False):
+    """
+    Read data from either train_01_16 or test_17_23 (if test=True)
 
-def load_data(subject_range = range(1,17), tmin=0.0, tmax=0.5, test=False):
+    @param subject_range = range(first, last subject)
+    @param test = True/False since test data has different y labels
 
+    return x, y numpy arrays
+    """
     x = []
     y = []
 
@@ -32,11 +30,6 @@ def load_data(subject_range = range(1,17), tmin=0.0, tmax=0.5, test=False):
             subject_y = data['y']
 
         subject_x = data['X']
-        sfreq = data['sfreq']
-        tmin_original = data['tmin']
-
-        subject_x = create_features(subject_x, tmin, tmax, sfreq, tmin_original)
-
         x.append(subject_x)
         y.append(subject_y)
 
@@ -45,20 +38,34 @@ def load_data(subject_range = range(1,17), tmin=0.0, tmax=0.5, test=False):
 
     return x, y
 
-def view_data():
+def constrain_interval(x, tmin, tmax, sfreq = 250):
+    beginning = np.round((tmin + 0.5)*sfreq).astype(np.int)
+    end       = np.round((tmax + 0.5)*sfreq).astype(np.int)
+    x = x[:,:,beginning:end].copy()
+    return x
 
-    x, y = load_data(range(1,2))
+def concatenate_sensors(x):
+    x = x.reshape(x.shape[0], x.shape[1]*x.shape[2])
+    return x
 
-    sfreq = 1.0/250.0
+def z_score(x):
+    x -= x.mean(0)
+    x = np.nan_to_num(x/x.std(0))
+    return x
 
-    axis_x = [(-0.5 + sfreq * i) for i in range(375)]
+def plot_series(series_x, sfreq=.004):
 
-    plot(axis_x,x[0][375*3:375*4])
-
+    x_axis = [(-0.5 + sfreq * i) for i in range(375)]
+    plot(x_axis,x[0][0])
     show()
-
 
 if __name__ == "__main__":
 
-    view_data()
+    x, y = load_data(range(1,2))
+    x = constrain_interval(x, 0, .5)
+    print x.shape
+    x = concatenate_sensors(x)
+    print x.shape
+    x = z_score(x)
+    print x
 
