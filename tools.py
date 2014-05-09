@@ -53,10 +53,18 @@ def z_score(x):
     x = np.nan_to_num(x/x.std(0))
     return x
 
-def plot_series(series_x, sfreq=.004):
+def butterfly_plot(trial_x, sfreq=.04):
+    """
+    plots one trial (306 sensors) in one chart
+    @param trial_x = 306x375 numpy array
+    @param sfreq = frequency (default is 1/25)
+    """
 
+    # change so range is fixed -5 through 1 for varying frequencies
     x_axis = [(-0.5 + sfreq * i) for i in range(375)]
-    plot(x_axis,x[0][0])
+
+    for sensor in trial_x:
+        plot(x_axis,sensor)
     show()
 
 def create_submission_file(ids, prediction):
@@ -72,5 +80,4 @@ if __name__ == "__main__":
 
     x, y = load_data(range(1,2))
 
-    plot_series(x[0])
-    plot_series(x[2])
+    butterfly_plot(x[2])
