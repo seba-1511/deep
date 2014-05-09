@@ -59,13 +59,18 @@ def plot_series(series_x, sfreq=.004):
     plot(x_axis,x[0][0])
     show()
 
+def create_submission_file(ids, prediction):
+    filename_submission = "submission.csv"
+    print "Creating submission file", filename_submission
+    f = open(filename_submission, "w")
+    print >> f, "Id,Prediction"
+    for i in range(len(prediction)):
+        print >> f, str(ids[i]) + "," + str(prediction[i])
+    f.close()
+
 if __name__ == "__main__":
 
     x, y = load_data(range(1,2))
-    x = constrain_interval(x, 0, .5)
-    print x.shape
-    x = concatenate_sensors(x)
-    print x.shape
-    x = z_score(x)
-    print x
 
+    plot_series(x[0])
+    plot_series(x[2])
