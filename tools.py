@@ -56,14 +56,17 @@ def z_score(x):
 def butterfly_plot(x, y):
     """
     plots one trial (306 sensors) in one chart
-    @param trial_x = 306x375 numpy array
-    @param sfreq = frequency (default is 1/25)
+    @param x = trials
+    @param y = trial labels
     """
 
     for i in range(len(x)):
-        plt.plot(x[i], label = str(y[i]))
-        plt.axis([0,1.5,x[i].min(),x[i].max()])
-    plt.legend(loc='lower left')
+        if y[i] == 0:
+            plt.plot(x[i], 'r')
+            plt.axis([0,1.5,x[i].min(),x[i].max()])
+        if y[i] == 1:
+            plt.plot(x[i], 'b')
+            plt.axis([0,1.5,x[i].min(),x[i].max()])
 
     plt.show()
 
