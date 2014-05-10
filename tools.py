@@ -2,7 +2,7 @@ import sys
 sys.path.insert(0, "/usr/local/lib/python2.7/site-packages")
 import numpy as np
 from scipy.io import loadmat
-from pylab import plot, show
+import matplotlib.pyplot as plt
 
 def load_data(subject_range = range(1,17), test=False):
     """
@@ -53,19 +53,19 @@ def z_score(x):
     x = np.nan_to_num(x/x.std(0))
     return x
 
-def butterfly_plot(trial_x, sfreq=.04):
+def butterfly_plot(x, y):
     """
     plots one trial (306 sensors) in one chart
     @param trial_x = 306x375 numpy array
     @param sfreq = frequency (default is 1/25)
     """
 
-    # change so range is fixed -5 through 1 for varying frequencies
-    x_axis = [(-0.5 + sfreq * i) for i in range(375)]
+    for i in range(len(x)):
+        plt.plot(x[i], label = str(y[i]))
+        plt.axis([0,1.5,x[i].min(),x[i].max()])
+    plt.legend(loc='lower left')
 
-    for sensor in trial_x:
-        plot(x_axis,sensor)
-    show()
+    plt.show()
 
 def create_submission_file(ids, prediction):
     filename_submission = "submission.csv"
@@ -80,4 +80,4 @@ if __name__ == "__main__":
 
     x, y = load_data(range(1,2))
 
-    butterfly_plot(x[2])
+    butterfly_plot(x[0])
