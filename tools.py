@@ -53,20 +53,17 @@ def z_score(x):
     x = np.nan_to_num(x/x.std(0))
     return x
 
-def butterfly_plot(x, y):
+def plot_trial(trial_x):
     """
     plots one trial (306 sensors) in one chart
     @param x = trials
     @param y = trial labels
     """
 
-    for i in range(len(x)):
-        if y[i] == 0:
-            plt.plot(x[i], 'r')
-            plt.axis([0,1.5,x[i].min(),x[i].max()])
-        if y[i] == 1:
-            plt.plot(x[i], 'b')
-            plt.axis([0,1.5,x[i].min(),x[i].max()])
+    for i in range(10):
+
+        plt.subplot(10, 1, i)
+        plt.plot(trial_x[i])
 
     plt.show()
 
@@ -83,4 +80,11 @@ if __name__ == "__main__":
 
     x, y = load_data(range(1,2))
 
-    butterfly_plot(x[0])
+    fft_x = np.fft.fft(x[0][0])
+
+    ifft_x = np.fft.ifft(fft_x[:200])
+
+    plt.plot(ifft_x)
+    plt.plot(x[0][0])
+    plt.show()
+
