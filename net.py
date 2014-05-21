@@ -43,12 +43,16 @@ if __name__ == "__main__":
 
         stacked_svms.append(linear_svm)
 
-    valid_x, valid_y = load_data(range(9,10),125,225)
-    valid_x = valid_x.reshape(valid_x.shape[0],valid_x.shape[1]*valid_x.shape[2])
+    for i in range(9,17):
 
-    for i in range(len(stacked_svms)):
+        print "Validating subject #", i
 
-        print "svm #", i+1, "score", stacked_svms[i].score(valid_x, valid_y)
+        valid_x, valid_y = load_data(range(i,i+1),125,225)
+        valid_x = valid_x.reshape(valid_x.shape[0],valid_x.shape[1]*valid_x.shape[2])
+
+        for i in range(len(stacked_svms)):
+
+            print "svm #", i+1, "->", stacked_svms[i].score(valid_x, valid_y)
 
 
 
