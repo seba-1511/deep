@@ -1,6 +1,5 @@
 import sys
 sys.path.insert(0, "/usr/local/lib/python2.7/site-packages")
-import pybrain
 from scipy.io import loadmat
 from scipy.stats.mstats import zscore
 import numpy as np
@@ -30,17 +29,26 @@ def load_data(subject_range, start=0, end=375):
 
 if __name__ == "__main__":
 
-    x, y = load_data(range(1,8),125,225)
-    train_x = x[:300]
-    train_y = y[:300]
+    stacked_svms = []
 
-    valid_x = x[300:]
-    valid_y = y[300:]
+    for i in range(1,9):
 
-    train_x = train_x.reshape(train_x.shape[0],train_x.shape[1]*train_x.shape[2])
+        print "Training svm #", i
+
+        train_x, train_y = load_data(range(i,i+1),125,225)
+        train_x = train_x.reshape(train_x.shape[0],train_x.shape[1]*train_x.shape[2])
+
+        linear_svm = svm.SVC(probability=True, kernel='linear')
+        linear_svm.fit(train_x, train_y)
+
+        stacked_svms.append(linear_svm)
+
+    valid_x, valid_y = load_data(range(9,10),125,225)
     valid_x = valid_x.reshape(valid_x.shape[0],valid_x.shape[1]*valid_x.shape[2])
 
-    linear_svm = svm.LinearSVC()
-    linear_svm.fit(train_x, train_y)
+    for i in range(len(stacked_svms)):
 
-    print "LinearSVC:", linear_svm.score(valid_x, valid_y)
+        print "svm #", i+1, "score", stacked_svms[i].score(valid_x, valid_y)
+
+
+
