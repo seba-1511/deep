@@ -42,38 +42,33 @@ if __name__ == "__main__":
 
     # load data
     train_x, train_y = load_data(range(1,2),125,225)
-    valid_x, valid_y = load_data(range(2,3),125,225)
+    valid_x, valid_y = load_data(range(9,10),125,225)
 
-    # create svm and score arrays
-    channel_svm = svm.LinearSVC()
-    score_channel = np.zeros(train_x.shape[1])
-    score_channel_sums = np.zeros(train_x.shape[1])
+    # concatenate sensors
+    x = train_x.reshape(train_x.shape[0], train_x.shape[1]*train_x.shape[2])
+    v = valid_x.reshape(valid_x.shape[0], valid_x.shape[1]*valid_x.shape[2])
 
-    # cross-validate each sensor
-    for channel in range(train_x.shape[1]):
-        scores = cross_val_score(channel_svm, train_x[:,channel], train_y, cv=2, scoring='accuracy')
-        score_channel[channel] = scores.mean()
-        print "Channel #", channel+1, "Score:", score_channel[channel]
+    # validate
+    clf = svm.LinearSVC()
+    print "Cross validation (no convolution)", cross_val_score(clf, x, train_y, cv=2, scoring='accuracy')
+    clf.fit(x, train_y)
+    print "New subject (no convolution)", clf.score(v, valid_y)
 
-    score_index = np.argsort(score_channel)
+    # create convolutional filter
+    conv = np.ones(10)
+    conv = conv / float(10)
 
-    print
-    print "Sensors from least to greatest:"
-    print
-    for i in range(len(score_channel)):
-        print "Channel #", score_index[i]+1, "Score:", score_channel[score_index[i]]
+    # convolve each sensor
+    for i in range(train_x.shape[0]):
+        for j in range(train_x.shape[1]):
+            train_x[i][j] = np.convolve(train_x[i][j], conv, 'same')
+            valid_x[i][j] = np.convolve(valid_x[i][j], conv, 'same')
 
-    # cross validate dropping worst sensor
-    for channel in range(0,train_x.shape[1]+1,5):
+    # concatenate sensors
+    x = train_x.reshape(train_x.shape[0], train_x.shape[1]*train_x.shape[2])
+    v = valid_x.reshape(valid_x.shape[0], valid_x.shape[1]*valid_x.shape[2])
 
-        print score_channel[score_index[channel:]]
-
-        x = train_x[:,score_index[channel:],:]
-        x = x.reshape(x.shape[0], x.shape[1]*x.shape[2])
-        scores = cross_val_score(channel_svm, x, train_y, cv=2, scoring='accuracy')
-        score_channel_sums[channel] = scores.mean()
-        print "Train_x", x.shape, "Score:", score_channel_sums[channel]
-
-    plt.plot(np.sort(score_channel))
-    plt.plot(np.sort(score_channel_sums))
-    plt.show()
+    # validate
+    print "Cross validation (convolution)", cross_val_score(clf, x, train_y, cv=2, scoring='accuracy')
+    clf.fit(x, train_y)
+    print "New subject (convolution)", clf.score(v, valid_y)
