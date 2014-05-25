@@ -3,7 +3,7 @@ sys.path.insert(0, "/usr/local/lib/python2.7/site-packages")
 from scipy.io import loadmat
 from scipy.stats.mstats import zscore
 import numpy as np
-from sklearn import svm
+from sklearn import svm, neural_network
 from sklearn.cross_validation import cross_val_score
 from matplotlib import pyplot as plt
 
@@ -41,73 +41,46 @@ def load_data(subject_range, start=0, end=375, test=False):
 if __name__ == "__main__":
 
     # load data
-    train_x, train_y = load_data(range(1,6),125,225)
-    valid_x, valid_y = load_data(range(9,12),125,225)
+    train_x, train_y = load_data(range(1,2))
+    test_x, test_y = load_data(range(17,18), test=True)
 
     # concatenate sensors
-    x = train_x.reshape(train_x.shape[0], train_x.shape[1]*train_x.shape[2])
-    v = valid_x.reshape(valid_x.shape[0], valid_x.shape[1]*valid_x.shape[2])
+    train_x = train_x.reshape(train_x.shape[0], train_x.shape[1]*train_x.shape[2])
+    test_x = test_x.reshape(test_x.shape[0], test_x.shape[1]*test_x.shape[2])
 
-    # validate
-    clf = svm.LinearSVC()
-    print "Cross validation (no convolution)", cross_val_score(clf, x, train_y, cv=2, scoring='accuracy')
-    clf.fit(x, train_y)
-    print "New subject (no convolution)", clf.score(v, valid_y)
+    # shorten for testing
+    train_x = train_x[:10].copy()
+    test_x = test_x[:10].copy()
 
-    # create convolutional filter
-    conv = np.ones(25)
-    conv = conv / float(25)
 
-    # convolve train sensors
-    for i in range(train_x.shape[0]):
-        for j in range(train_x.shape[1]):
-            train_x[i][j] = np.convolve(train_x[i][j], conv, 'same')
+    # create export file
+    f = open('train_transduction.dat','w')
 
-    # convolve valid sensors
-    for i in range(valid_x.shape[0]):
-        for j in range(train_x.shape[1]):
-            valid_x[i][j] = np.convolve(valid_x[i][j], conv, 'same')
+    # write labeled data
+    for trial in range(len(train_x)):
 
-    # concatenate sensors
-    x = train_x.reshape(train_x.shape[0], train_x.shape[1]*train_x.shape[2])
-    v = valid_x.reshape(valid_x.shape[0], valid_x.shape[1]*valid_x.shape[2])
+        print "Writing labeled trial #", trial, "/", len(train_x)
 
-    # validate
-    print "Cross validation (convolution)", cross_val_score(clf, x, train_y, cv=2, scoring='accuracy')
-    clf.fit(x, train_y)
-    print "New subject (convolution)", clf.score(v, valid_y)
+        if train_y[trial] == 1:
+            line = "1"
+        else:
+            line = "-1"
 
-    # pool sample lists
-    train_pool_x = []
-    valid_pool_x = []
+        for feature in range(len(train_x[trial])):
+            line += " " + str(feature+1) + ":" + str(train_x[trial][feature])
 
-    # max pool train sensors
-    for i in range(train_x.shape[0]):
-        sensors = []
-        for j in range(train_x.shape[1]):
-            pool = []
-            for k in range(0,train_x.shape[2],5):
-                pool.append(np.amax(train_x[i][j][k:k+25]))
-            sensors.append(pool)
-        train_pool_x.append(sensors)
-    train_x = np.array(train_pool_x)
+        print >> f, line
 
-    # max pool valid sensors
-    for i in range(valid_x.shape[0]):
-        sensors = []
-        for j in range(valid_x.shape[1]):
-            pool = []
-            for k in range(0,valid_x.shape[2],5):
-                pool.append(np.amax(valid_x[i][j][k:k+25]))
-            sensors.append(pool)
-        valid_pool_x.append(sensors)
-    valid_x = np.array(valid_pool_x)
+    # write unlabeled data
+    for trial in range(len(test_x)):
 
-    # concatenate sensors
-    x = train_x.reshape(train_x.shape[0], train_x.shape[1]*train_x.shape[2])
-    v = valid_x.reshape(valid_x.shape[0], valid_x.shape[1]*valid_x.shape[2])
+        print "Writing unlabeled trial #", trial, "/", len(train_x)
 
-    # validate
-    print "Cross validation (max pooling)", cross_val_score(clf, x, train_y, cv=2, scoring='accuracy')
-    clf.fit(x, train_y)
-    print "New subject (max pooling)", clf.score(v, valid_y)
+        line = "0"
+
+        for feature in range(len(test_x[trial])):
+            line += " " + str(feature+1) + ":" + str(train_x[trial][feature])
+
+        print >> f, line
+
+    f.close()
