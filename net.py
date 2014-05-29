@@ -3,6 +3,7 @@ sys.path.insert(0, "/usr/local/lib/python2.7/site-packages")
 from scipy.io import loadmat
 from scipy.stats.mstats import zscore
 import numpy as np
+import pylab as pl
 from sklearn import svm, decomposition
 
 def load_data(subject_range, start=0, end=375, test=False):
@@ -57,19 +58,60 @@ if __name__ == "__main__":
     """
 
     # generate sample data
-    time = np.linspace(0,10,2000)
-    s1 = np.sin(2*time)
-    s2 = np.sign(np.sin(3*time))
-    S = np.c_[s1,s2]
-    S += 0.2*np.random.normal(size=S.shape)
-    S /= S.std(axis=0)
+    rng = np.random.RandomState(42)
+    S = rng.standard_t(1.5, size=(20000,2))
+    S[:,0] *= 2.
 
     # mix data
-    A = np.array([[1,1],[0.5,2]])
+    A = np.array([[1,1], [0,2]])
+
     X = np.dot(S, A.T)
 
-    # compute ICA
-    ica = decomposition.FastICA()
-    S_ = ica.fit_transform(X)
-    A_ = ica.mixing_.T
-    np.allclose(X, np.dot(S_, A_) + ica.mean_)
+    pca = decomposition.PCA()
+    S_pca_ = pca.fit(X).transform(X)
+
+    ica = decomposition.FastICA(random_state=rng)
+    S_ica_ = ica.fit(X).transform(X)
+
+    S_ica_ /= S_ica_.std(axis=0)
+
+    #plot results
+    def plot_samples(S, axis_list=None):
+        pl.scatter(S[:,0], S[:,1], s=2, marker='o', linewidths=0, zorder=10)
+        if axis_list is not None:
+            colors = [(0,0.6,0), (0.6,0,0)]
+            for color, axis in zip(colors, axis_list):
+                axis /= axis.std()
+                x_axis, y_axis = axis
+                # trick to get legend to work
+                pl.plot(0.1*x_axis, 0.1 * y_axis, linewidth=2, color=color)
+                pl.quiver(0,0,x_axis, y_axis,zorder=11,width=0.01,scale=6,color=color)
+
+        pl.hlines(0,-3,3)
+        pl.vlines(0,-3,3)
+        pl.xlim(-3,3)
+        pl.ylim(-3,3)
+        pl.xlabel('x')
+        pl.ylabel('y')
+
+    pl.subplot(2,2,1)
+    plot_samples(S / S.std())
+    pl.title('True Independent Sources')
+
+    axis_list = [pca.components_.T, ica.mixing_]
+    pl.subplot(2,2,2)
+    plot_samples(X / np.std(X), axis_list=axis_list)
+    pl.legend(['PCA','ICA'], loc='upper left')
+    pl.title('Observations')
+
+    pl.subplot(2, 2, 3)
+    plot_samples(S_pca_ / np.std(S_pca_, axis=0))
+    pl.title('PCA scores')
+
+    pl.subplot(2, 2, 4)
+    plot_samples(S_ica_ / np.std(S_ica_))
+    pl.title('ICA estimated sources')
+
+    pl.subplots_adjust(0.09, 0.04, 0.94, 0.94, 0.26, 0.26)
+
+    pl.show()
