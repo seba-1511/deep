@@ -160,7 +160,7 @@ class ts_cluster(object):
 if __name__ == "__main__":
 
     # load training data
-    X, y = load_data(range(1,2))
+    X, y = load_data(range(1,2), 125, 225)
 
     cv = 2
 
@@ -176,6 +176,7 @@ if __name__ == "__main__":
 
     best_channels = np.argsort(score_channel)
 
+    """
     print "Best channel #", best_channels[-1], "Accuracy:", score_channel[best_channels[-1]]
     X_best_face = X[:,best_channels[-1],:][y==1].mean(0)
     X_best_scramble = X[:,best_channels[-1],:][y==0].mean(0)
@@ -191,4 +192,18 @@ if __name__ == "__main__":
     plt.plot(X_worst_face, 'r-')
     plt.plot(X_worst_scramble, 'b-')
     plt.show()
-    
+    """
+
+
+    kmeans = ts_cluster(2)
+
+    kmeans.k_means_clust(X[:,best_channels[-1],:], 10, w=None, progress=True)
+
+    assignments = kmeans.get_assignments()
+
+    X_best_face = X[:,best_channels[-1],:][assignments[1]].mean(0)
+    X_best_scramble = X[:,best_channels[-1],:][assignments[0]].mean(0)
+
+    plt.plot(X_best_face, 'r-')
+    plt.plot(X_best_scramble, 'b-')
+    plt.show()
