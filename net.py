@@ -32,7 +32,7 @@ def load_data(subject_range, start=0, end=375, test=False):
 
         # z score and resize
         subject_x = data['X']
-        subject_x = zscore(subject_x)
+        #subject_x = zscore(subject_x)
         subject_x = subject_x[:,:,start:end].copy()
 
         # append to subject list
@@ -51,24 +51,37 @@ if __name__ == "__main__":
     train_x, train_y = load_data(range(3,5))
     valid_x, valid_y = load_data(range(12,14))
 
-    """
+    # z score individual sensors
+    for trial in range(len(train_x)):
+        for sensor in range(len(train_x[trial])):
+            train_x[trial][sensor] = zscore(train_x[trial][sensor])
+
+    for trial in range(len(valid_x)):
+        for sensor in range(len(valid_x[trial])):
+            valid_x[trial][sensor] = zscore(valid_x[trial][sensor])
+
     # concatenate sensors
     train_x = train_x.reshape(train_x.shape[0], train_x.shape[1]*train_x.shape[2])
     valid_x = valid_x.reshape(valid_x.shape[0], valid_x.shape[1]*valid_x.shape[2])
-    """
 
-    # first sensor
-    sensor = train_x[0][0]
+    clf = svm.LinearSVC()
+    clf.fit(train_x, train_y)
+    print clf.score(valid_x, valid_y)
 
-    # fit ICA
-    ica = decomposition.FastICA()
-    S_ = ica.fit(sensor).transform(sensor)
+    # load train/valid data
+    train_x, train_y = load_data(range(3,5))
+    valid_x, valid_y = load_data(range(12,14))
 
-    # plot sensor
-    pl.figure()
-    pl.subplot(2,1,1)
-    pl.plot(sensor)
+    # concatenate sensors
+    train_x = train_x.reshape(train_x.shape[0], train_x.shape[1]*train_x.shape[2])
+    valid_x = valid_x.reshape(valid_x.shape[0], valid_x.shape[1]*valid_x.shape[2])
 
-    # plot ICA
-    pl.subplot(2,1,2)
-    pl.plot(S_)
+    # z score entire set
+    train_x = zscore(train_x)
+    valid_x = zscore(valid_x)
+
+    clf = svm.LinearSVC()
+    clf.fit(train_x, train_y)
+    print clf.score(valid_x, valid_y)
+
+
