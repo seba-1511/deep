@@ -5,6 +5,7 @@ from scipy.stats.mstats import zscore
 import numpy as np
 from sklearn import decomposition
 import matplotlib.pyplot as plt
+from sklearn import svm
 
 def load_data(subject_range, start=0, end=375, test=False):
 
@@ -48,36 +49,58 @@ def load_data(subject_range, start=0, end=375, test=False):
 if __name__ == "__main__":
 
     # load train data
-    train_x, train_y = load_data(range(1,2))
+    train_x, train_y = load_data(range(2,3))
+    valid_x, valid_y = load_data(range(9,10))
 
     # ica using one trial
     ica = decomposition.FastICA(n_components=25)
     S_ = ica.fit_transform(train_x[0].T)
 
-    # ica using all trials
-    ica_x = []
+    # reshape train ica
+    train_ica_x = []
     for trial in range(len(train_x)):
-        ica_x.append(train_x[trial].T)
+        train_ica_x.append(train_x[trial].T)
 
-    # convert to numpy and stack
-    ica_x = np.array(ica_x)
-    ica_x = np.vstack(ica_x)
+    # reshape valid ica
+    valid_ica_x = []
+    for trial in range(len(valid_x)):
+        valid_ica_x.append(valid_x[trial].T)
 
-    # fit ica
-    S_ = ica.fit_transform(ica_x)
-    print S_.shape
-    print ica_x.shape
+    # convert to numpy
+    train_ica_x = np.array(train_ica_x)
+    train_ica_x = np.vstack(train_ica_x)
+    valid_ica_x = np.array(valid_ica_x)
+    valid_ica_x = np.vstack(valid_ica_x)
 
-    # shapes
-    print ica_x[:375,0].shape
-    print ica_x[:375,0]
-    print S_[:375,0].shape
-    print S_[:375,0]
+    # fit/transform
+    train_S = ica.fit_transform(train_ica_x)
+    valid_S = ica.transform(valid_ica_x)
 
-    # normalize ica
-    S_ = zscore(S_)
+    # reshape train ica
+    train_unmixed_x = []
+    for i in range(0, len(train_S), 375):
+        ica_signals = np.array(train_S[i:i+375])
+        train_unmixed_x.append(ica_signals.T)
+    train_unmixed_x = np.array(train_unmixed_x)
 
-    # plot orginal and ica
-    plt.plot(ica_x[:375,278], 'r-')
-    plt.plot(S_[:375,1], 'b-')
-    plt.show()
+    # reshape valid ica
+    valid_unmixed_x = []
+    for i in range(0, len(valid_S), 375):
+        ica_signals = np.array(valid_S[i:i+375])
+        valid_unmixed_x.append(ica_signals.T)
+    valid_unmixed_x = np.array(valid_unmixed_x)
+
+    # concatenate sensors
+    train_x = train_x.reshape(train_x.shape[0], train_x.shape[1]*train_x.shape[2])
+    valid_x = valid_x.reshape(valid_x.shape[0], valid_x.shape[1]*valid_x.shape[2])
+    train_unmixed_x = train_unmixed_x.reshape(train_unmixed_x.shape[0], train_unmixed_x.shape[1]*train_unmixed_x.shape[2])
+    valid_unmixed_x = valid_unmixed_x.reshape(valid_unmixed_x.shape[0], valid_unmixed_x.shape[1]*valid_unmixed_x.shape[2])
+
+    # train svm on original
+    clf = svm.LinearSVC()
+    clf.fit(train_x, train_y)
+    print clf.score(valid_x, valid_y)
+
+    # train on unmixed signal
+    clf.fit(train_unmixed_x, train_y)
+    print clf.score(valid_unmixed_x, valid_y)
