@@ -47,7 +47,35 @@ class LogisticRegression(object):
 
 def load_data(dataset):
 
+    # open file and discard header
     f = open(dataset)
+    f.readline()
+
+    # parse training data and convert to int
+    data = [line.split(',') for line in f.readlines()]
+    data = numpy.array(data, dtype=int)
+
+    # set train/valid/test split
+    num_train = len(data) * .5
+    num_valid = len(data) * .25
+
+    # split data
+    train_set = data[:num_train]
+    valid_set = data[num_train:num_train+num_valid]
+    test_set  = data[num_train+num_valid:]
+
+    # separate labels
+    train_set_x = train_set[:,1:]
+    train_set_y = train_set[:,:1]
+    valid_set_x = valid_set[:,1:]
+    valid_set_y = valid_set[:,:1]
+    test_set_x  =  test_set[:,1:]
+    test_set_y  =  test_set[:,:1]
+
+    # return as list of x,y pairs
+    return [[train_set_x, train_set_y],
+            [valid_set_x, valid_set_y],
+            [test_set_x , test_set_y]]
 
 def sgd_optimization_mnist(learning_rate=0.13, n_epochs=1000,
                            dataset='kaggle_digits/train.csv', batch_size=600):
@@ -184,4 +212,17 @@ def sgd_optimization_mnist(learning_rate=0.13, n_epochs=1000,
                           ' ran for %.1fs' % ((end_time - start_time)))
 
 if __name__ == '__main__':
-    sgd_optimization_mnist()
+
+    datasets = load_data('kaggle_digits/train.csv')
+    train_set_x, train_set_y = datasets[0]
+    valid_set_x, valid_set_y = datasets[1]
+    test_set_x , test_set_y  = datasets[2]
+
+    print train_set_x.shape
+    print train_set_y.shape
+
+    print valid_set_x.shape
+    print valid_set_y.shape
+
+    print test_set_x.shape
+    print test_set_y.shape
