@@ -23,6 +23,41 @@ def load_data(dataset):
 
     # read lines into numpy array
     data = [line.split(',') for line in f.readlines()]
+    data = numpy.array(data, dtype=float)
+
+    # separate examples and labels
+    data_x = data[:,1:]
+    data_y = data[:,:1]
+
+    # split data parameters
+    end_of_train = data.shape[0] / 2
+    end_of_valid = data.shape[0] / 4 * 3
+
+    # split data
+    train_set_x = data_x[:end_of_train]
+    train_set_y = data_y[:end_of_train]
+    valid_set_x = data_x[end_of_train:end_of_valid]
+    valid_set_y = data_y[end_of_train:end_of_valid]
+    test_set_x  = data_x[end_of_valid:]
+    test_set_y  = data_y[end_of_valid:]
+
+    def shared_dataset(data_x, data_y, borrow=True):
+
+        shared_x = theano.shared(numpy.asarray(data_x,
+                                               dtype=theano.config.floatX),
+                                 borrow=borrow)
+        shared_y = theano.shared(numpy.asarray(data_y,
+                                               dtype=theano.config.floatX),
+                                 borrow=borrow)
+        return shared_x, T.cast(shared_y, 'int32')
+
+    train_set_x, train_set_y = shared_dataset(train_set_x, train_set_y)
+    valid_set_x, valid_set_y = shared_dataset(valid_set_x, valid_set_y)
+    test_set_x , test_set_y  = shared_dataset(test_set_x , test_set_y)
+
+    rval = [(train_set_x, train_set_y), (valid_set_x, valid_set_y),
+            (test_set_x, test_set_y)]
+    return rval
 
 def theano_load_data(dataset):
     ''' Loads the dataset
@@ -63,14 +98,7 @@ def theano_load_data(dataset):
     #target to the example with the same index in the input.
 
     def shared_dataset(data_xy, borrow=True):
-        """ Function that loads the dataset into shared variables
 
-        The reason we store our dataset in shared variables is to allow
-        Theano to copy it into the GPU memory (when code is run on GPU).
-        Since copying data into the GPU is slow, copying a minibatch everytime
-        is needed (the default behaviour if the data is not in a shared
-        variable) would lead to a large decrease in performance.
-        """
         data_x, data_y = data_xy
         shared_x = theano.shared(numpy.asarray(data_x,
                                                dtype=theano.config.floatX),
@@ -104,16 +132,17 @@ if __name__ == '__main__':
     theano_dataset='mnist.pkl.gz'
     theano_datasets = theano_load_data(theano_dataset)
 
-    train_set_x, train_set_y = theano_datasets[0]
-    valid_set_x, valid_set_y = theano_datasets[1]
-    test_set_x, test_set_y   = theano_datasets[2]
-
-    print train_set_x
+    theano_train_set_x, theano_train_set_y = theano_datasets[0]
+    theano_valid_set_x, theano_valid_set_y = theano_datasets[1]
+    theano_test_set_x,  theano_test_set_y   = theano_datasets[2]
 
     # kaggle
-    #dataset = "kaggle_digits/train.csv"
-    #datasets = load_data(dataset)
+    dataset = "kaggle_digits/train.csv"
+    datasets = load_data(dataset)
 
-    #train_set_x, train_set_y = datasets[0]
-    #valid_set_x, valid_set_y = datasets[1]
-    #test_set_x, test_set_y = datasets[2]
+    train_set_x, train_set_y = datasets[0]
+    valid_set_x, valid_set_y = datasets[1]
+    test_set_x, test_set_y = datasets[2]
+
+    print type(train_set_x)
+    print type(theano_train_set_x)
