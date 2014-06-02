@@ -27,7 +27,7 @@ def load_data(dataset):
 
     # separate examples and labels
     data_x = data[:,1:]
-    data_y = data[:,:1]
+    data_y = data[:,0]
 
     # split data parameters
     end_of_train = data.shape[0] / 2
@@ -134,7 +134,7 @@ if __name__ == '__main__':
 
     theano_train_set_x, theano_train_set_y = theano_datasets[0]
     theano_valid_set_x, theano_valid_set_y = theano_datasets[1]
-    theano_test_set_x,  theano_test_set_y   = theano_datasets[2]
+    theano_test_set_x,  theano_test_set_y  = theano_datasets[2]
 
     # kaggle
     dataset = "kaggle_digits/train.csv"
@@ -142,7 +142,19 @@ if __name__ == '__main__':
 
     train_set_x, train_set_y = datasets[0]
     valid_set_x, valid_set_y = datasets[1]
-    test_set_x, test_set_y = datasets[2]
+    test_set_x, test_set_y   = datasets[2]
 
-    print type(train_set_x)
-    print type(theano_train_set_x)
+    print theano_train_set_x.get_value(borrow=True).shape
+    print theano_train_set_y.ndim
+    print theano_valid_set_x.get_value(borrow=True).shape
+    print theano_valid_set_y.ndim
+    print theano_test_set_x.get_value(borrow=True).shape
+    print theano_test_set_y.ndim
+    print
+    print
+    print train_set_x.get_value(borrow=True).shape
+    print train_set_y.ndim
+    print valid_set_x.get_value(borrow=True).shape
+    print valid_set_y.ndim
+    print test_set_x.get_value(borrow=True).shape
+    print test_set_y.ndim
