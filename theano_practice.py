@@ -156,11 +156,65 @@ class LogisticRegression(object):
         else:
             raise NotImplementedError()
 
-def sgd_optimization_mnist(learning_rate=0.113, n_epochs=1000,
-                           dataset='mnist.pkl.gz',
-                           batch_size=600):
+class HiddenLayer(object):
 
-    datasets = load_data(dataset)
+    def __init__(self, rng, input, n_in, n_out, W=None, b=None, activation=T.tanh):
+
+        self.input = input
+
+        if W is None:
+            W_values = numpy.asarray(rng.uniform(
+                low=-numpy.sqrt(6. / (n_in + n_out)),
+                high=numpy.sqrt(6. / (n_in + n_out)),
+                size=(n_in, n_out)), dtype=theano.config.floatX)
+            if activation == theano.tensor.nnet.sigmoid:
+                W_values *= 4
+
+            W = theano.shared(value=W_values, name='W', borrow=True)
+
+        if b is None:
+            b_values = numpy.zeros((n_out,), dtype=theano.config.floatX)
+            b = theano.shared(value=b_values, name='b', borrow=True)
+
+        self.W = W
+        self.b = b
+
+        lin_output = T.dot(input, self.W) + self.b
+        self.output = (lin_output if activation is None
+                        else activation(lin_output))
+
+        self.params = [self.W, self.b]
+
+class MLP(object):
+
+    def __init__(self, rng, input, n_in, n_hidden, n_out):
+
+        self.hiddenLayer = HiddenLayer(rng=rng, input=input,
+                                       n_in=n_in, n_out=n_hidden,
+                                       activation=T.tanh)
+
+        self.logRegressionLayer = LogisticRegression(
+            input=self.hiddenLayer.output,
+            n_in=n_hidden,
+            n_out=n_out
+        )
+
+        self.L1 = abs(self.hiddenLayer.W).sum() \
+                + abs(self.logRegressionLayer.W).sum()
+
+        self.L2_sqr = (self.hiddenLayer.W ** 2).sum() \
+                    + (self.logRegressionLayer.W ** 2).sum()
+
+        self.negative_log_likelihood = self.logRegressionLayer.negative_log_likelihood
+
+        self.errors = self.logRegressionLayer.errors
+
+        self.params = self.hiddenLayer.params + self.logRegressionLayer.params
+
+def test_mlp(learning_rate = 0.01, L1_reg=0.00, L2_reg=0.0001, n_epochs=1000,
+             dataset='mnist.pkl.gz', batch_size=20, n_hidden=500):
+
+    datasets = theano_load_data(dataset)
 
     train_set_x, train_set_y = datasets[0]
     valid_set_x, valid_set_y = datasets[1]
@@ -176,9 +230,14 @@ def sgd_optimization_mnist(learning_rate=0.113, n_epochs=1000,
     x = T.matrix('x')
     y = T.ivector('y')
 
-    classifier = LogisticRegression(input=x, n_in=28*28, n_out=10)
+    rng = numpy.random.RandomState(1234)
 
-    cost = classifier.negative_log_likelihood(y)
+    classifier = MLP(rng=rng, input=x, n_in=28*28,
+                     n_hidden=n_hidden, n_out=10)
+
+    cost = classifier.negative_log_likelihood(y) \
+         + L1_reg * classifier.L1 \
+         + L2_reg * classifier.L2_sqr
 
     test_model = theano.function(inputs=[index],
                                  outputs=classifier.errors(y),
@@ -194,14 +253,16 @@ def sgd_optimization_mnist(learning_rate=0.113, n_epochs=1000,
                                          y: valid_set_y[index*batch_size:(index+1)*batch_size]
                                      })
 
-    g_W = T.grad(cost=cost, wrt=classifier.W)
-    g_b = T.grad(cost=cost, wrt=classifier.b)
+    gparams = []
+    for param in classifier.params:
+        gparam = T.grad(cost, param)
+        gparams.append(gparam)
 
-    updates = [(classifier.W, classifier.W - learning_rate * g_W),
-               (classifier.b, classifier.b - learning_rate * g_b)]
+    updates = []
+    for param, gparam in zip(classifier.params, gparams):
+        updates.append((param, param - learning_rate * gparam))
 
-    train_model = theano.function(inputs=[index],
-                                  outputs=cost,
+    train_model = theano.function(inputs=[index], outputs=cost,
                                   updates=updates,
                                   givens={
                                       x: train_set_x[index*batch_size:(index+1)*batch_size],
@@ -210,7 +271,7 @@ def sgd_optimization_mnist(learning_rate=0.113, n_epochs=1000,
 
     print '... training model'
 
-    patience = 5000
+    patience = 10000
     patience_increase = 2
 
     improvement_threshold = 0.995
@@ -219,87 +280,62 @@ def sgd_optimization_mnist(learning_rate=0.113, n_epochs=1000,
 
     best_params = None
     best_validation_loss = numpy.inf
-    test_score = 0.
+    best_iter = 0
+    test_score = 0
     start_time = time.clock()
 
-    done_looping = False
     epoch = 0
-    while(epoch < n_epochs) and (not done_looping):
+    done_looping = False
+
+    while (epoch < n_epochs) and (not done_looping):
         epoch = epoch + 1
         for minibatch_index in xrange(n_train_batches):
+
             minibatch_avg_cost = train_model(minibatch_index)
+
             iter = (epoch - 1) * n_train_batches + minibatch_index
 
             if (iter + 1) % validation_frequency == 0:
-                validation_losses = [validate_model(i)
-                                    for i in xrange(n_valid_batches)]
+
+                validation_losses = [validate_model(i) for i
+                                    in xrange(n_valid_batches)]
                 this_validation_loss = numpy.mean(validation_losses)
 
-                print('epoch %i, minibatch %i/%i, validation error %f %%' % \
-                      (epoch, minibatch_index + 1, n_train_batches,
-                      this_validation_loss * 100.))
+                print('epoch %i, minibatch %i/%i, validation error %f %%' %
+                      (epoch, minibatch_index+1, n_train_batches,
+                      this_validation_loss*100.))
 
                 if this_validation_loss < best_validation_loss:
+
                     if this_validation_loss < best_validation_loss * \
-                      improvement_threshold:
+                            improvement_threshold:
                         patience = max(patience, iter * patience_increase)
 
                     best_validation_loss = this_validation_loss
+                    best_iter = iter
 
-                    test_losses = [test_model(i)
-                                   for i in xrange(n_test_batches)]
+                    test_losses = [test_model(i) for i
+                                  in xrange(n_test_batches)]
                     test_score = numpy.mean(test_losses)
 
-                    print(('    epoch %i, minibatch %i/%i, test error of best'
-                           ' model %f %%') %
+                    print(('     epoch %i, minibatch %i/%i, test error of '
+                           'best model %f %%') %
                           (epoch, minibatch_index + 1, n_train_batches,
-                          test_score * 100.))
+                           test_score * 100.))
 
             if patience <= iter:
-                done_looping = True
-                break
+                    done_looping = True
+                    break
+
     end_time = time.clock()
-    print(('Optimization complete with best validation score of %f %%,'
-           'with test performance %f %%') %
-                 (best_validation_loss * 100., test_score * 100.))
-    print 'The code run for %d epochs, with %f epochs/sec' % (
-        epoch, 1. * epoch / (end_time - start_time))
+    print(('Optimization complete. Best validation score of %f %% '
+           'obtained at iteration %i, with test performance %f %%') %
+          (best_validation_loss * 100., best_iter + 1, test_score * 100.))
     print >> sys.stderr, ('The code for file ' +
                           os.path.split(__file__)[1] +
-                          ' ran for %.1fs' % ((end_time - start_time)))
+                          ' ran for %.2fm' % ((end_time - start_time) / 60.))
 
-
-    ###
-    ### function to output labels for unlabeled data
-    ###
-
-    f = open("kaggle_digits/test.csv")
-    f.readline()
-
-    data = [line.split(',') for line in f.readlines()]
-    data = numpy.array(data, dtype=float)
-
-    unlabeled_x = theano.shared(numpy.asarray(data,
-                                              dtype=theano.config.floatX),
-                                borrow=True)
-
-    test_labels = theano.function(inputs=[index],
-                              outputs = classifier.y_pred,
-                              givens={
-                                  x: unlabeled_x[index:]
-                              })
-
-    labels = test_labels(0)
-
-    f = open("submission.csv", 'w')
-
-    print >> f, "ImageId,Label"
-
-    for i in range(len(labels)):
-        print >> f, str(i+1) + "," + str(labels[i])
-
-    f.close
+    
 
 if __name__ == '__main__':
-
-    classifier = sgd_optimization_mnist(dataset="kaggle_digits/train.csv")
+    test_mlp()
