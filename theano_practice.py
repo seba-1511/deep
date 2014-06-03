@@ -269,7 +269,35 @@ def sgd_optimization_mnist(learning_rate=0.113, n_epochs=1000,
                           ' ran for %.1fs' % ((end_time - start_time)))
 
 
+    ###
+    ### function to output labels for unlabeled data
+    ###
+
+    f = open("kaggle_digits/test.csv")
+    f.readline()
+
+    data = [line.split(',') for line in f.readlines()]
+    data = numpy.array(data, dtype=float)
+
+    unlabeled_x = theano.shared(numpy.asarray(data,
+                                              dtype=theano.config.floatX),
+                                borrow=True)
+
+    test_labels = theano.function(inputs=[index],
+                              outputs = classifier.y_pred,
+                              givens={
+                                  x: unlabeled_x[index:]
+                              })
+
+    labels = test_labels(0)
+
+    f = open("submission.csv", 'w')
+
+    for i in range(len(labels)):
+        print >> f, str(labels[i])
+
+    f.close
 
 if __name__ == '__main__':
 
-    sgd_optimization_mnist(dataset="kaggle_digits/train.csv")
+    classifier = sgd_optimization_mnist(dataset="kaggle_digits/train.csv")
