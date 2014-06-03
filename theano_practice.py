@@ -209,12 +209,14 @@ class MLP(object):
 
         self.errors = self.logRegressionLayer.errors
 
+        self.y_pred = self.logRegressionLayer.y_pred
+
         self.params = self.hiddenLayer.params + self.logRegressionLayer.params
 
 def test_mlp(learning_rate = 0.01, L1_reg=0.00, L2_reg=0.0001, n_epochs=1000,
              dataset='mnist.pkl.gz', batch_size=20, n_hidden=500):
 
-    datasets = theano_load_data(dataset)
+    datasets = load_data(dataset)
 
     train_set_x, train_set_y = datasets[0]
     valid_set_x, valid_set_y = datasets[1]
@@ -335,7 +337,36 @@ def test_mlp(learning_rate = 0.01, L1_reg=0.00, L2_reg=0.0001, n_epochs=1000,
                           os.path.split(__file__)[1] +
                           ' ran for %.2fm' % ((end_time - start_time) / 60.))
 
-    
+    ###
+    ### function to output labels for unlabeled data
+    ###
+
+    f = open("kaggle_digits/test.csv")
+    f.readline()
+
+    data = [line.split(',') for line in f.readlines()]
+    data = numpy.array(data, dtype=float)
+
+    unlabeled_x = theano.shared(numpy.asarray(data,
+                                              dtype=theano.config.floatX),
+                                borrow=True)
+
+    #Need to figure out how to output labels
+    test_labels = theano.function(inputs=[index],
+                                  outputs = classifier.y_pred,
+                                  givens={
+                                      x: unlabeled_x[index:]
+                                  })
+
+    labels = test_labels(0)
+
+    f = open("submission.csv", 'w')
+
+    print >> f, "ImageId,Label"
+    for i in range(len(labels)):
+        print >> f, str(i+1) + "," + str(labels[i])
+
+    f.close
 
 if __name__ == '__main__':
-    test_mlp()
+    test_mlp(dataset='kaggle_digits/train.csv')
