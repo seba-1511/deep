@@ -293,8 +293,10 @@ def sgd_optimization_mnist(learning_rate=0.113, n_epochs=1000,
 
     f = open("submission.csv", 'w')
 
+    print >> f, "ImageId,Label"
+
     for i in range(len(labels)):
-        print >> f, str(labels[i])
+        print >> f, str(i+1) + "," + str(labels[i])
 
     f.close
 
