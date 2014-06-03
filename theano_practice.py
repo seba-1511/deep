@@ -30,8 +30,8 @@ def load_data(dataset):
     data_y = data[:,0]
 
     # split data parameters
-    end_of_train = data.shape[0] / 2
-    end_of_valid = data.shape[0] / 4 * 3
+    end_of_train = data.shape[0] * .95
+    end_of_valid = data.shape[0] * .99
 
     # split data
     train_set_x = data_x[:end_of_train]
@@ -368,5 +368,80 @@ def test_mlp(learning_rate = 0.01, L1_reg=0.00, L2_reg=0.0001, n_epochs=1000,
 
     f.close
 
+class LeNetConvPoolLayer(object):
+
+    def __init__(self, rng, input, filter_shape, image_shape, poolsize=(2,2)):
+
+        assert image_shape[1] == filter_shape[1]
+        self.input = input
+
+        fan_in = numpy.prod(filter_shape[1:])
+        W_values = numpy.asarray(rng.uniform(
+            low=-numpy.sqrt(3./fan_in),
+            high=numpy.sqrt(3./fan_in),
+            size=filter_shape), dtype=theano.config.floatX)
+        self.W = theano.shared(value=W_values, name='W')
+
+        b_values = numpy.zeros((filter_shape[0],), dtype=theano.config.floatX)
+        self.b = theano.shared(value_b_values, name='b')
+
+        conv_out = conv.conv2d(input, self.W,
+                               filter_shape=filter_shape, image_shape=image_shape)
+
+        pooled_out = downsample.max_pool_2d(conv_out, poolsize, ignore_border=True)
+
+        self.output = T.tanh(pooled_out + self.b.dimshuffle('x', 0, 'x', 'x'))
+
+        self.params = [self.W, self.b]
+
+ded test_lenet(learning_rate = 0.1, L1_reg=0.00, L2_reg=0.0001, n_epochs=1000,
+             dataset='mnist.pkl.gz', batch_size=20, n_hidden=500):
+
+    rng = numpy.random.RandomState(1234)
+
+    ishape = (28, 28)
+    batch_size = 20
+
+    x = T.matrix('x')
+    y = T.lvector('y')
+
+    print "... building model"
+
+    layer0_input = x.reshape((batch_size, 1, 28, 28))
+
+    layer0 = LeNetConvPoolLayer(rng, input=layer0_input,
+                                image_shape=(batch_size,1,28,28),
+                                filter_shape=(20,1,5,5), poolsize=(2,2))
+
+    layer1 = LeNetConvPoolLayer(rng, input=layer0.output,
+                                image_shape=(batch_size,20,12,12),
+                                filter_shape=(50,20,5,5), poolsize=(2,2))
+
+    layer2_input = layer1.output.flatten(2)
+
+    layer2 = HiddenLayer(rng, input=layer2_input,
+                         n_in=50 * 4 * 4, n_out=500,
+                         activation=T.tanh)
+
+    layer3 = LogisticRegression(input=layer2.output, n_in=500, n_out=10)
+
+    cost = layer3.negative_log_likelihood(y)
+
+    test_model = theano.function([x,y], layer3.errors(y))
+
+    params = layer3.param + layer2.params + layer1.params + layer0.params
+
+    grads = T.grad(cost, params)
+
+    updates = []
+    for param_i, grad_i in zip(params, grads):
+        updates.append((param_i, param_i - learning_rate * grad_i))
+    train_model = theano.function([index], cost, updates = updates,
+                                  givens={
+                                      x: train_set_x[index*batch_size:(index+1)*batch_size],
+                                      y: train_set_x[index*batch_size:(index+1)*batch_size]
+                                  })
+
 if __name__ == '__main__':
+
     test_mlp(dataset='kaggle_digits/train.csv')
