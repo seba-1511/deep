@@ -34,8 +34,8 @@ def load_data(dataset):
     data_y = data[:,0]
 
     # split data parameters
-    end_of_train = data.shape[0] * .8
-    end_of_valid = data.shape[0] * .9
+    end_of_train = .7
+    end_of_valid = data.shape[0] * .85
 
     # split data
     train_set_x = data_x[:end_of_train]
@@ -589,14 +589,15 @@ def evaluate_lenet5(learning_rate=0.1, n_epochs=200,
                                               dtype=theano.config.floatX),
                                 borrow=True)
 
-    #Need to figure out how to output labels
-    test_labels = theano.function(inputs=[index],
-                                  outputs = classifier.y_pred,
-                                  givens={
-                                      x: unlabeled_x[index:]
-                                  })
+    n_unlabeled_batches = unlabeled_x.get_value(borrow=True).shape[0] / batch_size
 
-    labels = test_labels(0)
+    label_examples = theano.function([index], layer3.y_pred,
+         givens={
+            x: unlabeled_x[index*batch_size:(index+1)*batch_size],
+         })
+
+    batch_labels = [label_examples(i) for i in xrange(n_unlabeled_batches)]
+    labels = [item for sublist in batch_labels for item in sublist] # dirty!
 
     f = open("submission.csv", 'w')
 
