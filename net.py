@@ -1,106 +1,57 @@
 import sys
 sys.path.insert(0, "/usr/local/lib/python2.7/site-packages")
-from scipy.io import loadmat
-from scipy.stats.mstats import zscore
 import numpy as np
-from sklearn import decomposition
 import matplotlib.pyplot as plt
-from sklearn import svm
+import cPickle
+import gzip
 
-def load_data(subject_range, start=0, end=375, test=False):
+def create_y_vector(y):
+    y_vector = np.zeros((10,1))
+    y_vector[y] = 1
+    return y_vector
 
-    # list of all subjects
-    x = []
-    y = []
+def sigmoid(z):
+    return 1 / (1 + np.exp(-z))
 
-    # load subject data
-    for subject in subject_range:
+def feedforward(weights, a):
 
-        # open train/test file
-        if test:
-            filename = 'test_17_23/test_subject%02d.mat' % subject
-        else:
-            filename = 'train_01_16/train_subject%02d.mat' % subject
+    # for each layer
+    for w in weights:
+        a = sigmoid(np.dot(w, a))
+        # add 1 for bias
+        a = np.insert(a,0,1)
+    # remove 1 from final activation
+    return a[1:]
 
-        # load
-        data = loadmat(filename, squeeze_me=True)
+def cost(weights, set_x, set_y):
 
-        # test = id/train = labels
-        if test:
-            subject_y = data['Id']
-        else:
-            subject_y = data['y']
-
-        # z score and resize
-        subject_x = data['X']
-        subject_x = zscore(subject_x)
-        subject_x = subject_x[:,:,start:end].copy()
-
-        # append to subject list
-        x.append(subject_x)
-        y.append(subject_y)
-
-    # make numpy arrays
-    x = np.vstack(x)
-    y = np.concatenate(y)
-
-    return x, y
+    # sum of the square difference of output and label vector
+    return np.sum([(feedforward(weights, x) - train_y)**2 for
+                   x, y in zip(set_x, set_y)])
 
 if __name__ == "__main__":
 
-    # load train data
-    train_x, train_y = load_data(range(2,3))
-    valid_x, valid_y = load_data(range(9,10))
+    # random seed
+    np.random.seed(1)
 
-    # ica using one trial
-    ica = decomposition.FastICA(n_components=25)
-    S_ = ica.fit_transform(train_x[0].T)
+    # load training data
+    f = gzip.open('data/mnist.pkl.gz', 'rb')
+    training_data, validation_data, test_data = cPickle.load(f)
 
-    # reshape train ica
-    train_ica_x = []
-    for trial in range(len(train_x)):
-        train_ica_x.append(train_x[trial].T)
+    # take small subset for testing
+    train_x = training_data[0][:100]
+    train_y = training_data[1][:100]
 
-    # reshape valid ica
-    valid_ica_x = []
-    for trial in range(len(valid_x)):
-        valid_ica_x.append(valid_x[trial].T)
+    # append 0's to x's and
+    # convert y labels to vectors
+    train_x = np.column_stack((np.ones(len(train_x)),train_x))
+    train_y = [create_y_vector(y) for y in train_y]
 
-    # convert to numpy
-    train_ica_x = np.array(train_ica_x)
-    train_ica_x = np.vstack(train_ica_x)
-    valid_ica_x = np.array(valid_ica_x)
-    valid_ica_x = np.vstack(valid_ica_x)
+    # initialize network
+    size = [784, 30, 10]
+    weights = [np.random.randn(x,y+1) for x, y in zip(size[1:], size[:-1])]
 
-    # fit/transform
-    train_S = ica.fit_transform(train_ica_x)
-    valid_S = ica.transform(valid_ica_x)
+    # feedforward
+    print feedforward(weights, train_x[0])
 
-    # reshape train ica
-    train_unmixed_x = []
-    for i in range(0, len(train_S), 375):
-        ica_signals = np.array(train_S[i:i+375])
-        train_unmixed_x.append(ica_signals.T)
-    train_unmixed_x = np.array(train_unmixed_x)
-
-    # reshape valid ica
-    valid_unmixed_x = []
-    for i in range(0, len(valid_S), 375):
-        ica_signals = np.array(valid_S[i:i+375])
-        valid_unmixed_x.append(ica_signals.T)
-    valid_unmixed_x = np.array(valid_unmixed_x)
-
-    # concatenate sensors
-    train_x = train_x.reshape(train_x.shape[0], train_x.shape[1]*train_x.shape[2])
-    valid_x = valid_x.reshape(valid_x.shape[0], valid_x.shape[1]*valid_x.shape[2])
-    train_unmixed_x = train_unmixed_x.reshape(train_unmixed_x.shape[0], train_unmixed_x.shape[1]*train_unmixed_x.shape[2])
-    valid_unmixed_x = valid_unmixed_x.reshape(valid_unmixed_x.shape[0], valid_unmixed_x.shape[1]*valid_unmixed_x.shape[2])
-
-    # train svm on original
-    clf = svm.LinearSVC()
-    clf.fit(train_x, train_y)
-    print clf.score(valid_x, valid_y)
-
-    # train on unmixed signal
-    clf.fit(train_unmixed_x, train_y)
-    print clf.score(valid_unmixed_x, valid_y)
+    print cost(weights, train_x, train_y)
