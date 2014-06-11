@@ -4,67 +4,42 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 def sigmoid(z):
-    return 1.0 / (1.0 + np.exp(-z))
 
-sigmoid_vec = np.vectorize(sigmoid)
+    return 1 / (1 + np.exp(-z))
+
+def cost(w, x, y):
+
+    return np.sum([(np.dot(x,w) - y)**2 for x,y in zip(train_x, y)])
+
+def update(w, train_x, y):
+
+    for x, y in zip(train_x, y):
+        w = w + 0.1*(y - sigmoid(np.dot(x, w)))*x
+    return w
 
 if __name__ == "__main__":
 
-    # 100 training examples of 2 vars
-    train_x = np.random.randn(100,2)
-    train_y = []
+    # seed and generate x and y
+    np.random.seed(7)
+    x = np.random.randn(10,2) + 2
+    y = np.random.randint(0,2,10)
 
-    # generate ys
-    for x,y in train_x:
-        if x + y > 0:
-            train_y.append(1)
-        else:
-            train_y.append(0)
+    # generate weights
+    w = np.random.randn(3)
 
-    # shift up and right 4
-    train_x = train_x+4
+    # append ones to x
+    train_x  = np.column_stack((np.ones(10), x))
 
-    # initialize net
-    sizes = [2,1]
-    num_layers = len(sizes)
-    bias = np.random.randn(1)
-    weights = np.random.randn(2)
+    for i in range(100):
+        w = update(w, train_x, y)
+        print cost(w, train_x, y)
 
-    for i in range(10):
+    # compute line and plot
+    line = [-(w[0] + w[1] * i) / w[2]  for i in range(5)]
+    plt.plot(line)
 
-        print "bias   :", bias
-        print "weights:", weights
+    # stack columns (since zip won't work) and plot
+    d = np.column_stack((x,y))
+    [plt.scatter(x1,x2, c=('r' if y == 1 else 'b')) for x1, x2, y in d]
+    plt.show()
 
-        # plot training examples
-        for x, y in zip(train_x, train_y):
-            x1, x2 = x
-            if y == 1:
-                plt.scatter(x1,x2,c='b')
-            if y == 0:
-                plt.scatter(x1,x2,c='r')
-
-        # create line
-        line = []
-        for j in range(0,9):
-            x1 = j
-            x2 = (bias - weights[0] * x1)  / weights[1]
-            line.append((x2))
-
-        # plot line
-        plt.plot(line)
-        plt.axis([0,8,0,8])
-        plt.show()
-
-        print i
-        print "example  :", train_x[i], "label:", train_y[i]
-
-        update = weights - weights
-
-        for i in range(len(train_x)):
-
-            raw_activation = np.dot(weights, train_x[i])
-            squashed_activation = sigmoid(raw_activation)
-            error = train_y[i] - squashed_activation
-            update += error * train_x[i]
-
-        weights = weights + update * .01
