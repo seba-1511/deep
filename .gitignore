@@ -4,5 +4,6 @@
 # folders
 .idea
 data
-kaggle
-research
+corex/
+python_deep_learning
+theano_deep_learning
