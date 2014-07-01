@@ -1,0 +1,13 @@
+# compiled
+*.pyc
+
+# folders
+DeepLearning-master/
+DeepLearningTutorials-master/
+corex/
+data/
+kaggle_digits/
+test_17_23/
+topography/
+train_01_16/
+.idea/
