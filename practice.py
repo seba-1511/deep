@@ -1,156 +1,111 @@
-"""
-classes by Yusuke Sugomori
-
-"""
-
 # path to modules
 import sys
 sys.path.insert(0, "/usr/local/lib/python2.7/site-packages")
 
-# main modules
-import numpy
+from sklearn import datasets
+import numpy as np
 
-def sigmoid(x):
-    return 1. / (1 + numpy.exp(-x))
+def sigmoid(z):
+    return 1.0 / (1 + np.exp(-z))
 
-def softmax(x):
-    e = numpy.exp(x - numpy.max(x)) # prevent overflow
-    if e.ndim == 1:
-        return e / numpy.sum(e, axis=0)
-    else:
-        return e / numpy.array([numpy.sum(e, axis=1)]).T
+def sigmoid_prime(z):
+    return sigmoid(z) * (1 - sigmoid(z))
 
-class dA(object):
-    """
-     Denoising Autoencoders (dA)
+class neural_network:
 
-     References :
-       - P. Vincent, H. Larochelle, Y. Bengio, P.A. Manzagol: Extracting and
-       Composing Robust Features with Denoising Autoencoders, ICML'08, 1096-1103,
-       2008
+    def __init__(self, input_size, hidden_size, output_size):
 
-       - DeepLearningTutorials
-       https://github.com/lisa-lab/DeepLearningTutorials
+        self.hidden_w = np.random.random((hidden_size, input_size))
+        self.hidden_b = np.random.random((hidden_size, 1))
 
-       - Yusuke Sugomori: Stochastic Gradient Descent for Denoising Autoencoders,
-       http://yusugomori.com/docs/SGD_DA.pdf
+        self.visible_w = np.random.random((output_size, hidden_size))
+        self.visible_b = np.random.random((output_size, 1))
 
-    """
+    def back_prop(self, x, y, learning_rate):
 
-    def __init__(self, input=None, n_visible=2, n_hidden=3,
-                 W=None, hbias=None, vbias=None, numpy_rng=None):
+        x = x.reshape(len(x), 1)
+        y = y.reshape(len(y), 1)
 
-        self.n_visible = n_visible
-        self.n_hidden = n_hidden
+        hidden_z = np.dot(self.hidden_w, x) + self.hidden_b
+        hidden_a = sigmoid(hidden_z)
 
-        if numpy_rng is None:
-            numpy_rng = numpy.random.RandomState(1234)
+        visible_z = np.dot(self.visible_w, hidden_a) + self.visible_b
+        visible_a = sigmoid(visible_z)
 
-        if W is None:
-            a = 1. / n_visible
-            initial_W = numpy.array(numpy_rng.uniform(
-                low=-a,
-                high=a,
-                size=(n_visible, n_hidden)
-            ))
-            W = initial_W
+        visible_d = (y - visible_a) * -sigmoid_prime(visible_z)
+        hidden_d = np.dot(self.visible_w.T, visible_d) * -sigmoid_prime(hidden_z)
 
-            if hbias is None:
-                hbias = numpy.zeros(n_hidden)
+        visible_g = np.dot(visible_d, hidden_a.T)
+        hidden_g = np.dot(hidden_d, x.T)
 
-            if vbias is None:
-                vbias = numpy.zeros(n_visible)
+        self.hidden_w -= learning_rate * hidden_g
+        self.hidden_b -= learning_rate * hidden_d
 
-            self.numpy_rng = numpy_rng
-            self.x = input
-            self.W = W
-            self.W_prime = self.W.T
-            self.hbias = hbias
-            self.vbias = vbias
+        self.visible_w -= learning_rate * visible_g
+        self.visible_b -= learning_rate * visible_d
 
-    def get_corrupted_input(self, input, corruption_level):
-        assert corruption_level < 1
+    def cost(self, x, y):
 
-        return self.numy_rng.binomial(size=input.shape,
-                                      n=1,
-                                      p=1-corruption_level) * input(
+        x = x.reshape(len(x), 1)
+        y = y.reshape(len(y), 1)
 
-        )
+        hidden_z = np.dot(self.hidden_w, x) + self.hidden_b
+        hidden_a = sigmoid(hidden_z)
 
-    def get_hidden_values(self, input):
-        return sigmoid(numpy.dog(input, self.W) + self.hbias)
+        visible_z = np.dot(self.visible_w, hidden_a) + self.visible_b
+        visible_a = sigmoid(visible_z)
 
-    def get_reconstructed_input(self, hidden):
-        return sigmoid(numpy.dot(hidden, self.w_prime) + self.vbias)
+        return np.mean((y - visible_a)**2)
 
-    def train(self, lr=0.1, corruption_level=0.3, input=None):
-        if input is not None:
-            self.x = input
+    def predict(self, x):
 
-        x = self.x
-        tilde_x = self.get_corrupted_input(x, corruption_level)
-        y = self.get_hidden_values(tilde_x)
-        z = self.get_reconstructed_input(y)
+        x = x.reshape(len(x), 1)
 
-        L_h2 = x -z
-        L_h1 = numpy.dot(L_h2, self.W) * y * (1-y)
+        hidden_z = np.dot(self.hidden_w, x) + self.hidden_b
+        hidden_a = sigmoid(hidden_z)
 
-        L_vbias = L_h2
-        L_hbias = L_h1
-        L_W = numpy.dot(tilde_x.T, L_h1) + numpy.dot(L_h2.T, y)
+        visible_z = np.dot(self.visible_w, hidden_a) + self.visible_b
+        visible_a = sigmoid(visible_z)
 
-        self.W += lr * L_W
-        self.hbias += lr * numpy.mean(L_hbias, axis=0)
-        self.vbias += lr * numpy.mean(L_vbias, axis=0)
+        return np.argmax(visible_a)
 
-    def negative_log_likelihood(self, corruption_level=0.3):
-        tilde_x = self.get_corrupted_input(self.x, corruption_level)
-        y = self.get_hidden_values(tilde_x)
-        z = self.get_reconstructed_input(y)
+    def fit(self, train_x, train_y, learning_rate=0.1, epochs=5):
 
-        cross_entropy = -numpy.mean(
-            numpy.sum(self.x * numpy.log(z) +
-                      (1 - self.x) * numpy.log(1-z),
-                      axis=1)
-        )
+        for epoch in range(epochs):
 
-        return cross_entropy
+            total_cost = 0
 
-    def reconstruct(self, x):
-        y = self.get_hidden_values(x)
-        z = self.get_reconstructed_input(y)
-        return z
+            for x, y in zip(train_x, train_y):
+                total_cost += self.cost(x, y)
+                self.back_prop(x, y, learning_rate)
 
-def test_dA(learning_rate=0.1, corruption_level=0.3, training_epochs=50):
-    data = numpy.array([[1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-                        [1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-                        [1, 1, 0, 1, 1, 1, 1, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-                        [1, 1, 1, 1, 0, 0, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-                        [0, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-                        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
-                        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1],
-                        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 1, 1, 1, 1, 1, 0, 1],
-                        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 0, 0, 1, 1, 1, 1],
-                        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 0]])
+            print total_cost
 
-    rng = numpy.random.RandomState(123)
+    def score(self, valid_x, valid_y):
 
-    # construct dA
-    da = dA(input=data, n_visible=20, n_hidden=5, numpy_rng=rng)
+        correct = 0.0
 
-    # train
-    for epoch in xrange(training_epochs):
-        da.train(lr=learning_rate, corruption_level=corruption_level)
-        # cost = da.negative_log_likelihood(corruption_level=corruption_level)
-        # print >> sys.stderr, 'Training epoch %d, cost is ' % epoch, cost
-        # learning_rate *= 0.95
+        for x, y in zip(valid_x, valid_y):
+            if self.predict(x) == np.argmax(y):
+                correct += 1
 
+        return correct / len(valid_x)
 
-    # test
-    x = numpy.array([[1, 0, 1, 0, 0, 0, 1, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1],
-                     [0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 1, 0, 0, 1, 1, 0]])
-
-    print da.reconstruct(x)
+def vectorized_target(y):
+    e = np.zeros((3,1))
+    e[y] = 1.0
+    return e
 
 if __name__ == "__main__":
-    test_dA()
+
+    iris = datasets.load_iris()
+    train_x = iris.data
+    train_y = [vectorized_target(y).reshape(3) for y in iris.target]
+
+    combined = zip(train_x, train_y)
+    np.random.shuffle(combined)
+    train_x, train_y = zip(*combined)
+
+    net = neural_network(4,4,3)
+    net.fit(train_x, train_y)
+    print net.score(train_x, train_y)
