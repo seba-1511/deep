@@ -67,13 +67,13 @@ class NeuralNetwork():
         hidden_g = np.dot(hidden_d, x.reshape(len(x),1).T)
 
         cost = self.get_cost(x, y)
-        self.visible_w += lr * visible_g * cost
-        self.visible_b += lr * visible_d * cost
+        self.visible_w -= lr * visible_g * cost
+        self.visible_b -= lr * visible_d * cost
 
-        self.hidden_w += lr * hidden_g * cost
-        self.hidden_b += lr * hidden_d * cost
+        self.hidden_w -= lr * hidden_g * cost
+        self.hidden_b -= lr * hidden_d * cost
 
-    def train(self, train_x, train_y, lr=0.1, epochs=10):
+    def train(self, train_x, train_y, lr=3, epochs=1000):
 
         for epoch in range(epochs):
 
@@ -81,21 +81,31 @@ class NeuralNetwork():
 
             for x, y in zip(train_x, train_y):
                 total_cost += self.get_cost(x, y)
-                self.update(x, y)
+                self.update(x, y, lr)
 
-            print total_cost
+            print 'total cost:', total_cost, 'valid %:', self.score(valid_x, valid_y)
 
+    def score(self, valid_x, valid_y):
+
+        correct = 0.
+
+        for x, y in zip(valid_x, valid_y):
+
+            if self.predict(x) == np.argmax(y):
+
+                correct += 1
+
+        return correct / len(valid_x)
 
 # load data
 data = load_mnist_data()
 train_x, train_y = data[0]
-print train_y[:10]
 train_y = [vectorize_label(y) for y in train_y]
+valid_x, valid_y = data[1]
+valid_y = [vectorize_label(y) for y in valid_y]
 
 net = NeuralNetwork(784, 30, 10)
 
-net.train(train_x[:100], train_y[:100])
+net.train(train_x, train_y)
 
-for i in range(10):
-
-    print net.predict(train_x[i])
+print net.score(valid_x, valid_y)
