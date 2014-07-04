@@ -2,110 +2,100 @@
 import sys
 sys.path.insert(0, "/usr/local/lib/python2.7/site-packages")
 
-from sklearn import datasets
 import numpy as np
+import cPickle
+import gzip
+
+def vectorize_label(y):
+    e = np.zeros((10,1))
+    e[y] = 1.0
+    return e
+
+def load_mnist_data():
+
+    f = gzip.open('data/mnist.pkl.gz','rb')
+    train_data, valid_data, test_data = cPickle.load(f)
+    f.close()
+
+    return (train_data, valid_data, test_data)
 
 def sigmoid(z):
-    return 1.0 / (1 + np.exp(-z))
+    return 1.0 / (1.0 + np.exp(-z))
 
 def sigmoid_prime(z):
     return sigmoid(z) * (1 - sigmoid(z))
 
-class neural_network:
+class NeuralNetwork():
 
     def __init__(self, input_size, hidden_size, output_size):
 
-        self.hidden_w = np.random.random((hidden_size, input_size))
-        self.hidden_b = np.random.random((hidden_size, 1))
+        self.hidden_w = np.random.randn(hidden_size, input_size)
+        self.hidden_b = np.random.randn(hidden_size, 1)
+        self.visible_w = np.random.randn(output_size, hidden_size)
+        self.visible_b = np.random.randn(output_size, 1)
 
-        self.visible_w = np.random.random((output_size, hidden_size))
-        self.visible_b = np.random.random((output_size, 1))
-
-    def back_prop(self, x, y, learning_rate):
-
-        x = x.reshape(len(x), 1)
-        y = y.reshape(len(y), 1)
-
-        hidden_z = np.dot(self.hidden_w, x) + self.hidden_b
+    def get_hidden_values(self, input):
+        input = input.reshape(len(input), 1)
+        hidden_z = np.dot(self.hidden_w, input) + self.hidden_b
         hidden_a = sigmoid(hidden_z)
+        return (hidden_z, hidden_a)
 
-        visible_z = np.dot(self.visible_w, hidden_a) + self.visible_b
+    def get_output_values(self, hidden_values):
+        visible_z = np.dot(self.visible_w, hidden_values) + self.visible_b
         visible_a = sigmoid(visible_z)
+        return (visible_z, visible_a)
 
-        visible_d = (y - visible_a) * -sigmoid_prime(visible_z)
-        hidden_d = np.dot(self.visible_w.T, visible_d) * -sigmoid_prime(hidden_z)
-
-        visible_g = np.dot(visible_d, hidden_a.T)
-        hidden_g = np.dot(hidden_d, x.T)
-
-        self.hidden_w -= learning_rate * hidden_g
-        self.hidden_b -= learning_rate * hidden_d
-
-        self.visible_w -= learning_rate * visible_g
-        self.visible_b -= learning_rate * visible_d
-
-    def cost(self, x, y):
-
-        x = x.reshape(len(x), 1)
-        y = y.reshape(len(y), 1)
-
-        hidden_z = np.dot(self.hidden_w, x) + self.hidden_b
-        hidden_a = sigmoid(hidden_z)
-
-        visible_z = np.dot(self.visible_w, hidden_a) + self.visible_b
-        visible_a = sigmoid(visible_z)
-
+    def get_cost(self, x, y):
+        hidden_z, hidden_a = self.get_hidden_values(x)
+        visible_z, visible_a = self.get_output_values(hidden_a)
         return np.mean((y - visible_a)**2)
 
     def predict(self, x):
-
-        x = x.reshape(len(x), 1)
-
-        hidden_z = np.dot(self.hidden_w, x) + self.hidden_b
-        hidden_a = sigmoid(hidden_z)
-
-        visible_z = np.dot(self.visible_w, hidden_a) + self.visible_b
-        visible_a = sigmoid(visible_z)
-
+        hidden_z, hidden_a = self.get_hidden_values(x)
+        visible_z, visible_a = self.get_output_values(hidden_a)
         return np.argmax(visible_a)
 
-    def fit(self, train_x, train_y, learning_rate=0.1, epochs=5):
+    def update(self, x, y, lr=0.1):
+
+        hidden_z, hidden_a = self.get_hidden_values(x)
+        visible_z, visible_a = self.get_output_values(hidden_a)
+
+        visible_d = -(y - visible_a) * sigmoid_prime(visible_z)
+        hidden_d = np.dot(self.visible_w.T, visible_d) * sigmoid_prime(hidden_z)
+
+        visible_g = np.dot(visible_d, hidden_a.T)
+        hidden_g = np.dot(hidden_d, x.reshape(len(x),1).T)
+
+        cost = self.get_cost(x, y)
+        self.visible_w += lr * visible_g * cost
+        self.visible_b += lr * visible_d * cost
+
+        self.hidden_w += lr * hidden_g * cost
+        self.hidden_b += lr * hidden_d * cost
+
+    def train(self, train_x, train_y, lr=0.1, epochs=10):
 
         for epoch in range(epochs):
 
             total_cost = 0
 
             for x, y in zip(train_x, train_y):
-                total_cost += self.cost(x, y)
-                self.back_prop(x, y, learning_rate)
+                total_cost += self.get_cost(x, y)
+                self.update(x, y)
 
             print total_cost
 
-    def score(self, valid_x, valid_y):
 
-        correct = 0.0
+# load data
+data = load_mnist_data()
+train_x, train_y = data[0]
+print train_y[:10]
+train_y = [vectorize_label(y) for y in train_y]
 
-        for x, y in zip(valid_x, valid_y):
-            if self.predict(x) == np.argmax(y):
-                correct += 1
+net = NeuralNetwork(784, 30, 10)
 
-        return correct / len(valid_x)
+net.train(train_x[:100], train_y[:100])
 
-def vectorized_target(y):
-    e = np.zeros((3,1))
-    e[y] = 1.0
-    return e
+for i in range(10):
 
-if __name__ == "__main__":
-
-    iris = datasets.load_iris()
-    train_x = iris.data
-    train_y = [vectorized_target(y).reshape(3) for y in iris.target]
-
-    combined = zip(train_x, train_y)
-    np.random.shuffle(combined)
-    train_x, train_y = zip(*combined)
-
-    net = neural_network(4,4,3)
-    net.fit(train_x, train_y)
-    print net.score(train_x, train_y)
+    print net.predict(train_x[i])
