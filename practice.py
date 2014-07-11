@@ -46,6 +46,7 @@ class NeuralNetwork():
         return (visible_z, visible_a)
 
     def get_cost(self, x, y):
+        y = y.reshape(len(y), 1)
         hidden_z, hidden_a = self.get_hidden_values(x)
         visible_z, visible_a = self.get_output_values(hidden_a)
         return np.mean((y - visible_a)**2)
@@ -56,6 +57,8 @@ class NeuralNetwork():
         return np.argmax(visible_a)
 
     def update(self, x, y, lr=0.1):
+
+        y = y.reshape(len(y), 1)
 
         hidden_z, hidden_a = self.get_hidden_values(x)
         visible_z, visible_a = self.get_output_values(hidden_a)
@@ -83,7 +86,7 @@ class NeuralNetwork():
                 total_cost += self.get_cost(x, y)
                 self.update(x, y, lr)
 
-            print 'total cost:', total_cost, 'valid %:', self.score(valid_x, valid_y)
+            print 'total cost:', total_cost
 
     def score(self, valid_x, valid_y):
 
@@ -97,15 +100,17 @@ class NeuralNetwork():
 
         return correct / len(valid_x)
 
-# load data
-data = load_mnist_data()
-train_x, train_y = data[0]
-train_y = [vectorize_label(y) for y in train_y]
-valid_x, valid_y = data[1]
-valid_y = [vectorize_label(y) for y in valid_y]
+if __name__ == "__main__":
 
-net = NeuralNetwork(784, 30, 10)
+    # load data
+    data = load_mnist_data()
+    train_x, train_y = data[0]
+    train_y = [vectorize_label(y) for y in train_y]
+    valid_x, valid_y = data[1]
+    valid_y = [vectorize_label(y) for y in valid_y]
 
-net.train(train_x, train_y)
+    net = NeuralNetwork(784, 30, 10)
 
-print net.score(valid_x, valid_y)
+    net.train(train_x, train_y)
+
+    print net.score(valid_x, valid_y)
