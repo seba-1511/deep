@@ -1,5 +1,6 @@
 import numpy as np
 import matplotlib.pyplot as plt
+import scipy.stats
 
 def load_old_faithful_data():
 
@@ -7,11 +8,12 @@ def load_old_faithful_data():
     lines = [line.split() for line in f.readlines()]
     array = np.array(lines, dtype=float)
 
-    array -= array.mean(0)
+    array -= array.min(0)
 
     array /= np.std(array, axis=0)
 
     return array[:,1:]
+
 
 class KM():
 
@@ -21,7 +23,7 @@ class KM():
         self.k = number_of_clusters
 
         self.means = [[-1,1], [1,-1]]
-        self.assignments = 0
+        self.assignments = None
         self.expectation_step()
 
     def expectation_step(self):
@@ -69,44 +71,47 @@ class KM():
 
         plt.show()
 
+
 class EM():
 
     def __init__(self, data, number_of_clusters):
 
         self.data = data
         self.k = number_of_clusters
-        self.n = data.shape[1]
 
         self.means = [[-1,1],[1,-1]]
-        self.covs = np.array([np.eye(2) for i in range(2)])
-
-        self.pi = np.random.random((self.n, 1))
-        self.pi = self.pi / sum(self.pi)
-
-    def log_likelihood(self):
-
-        # TODO
-
-        raise NotImplementedError
+        self.covs = np.array([np.eye(2) for _ in range(2)])
+        r = np.random.random(2)
+        self.pis = r / np.sum(r)
+        self.gamma = np.zeros((len(self.data), self.k))
 
     def expectation_step(self):
 
-        # TODO
-
-        raise NotImplementedError
+        self.gamma[:, 0] = scipy.stats.multivariate_normal.pdf(data, self.means[0], self.covs[0])
+        self.gamma[:, 1] = scipy.stats.multivariate_normal.pdf(data, self.means[1], self.covs[1])
+        self.gamma /= np.sum(self.gamma, axis=1).reshape(-1, 1)
 
     def maximization_step(self):
 
-        # TODO
+        self.means[0] = np.sum(self.data * self.gamma[:,0].reshape(-1, 1), axis=0)
+        self.means[1] = np.sum(self.data * self.gamma[:,1].reshape(-1, 1), axis=0)
+        self.means /= np.sum(self.gamma, axis=0)
 
-        raise NotImplementedError
+        self.covs[0] = np.sum(self.gamma[:,0] * np.dot((data - self.means[0]),
+                                                       (data - self.means[0]).T))
+        self.covs[1] = np.sum(self.gamma[:,1] * np.dot((data - self.means[1]),
+                                                       (data - self.means[1]).T))
+        self.covs /= np.sum(self.gamma, axis=0)
+
+        self.pis = np.sum(self.gamma, axis=0) / len(self.data)
+
 
     def plot(self):
 
         [plt.scatter(x,y) for x,y in self.data]
-        [plt.scatter(x,y, c='r') for x,y in self.means]
+        [plt.scatter(x,y, c='r', marker='x') for x,y in self.means]
 
-        # TODO: add standard deviation circles
+        # TODO: add standard deviation contours
         #http://stackoverflow.com/questions/20126061/creating-a-confidence-ellipses-in-a-sccatterplot-using-matplotlib
 
         plt.show()
@@ -115,7 +120,6 @@ if __name__ == "__main__":
 
     data = load_old_faithful_data()
 
-    km = KM(data, 2)
-    km.plot()
-    km.train()
-    km.plot()
+    em = EM(data, 2)
+    em.expectation_step()
+    em.maximization_step()
