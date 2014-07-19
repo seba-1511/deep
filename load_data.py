@@ -1,10 +1,15 @@
+"""
+Data loading utilities
+"""
+
 import gzip
 import cPickle
 import numpy
 from scipy.io import loadmat
 
-def load_mnist():
-    """ load mnist data from ? """ #TODO
+
+def mnist():
+    """ load mnist data from ? """
 
     f = gzip.open("data/mnist.pkl.gz")
     data = cPickle.load(f)
@@ -13,8 +18,8 @@ def load_mnist():
     return data
 
 
-def load_kaggle_decoding():
-    """ load kaggle decoding data from ? """ #TODO
+def kaggle_decoding():
+    """ load kaggle decoding data from ? """
 
     train_subject_range = range(1,2)
     valid_subject_range = range(11,12)
@@ -63,3 +68,42 @@ def load_kaggle_decoding():
             (valid_x, valid_y),
             (test_x, test_y))
 
+
+def reshape(data):
+    """ make x values 2d and vectorize labels """
+
+    train_x, train_y = data[0]
+    valid_x, valid_y = data[1]
+    test_x, test_y = data[2]
+
+    train_x = reshape_examples(train_x)
+    valid_x = reshape_examples(valid_x)
+    test_x = reshape_examples(test_x)
+
+    train_y = vectorize_labels(train_y)
+    valid_y = vectorize_labels(valid_y)
+
+    return ((train_x, train_y),
+            (valid_x, valid_y),
+            (test_x, test_y))
+
+
+def reshape_examples(set_x):
+    """ convert examples from (n,) to (n,1) """
+
+    rows = set_x.shape[0]
+    cols = set_x.shape[1]
+    return set_x.reshape((rows, cols, 1))
+
+
+def vectorize_labels(set_y):
+    """ convert labels from n to [0,0,n=1,0]  """
+
+    rows = len(set_y)
+    cols = numpy.max(set_y) + 1
+    vectorized_set_y = numpy.zeros(shape=(rows, cols))
+
+    for vector, y in zip(vectorized_set_y, set_y):
+        vector[y] = 1
+
+    return vectorized_set_y.reshape((rows, cols, 1))
