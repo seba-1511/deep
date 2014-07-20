@@ -2,7 +2,7 @@
 Autoencoder
 """
 
-from mlp import MLP
+from deep.model.mlp import MLP
 
 
 class AE(MLP):
