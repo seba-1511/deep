@@ -16,8 +16,7 @@ def mnist():
     data = cPickle.load(f)
     f.close()
 
-    return data
-
+    return reshape(data)
 
 def kaggle_decoding():
     """ load kaggle decoding data from ? """
