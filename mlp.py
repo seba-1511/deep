@@ -3,7 +3,6 @@ Multi-Layer Perceptron
 """
 
 import numpy as np
-import load_data
 
 
 def sigmoid(x):
@@ -39,6 +38,7 @@ class SigmoidLayer():
         self.delta = None
 
     def fprop(self, activation_below):
+        """ forwards propagation """
 
         self.activation_below = activation_below
         self.linear_activation = np.dot(self.weights, activation_below) + self.bias
@@ -46,12 +46,13 @@ class SigmoidLayer():
         return self.non_linear_activation
 
     def bprop(self, error_above):
-        """ update weights """
+        """ backwards propagation """
 
         self.delta = error_above * sigmoid_prime(self.linear_activation)
         return np.dot(self.weights.T, self.delta)
 
     def update(self):
+        """ update weights """
 
         self.weights -= 0.1 * np.dot(self.delta, self.activation_below.T)
         self.bias -= 0.1 * self.delta
@@ -69,55 +70,21 @@ class MLP():
 
         self.layers = layers
 
-    def fprop(self, input_x):
+    def fprop(self, activation):
         """ calculate activation of each layer """
 
-        rval = input_x
-        for layer in layers:
-             rval = layer.fprop(rval)
-        return rval
+        for layer in self.layers:
+             activation = layer.fprop(activation)
+        return activation
 
-    def bprop(self, input_x, label_y):
+    def bprop(self, error):
         """ calculate gradient of each layer """
 
-        error = self.fprop(input_x) - label_y
         for layer in self.layers[::-1]:
             error = layer.bprop(error)
 
     def update(self):
         """ apply gradient update to each layer """
 
-        for layer in layers:
+        for layer in self.layers:
             layer.update()
-
-    def train(self, train_x, train_y):
-
-        # TODO: move train to separate file
-
-        for x, y in zip(train_x, train_y):
-
-            self.bprop(x, y)
-            self.update()
-
-        correct = 0.0
-        for x, y in zip(train_x, train_y):
-
-            print np.argmax(self.fprop(x)), np.argmax(y)
-
-            if np.argmax(self.fprop(x)) == np.argmax(y):
-                correct += 1.0
-
-        return correct / len(train_x)
-
-
-data = load_data.mnist()
-data = load_data.reshape(data)
-train_x, train_y = data[0]
-
-layer1 = SigmoidLayer(784, 30)
-layer2 = SigmoidLayer(30, 10)
-layers = [layer1, layer2]
-
-mlp = MLP(layers)
-
-print mlp.train(train_x, train_y)

@@ -6,24 +6,42 @@ import numpy as np
 import mlp
 import load_data
 
-def sgd(data, model):
 
-    train_x, train_y = data[0]
-    valid_x, valid_y = data[1]
+def sgd(train_set, model, unsupervised=False):
+    """ stochastic gradient descent """
 
-    epochs = 10
+    train_x, train_y = train_set
+
+    if unsupervised:
+        train_y = train_x
+
+    epochs = 1
 
     for epoch in range(epochs):
 
+        total_error = 0.0
+
         for x, y in zip(train_x, train_y):
 
-            model.bprop(x, y)
+            error = model.fprop(x) - y
+
+            total_error += np.sum(error**2)
+
+            model.bprop(error)
+            model.update()
+
+        print total_error
+
+
+def score(valid_set, model):
+
+        valid_x, valid_y = valid_set
 
         correct = 0.0
 
         for x, y in zip(valid_x, valid_y):
 
-            if(np.argmax(model.fprop(x)) == np.argmax(y)):
+            if np.argmax(model.fprop(x)) == np.argmax(y):
 
                 correct += 1.0
 
@@ -38,5 +56,5 @@ layers = [layer1, layer2]
 
 mlp = mlp.MLP(layers)
 
-sgd(data, mlp)
-
+sgd(data[0], mlp)
+score(data[1], mlp)
