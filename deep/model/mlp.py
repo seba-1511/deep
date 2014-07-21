@@ -17,8 +17,16 @@ def sigmoid_prime(x):
     return sigmoid(x) * (1.0 - sigmoid(x))
 
 
+class Layer():
+    """ an abstract layer """
+
+
+class LinearLayer():
+    """ applies a linear transformation to input """
+
+
 class SigmoidLayer():
-    """ a non-linear layer of a multi-layer perceptron """
+    """ applies the sigmoid non-linearity to linear layer """
 
     def __init__(self, input_size, output_size):
         """ initialize weights uniformly """
@@ -51,11 +59,18 @@ class SigmoidLayer():
         self.delta = error_above * sigmoid_prime(self.linear_activation)
         return np.dot(self.weights.T, self.delta)
 
-    def update(self):
+    def update(self, learn_rate):
         """ update weights """
 
-        self.weights -= 0.1 * np.dot(self.delta, self.activation_below.T)
-        self.bias -= 0.1 * self.delta
+        self.weights -= learn_rate * np.dot(self.delta, self.activation_below.T)
+        self.bias -= learn_rate * self.delta
+
+class ConvolutionalLayer():
+    """ applies a convolution to input """
+
+
+class MaxPoolingLayer():
+    """ applies max pooling to a convolutional layer """
 
 
 class MLP():
@@ -83,8 +98,8 @@ class MLP():
         for layer in self.layers[::-1]:
             error = layer.bprop(error)
 
-    def update(self):
+    def update(self, learn_rate):
         """ apply gradient update to each layer """
 
         for layer in self.layers:
-            layer.update()
+            layer.update(learn_rate)

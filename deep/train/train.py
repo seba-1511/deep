@@ -13,14 +13,14 @@ def sgd(train_set, model, unsupervised=False):
     if unsupervised:
         train_y = train_x
 
-    epochs = 5
+    epochs = 1000
     for epoch in range(epochs):
         total_error = 0.0
         for x, y in zip(train_x, train_y):
             error = model.fprop(x) - y
             total_error += np.sum(error**2)
             model.bprop(error)
-            model.update()
+            model.update(.001)
 
         print total_error
 

@@ -2,6 +2,7 @@
 MNIST Data Class
 """
 
+import os
 import gzip
 import cPickle
 from dataset import DataSet
@@ -29,7 +30,9 @@ class MNIST(DataSet):
 
         # TODO: pass file name to super to load?
 
-        f = gzip.open("deep/dataset/data/mnist.pkl.gz")
+        data_dir = os.path.dirname(__file__) + "/data/"
+
+        f = gzip.open(data_dir + ".pkl.gz")
         data = cPickle.load(f)
         f.close()
 

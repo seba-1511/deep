@@ -4,6 +4,7 @@ Kaggle Decoding Data Class
 
 import matplotlib.pyplot as plt
 import numpy as np
+import os
 from sklearn.linear_model import LogisticRegression
 from sklearn.cross_validation import cross_val_score
 from scipy.io import loadmat
@@ -30,6 +31,8 @@ class KaggleDecoding(DataSet):
 
     def load(self):
 
+        data_dir = os.path.dirname(__file__) + "/data/kaggle_decoding/"
+
         train_subject_range = range(1, 2)
         valid_subject_range = range(11, 12)
         test_subject_range = range(17, 18)
@@ -42,21 +45,21 @@ class KaggleDecoding(DataSet):
         test_y = []
 
         for subject in train_subject_range:
-            filename = '../../deep/dataset/data/kaggle_decoding/train_subject%02d.mat' % subject
+            filename = data_dir + 'train_subject%02d.mat' % subject
             data = loadmat(filename, squeeze_me=True)
 
             train_x.append(data['X'])
             train_y.append(data['y'])
 
         for subject in valid_subject_range:
-            filename = '../../deep/dataset/data/kaggle_decoding/train_subject%02d.mat' % subject
+            filename = data_dir + 'train_subject%02d.mat' % subject
             data = loadmat(filename, squeeze_me=True)
 
             valid_x.append(data['X'])
             valid_y.append(data['y'])
 
         for subject in test_subject_range:
-            filename = '../../deep/dataset/data/kaggle_decoding/test_subject%02d.mat' % subject
+            filename = data_dir + 'test_subject%02d.mat' % subject
             data = loadmat(filename, squeeze_me=True)
 
             test_x.append(data['X'])
@@ -118,9 +121,4 @@ class KaggleDecoding(DataSet):
         plt.subplot(122)
         plt.plot(train_x[train_y == 0].mean(0))
         plt.show()
-
-
-
-k = KaggleDecoding()
-k.plot_classes()
 
