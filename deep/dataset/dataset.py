@@ -5,22 +5,15 @@ Abstract Data Model
 import numpy as np
 
 
-class DataSet():
+class DataSet(object):
     """  """
 
-    def __init__(self):
-
-        data = self.load()
-        data = self.reshape(data)
-
-        self.train_set = self.reshape(data[0])
-        self.valid_set = self.reshape(data[1])
-        self.test_set = self.reshape(data[2])
+    # TODO: init that calls subclass load()
 
     def load(self):
         """ load data from pickled file """
 
-        raise NotImplementedError
+        #raise NotImplementedError
 
     def reshape(self, set):
         """ reshape x and y sets """
@@ -45,11 +38,12 @@ class DataSet():
 
         shape = (len(set_y), np.max(set_y)+1)
         bin_y = np.zeros(shape)
-
         for bin, y in zip(bin_y, set_y):
             bin[y] = 1
 
-        return bin_y
+        shape = list(shape)
+        shape.append(1)
+        return bin_y.reshape(shape)
 
     def plot_classes(self):
         """ plot one example of each class """
