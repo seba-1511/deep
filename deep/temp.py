@@ -1,10 +1,9 @@
 """
 Temporary file for messing around
 """
+from deep.data import load
 from deep.model import mlp
 from deep.train import train
-
-from deep.util import load
 
 data = load.kaggle_decoding()
 
