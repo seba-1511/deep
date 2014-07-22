@@ -19,16 +19,19 @@ class DataSet(object):
         if len(data) >= 1:
 
             self.train_x, self.train_y = data[0]
+            self.train_size = self.train_x.shape[0]
             self.train_bin_y = self.reshape_y(self.train_y)
 
         if len(data) >= 2:
 
             self.valid_x, self.valid_y = data[1]
+            self.valid_size = self.valid_x.shape[0]
             self.valid_bin_y = self.reshape_y(self.valid_y)
 
         if len(data) == 3:
 
             self.test_x, self.test_y = data[2]
+            self.test_size = self.test_x.shape[0]
             self.test_bin_y = self.reshape_y(self.test_y)
 
     def load(self):
