@@ -13,26 +13,13 @@ class MNIST(DataSet):
 
     def __init__(self):
 
-        print "loading mnist digits dataset ... ",
         data = self.load()
-        print "ok"
-
-        self.train_set = self.reshape(data[0])
-        self.valid_set = self.reshape(data[1])
-        self.test_set = self.reshape(data[2])
-
-        print
-        print "x dimensions ...", self.train_set[0][0].shape
-        print "y dimensions ...", self.train_set[1][0].shape
-        print
+        super(MNIST, self).__init__(data)
 
     def load(self):
 
-        # TODO: pass file name to super to load?
-
         data_dir = os.path.dirname(__file__) + "/data/"
-
-        f = gzip.open(data_dir + ".pkl.gz")
+        f = gzip.open(data_dir + "mnist.pkl.gz")
         data = cPickle.load(f)
         f.close()
 
@@ -44,3 +31,6 @@ class MNIST(DataSet):
         # TODO: plot mnist digits 1-9
 
         raise NotImplementedError
+
+
+MNIST()
