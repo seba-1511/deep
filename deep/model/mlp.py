@@ -20,7 +20,7 @@ def sigmoid_prime(x):
 class Layer(object):
     """ abstract layer class """
 
-    def __init__(self, input_size, output_size):
+    def __init__(self):
         """ common initialization """
 
         self.activation_below = None
@@ -47,16 +47,16 @@ class LinearLayer(Layer):
     def __init__(self, input_size, output_size):
         """ initialize weights uniformly """
 
-        super(LinearLayer, self).__init__(input_size, output_size)
+        super(LinearLayer, self).__init__()
 
         self.delta = None
         self.activation_linear = None
 
-        self.bias = np.zeros((output_size, 1))
+        self.bias = np.zeros(output_size)
         self.weights = np.random.uniform(
             low=-1.0 / input_size,
             high=1.0 / input_size,
-            size=((output_size, input_size))
+            size=((input_size, output_size))
         )
 
     def fprop(self, activation_below):
@@ -64,7 +64,7 @@ class LinearLayer(Layer):
 
         super(LinearLayer, self).fprop(activation_below)
 
-        self.activation_linear = np.dot(self.weights, activation_below) \
+        self.activation_linear = np.dot(activation_below, self.weights) \
             + self.bias
 
         return self.activation_linear
@@ -101,13 +101,15 @@ class SigmoidLayer(LinearLayer):
         """ backwards propagation """
 
         self.delta = error_above * sigmoid_prime(self.activation_linear)
-        return np.dot(self.weights.T, self.delta)
+        return np.dot(self.delta, self.weights.T)
 
     def update(self, learn_rate):
         """ update weights """
 
-        self.weights -= learn_rate * np.dot(self.delta, self.activation_below.T)
-        self.bias -= learn_rate * self.delta
+        gradient = np.dot(self.activation_below.T, self.delta / len(self.delta))
+
+        self.weights -= learn_rate * gradient
+        self.bias -= learn_rate * self.delta.mean(0)
 
 
 class ConvolutionalLayer():
@@ -159,7 +161,6 @@ class MultiLayerPerceptron(object):
 
             raise TypeError('List must be all ints, layers, or autoencoders')
 
-
     def fprop(self, activation):
         """ calculate activation of each layer """
 
@@ -178,15 +179,3 @@ class MultiLayerPerceptron(object):
 
         for layer in self.layers:
             layer.update(learn_rate)
-
-
-class AutoEncoder(MultiLayerPerceptron):
-    """ a basic autoencoder """
-
-    def __init__(self, layers):
-        """ initialize with two layers """
-
-        # check if input layer matches output layer
-        assert len(layers) == 3 # used stacked autoencoder for more layers
-        assert layers[0] == layers[-1]
-        super(AutoEncoder, self).__init__(layers)
