@@ -1,9 +1,9 @@
+import numpy as np
 from deep.model.mlp import sigmoid
 from deep.model.mlp import Layer
 from deep.model.mlp import LinearLayer
 from deep.model.mlp import SigmoidLayer
-from deep.model.mlp import MLP
-import numpy as np
+from deep.model.mlp import MultiLayerPerceptron
 
 
 def test_layer():
@@ -36,7 +36,7 @@ def test_linear_layer():
 def test_sigmoid_layer():
     """ testing sigmoid layer """
 
-    # check if weight shapes are initialized correctly
+    # check if weights are initialized correctly
     sigmoid_layer = SigmoidLayer(10, 1)
     assert sigmoid_layer.weights.shape == (1, 10)
     assert sigmoid_layer.bias.shape == (1, 1)
@@ -54,9 +54,18 @@ def test_sigmoid_layer():
 def test_mlp():
     """ testing mlp """
 
-    
+    # check if weights are initialized correctly
+    multi_layer = MultiLayerPerceptron([10, 5, 2])
+    assert multi_layer.layers[0].weights.shape == (5, 10)
+    assert multi_layer.layers[1].weights.shape == (2, 5)
 
+    # initialize with list of layers
+    layer1 = SigmoidLayer(10, 5)
+    layer2 = SigmoidLayer(5, 2)
+    multi_layer = MultiLayerPerceptron([layer1, layer2])
+    assert multi_layer.layers[0].weights.shape == (5, 10)
+    assert multi_layer.layers[1].weights.shape == (2, 5)
 
-test_layer()
-test_linear_layer()
-test_sigmoid_layer()
+    # initialize with autoencoder
+
+    # TODO: after unit testing autoencoder
