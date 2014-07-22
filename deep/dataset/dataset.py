@@ -6,32 +6,35 @@ import numpy as np
 
 
 class DataSet(object):
-    """  """
+    """ abstract dataset class """
 
-    # TODO: init that calls subclass load()
+    def __init__(self, data):
+
+        # TODO: make dataset logic more flexible. Include unsupervised datasets
+
+        assert isinstance(data, tuple)
+        assert len(data) >= 1, "dataset should contain atleast one tuple"
+        assert len(data) <= 3, "dataset should contain 3 or less tuples"
+
+        if len(data) >= 1:
+
+            self.train_x, self.train_y = data[0]
+            self.train_bin_y = self.reshape_y(self.train_y)
+
+        if len(data) >= 2:
+
+            self.valid_x, self.valid_y = data[1]
+            self.valid_bin_y = self.reshape_y(self.valid_y)
+
+        if len(data) == 3:
+
+            self.test_x, self.test_y = data[2]
+            self.test_bin_y = self.reshape_y(self.test_y)
 
     def load(self):
-        """ load data from pickled file """
+        """ does not implement load """
 
-        #raise NotImplementedError
-
-    def reshape(self, set):
-        """ reshape x and y sets """
-
-        set_x, set_y = set
-
-        set_x = self.reshape_x(set_x)
-        set_y = self.reshape_y(set_y)
-
-        return set_x, set_y
-
-    def reshape_x(self, set_x):
-        """ convert 1d vectors to 2d vectors """
-
-        shape = list(set_x.shape)
-        shape.append(1)
-
-        return set_x.reshape(shape)
+        raise NotImplementedError("DataSet does not implement load")
 
     def reshape_y(self, set_y):
         """ convert numeric labels to binary vectors """
@@ -41,13 +44,9 @@ class DataSet(object):
         for bin, y in zip(bin_y, set_y):
             bin[y] = 1
 
-        shape = list(shape)
-        shape.append(1)
-        return bin_y.reshape(shape)
+        return bin_y
 
     def plot_classes(self):
         """ plot one example of each class """
 
         raise NotImplementedError
-
-d = DataSet()
