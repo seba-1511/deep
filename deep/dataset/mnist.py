@@ -4,7 +4,10 @@ MNIST Data Class
 
 import os
 import gzip
+import numpy
 import cPickle
+import matplotlib
+import matplotlib.pyplot as plt
 from dataset import DataSet
 
 
@@ -28,9 +31,18 @@ class MNIST(DataSet):
     def plot_classes(self):
         """ plot mnist digits 1-9 """
 
-        # TODO: plot mnist digits 1-9
+        fig = plt.figure()
 
-        raise NotImplementedError
+        for i in range(1,10):
 
+            ax = fig.add_subplot(3, 3, i)
 
-MNIST()
+            ith_digit = self.train_x[self.train_y == i][0]
+            ith_digit = ith_digit.reshape(28, 28)
+
+            ax.matshow(ith_digit, cmap=matplotlib.cm.binary)
+
+            plt.xticks(numpy.array([]))
+            plt.yticks(numpy.array([]))
+
+        plt.show()
