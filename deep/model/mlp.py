@@ -3,7 +3,7 @@ Multi-Layer Perceptron
 """
 
 import numpy as np
-
+from scipy.signal import convolve2d
 
 class Layer(object):
     """ abstract layer class """
@@ -110,13 +110,42 @@ class SigmoidLayer(LinearLayer):
         return self.sigmoid(activation) * (1.0 - self.sigmoid(activation))
 
 
-class ConvolutionalLayer():
+class ConvolutionalLayer(Layer):
     """ applies a convolution to input """
 
     def __init__(self):
 
-        raise NotImplementedError
+        pass
 
+    def fprop(self, activation):
+
+        print activation.shape
+
+        orig = activation.shape[0]
+
+        super(ConvolutionalLayer, self).fprop(activation)
+
+        conv = []
+
+        for act in activation:
+
+            act = act.reshape(28, 28)
+            conv.append(convolve2d(act, [[1, 1],[1, 1]], 'same').reshape(784))
+
+        conv = np.array(conv)
+
+        print conv.shape
+
+        return conv
+
+
+    def bprop(self, error):
+
+        return error
+
+    def update(self, learn_rate):
+
+        pass
 
 class MaxPoolingLayer():
     """ applies max pooling to a convolutional layer """
@@ -177,3 +206,19 @@ class MultiLayerPerceptron(object):
 
         for layer in self.layers:
             layer.update(learn_rate)
+
+
+import matplotlib
+import matplotlib.pyplot as plt
+from deep.train.train import bgd
+from deep.train.train import score
+from deep.dataset.mnist import MNIST
+m = MNIST()
+s = SigmoidLayer(784, 10)
+
+c = ConvolutionalLayer()
+
+mlp = MultiLayerPerceptron([c, s])
+
+bgd(m, mlp, 1)
+score(m, mlp)
