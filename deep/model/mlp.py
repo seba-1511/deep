@@ -5,18 +5,6 @@ Multi-Layer Perceptron
 import numpy as np
 
 
-def sigmoid(x):
-    """ element-wise sigmoid activation function """
-
-    return 1.0 / (1.0 + np.exp(-x))
-
-
-def sigmoid_prime(x):
-    """ element-wise derivative of sigmoid activation function """
-
-    return sigmoid(x) * (1.0 - sigmoid(x))
-
-
 class Layer(object):
     """ abstract layer class """
 
@@ -94,13 +82,13 @@ class SigmoidLayer(LinearLayer):
 
         super(SigmoidLayer, self).fprop(activation_below)
 
-        self.activation_non_linear = sigmoid(self.activation_linear)
+        self.activation_non_linear = self.sigmoid(self.activation_linear)
         return self.activation_non_linear
 
     def bprop(self, error_above):
         """ backwards propagation """
 
-        self.delta = error_above * sigmoid_prime(self.activation_linear)
+        self.delta = error_above * self.sigmoid_prime(self.activation_linear)
         return np.dot(self.delta, self.weights.T)
 
     def update(self, learn_rate):
@@ -110,6 +98,16 @@ class SigmoidLayer(LinearLayer):
 
         self.weights -= learn_rate * gradient
         self.bias -= learn_rate * self.delta.mean(0)
+
+    def sigmoid(self, activation):
+        """ element-wise sigmoid activation function """
+
+        return 1.0 / (1.0 + np.exp(-activation))
+
+    def sigmoid_prime(self, activation):
+        """ element-wise derivative of sigmoid activation function """
+
+        return self.sigmoid(activation) * (1.0 - self.sigmoid(activation))
 
 
 class ConvolutionalLayer():

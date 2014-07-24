@@ -1,5 +1,4 @@
 import numpy as np
-from deep.model.mlp import sigmoid
 from deep.model.mlp import Layer
 from deep.model.mlp import LinearLayer
 from deep.model.mlp import SigmoidLayer
@@ -43,12 +42,14 @@ def test_sigmoid_layer():
 
     # check if sigmoid fprop works with identity matrix as weights
     sigmoid_layer.weights = np.eye(10)
-    assert np.all(sigmoid_layer.fprop(np.arange(10)) == sigmoid(np.arange(10)))
+    assert np.all(sigmoid_layer.fprop(np.arange(10)) ==
+                  sigmoid_layer.sigmoid(np.arange(10)))
 
     # check if activations are stored
     assert np.all(sigmoid_layer.activation_below == np.arange(10))
     assert np.all(sigmoid_layer.activation_linear == np.arange(10))
-    assert np.all(sigmoid_layer.activation_non_linear == sigmoid(np.arange(10)))
+    assert np.all(sigmoid_layer.activation_non_linear ==
+                  sigmoid_layer.sigmoid(np.arange(10)))
 
 
 def test_mlp():
@@ -65,7 +66,3 @@ def test_mlp():
     multi_layer = MultiLayerPerceptron([layer1, layer2])
     assert multi_layer.layers[0].weights.shape == (10, 5)
     assert multi_layer.layers[1].weights.shape == (5, 2)
-
-    # initialize with autoencoder
-
-    # TODO: after unit testing autoencoder

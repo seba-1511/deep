@@ -116,10 +116,62 @@ class EM():
 
         plt.show()
 
-if __name__ == "__main__":
 
-    data = load_old_faithful_data()
+class CorEx():
+    """
+    Correlation Explanation Algorithm
 
-    em = EM(data, 2)
-    em.expectation_step()
-    em.maximization_step()
+    Simplifying assumptions
+    - observed variables are binary
+    - latent variables are binary
+
+    """
+
+    def __init__(self):
+
+        # initialize ns x n matrix of discrete variables
+        num_observed_samples = 1000
+        num_observed_variables = 10
+        observed_data_shape = (num_observed_samples, num_observed_variables)
+        observed_data = np.random.randint(0, 2, observed_data_shape)
+
+        # initialize m x k matrix of latent variables
+        num_latent_variables = 2
+        dim_latent_variables = 2
+        latent_variable_shape = (num_latent_variables, dim_latent_variables)
+        latent_variables = np.random.randint(0, 2,  latent_variable_shape)
+
+        # initialize alpha i x j
+        indicator_shape = (num_observed_variables, num_latent_variables)
+        indicator_variable = np.zeros(indicator_shape)
+        indicator_variable[:, 0] = 1
+
+        # initialize p_y_x_sample
+
+        #????????????????????????????????????????
+
+    def update_marginals(self):
+
+
+
+
+
+        raise NotImplementedError
+
+    def marginal_mutual_information(self):
+
+        raise NotImplementedError
+
+    def update_alpha(self):
+
+        raise NotImplementedError
+
+    def update_p_y_given_x(self):
+
+        raise NotImplementedError
+
+    def train(self):
+
+        raise NotImplementedError
+
+corex = CorEx()
