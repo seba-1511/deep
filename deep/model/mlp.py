@@ -113,31 +113,35 @@ class SigmoidLayer(LinearLayer):
 class ConvolutionalLayer(Layer):
     """ applies a convolution to input """
 
-    def __init__(self):
+    def __init__(self, filter_count, filter_size):
 
-        pass
+        super(ConvolutionalLayer, self).__init__()
 
-    def fprop(self, activation):
+        self.filters = np.random.uniform(
+            low=-1.0 / filter_size ** 2,
+            high=1.0 / filter_size ** 2,
+            size=((filter_count, filter_size, filter_size))
+        )
 
-        print activation.shape
+    def fprop(self, activation_below):
 
-        orig = activation.shape[0]
+        super(ConvolutionalLayer, self).fprop(activation_below)
 
-        super(ConvolutionalLayer, self).fprop(activation)
+        image_count = activation_below.shape[0]
+        image_dim = np.sqrt(activation_below.shape[1])
+        activation_below = activation_below.reshape((image_count,
+                                                     image_dim,
+                                                     image_dim))
 
-        conv = []
+        activation = []
 
-        for act in activation:
+        for image in activation_below:
+            filter_maps = []
+            for filter in self.filters:
+                filter_maps.append(convolve2d(image, filter))
+            activation.append(filter_maps)
 
-            act = act.reshape(28, 28)
-            conv.append(convolve2d(act, [[1, 1],[1, 1]], 'same').reshape(784))
-
-        conv = np.array(conv)
-
-        print conv.shape
-
-        return conv
-
+        return np.array(activation).reshape(image_count, -1)
 
     def bprop(self, error):
 
@@ -147,10 +151,16 @@ class ConvolutionalLayer(Layer):
 
         pass
 
-class MaxPoolingLayer():
+class MaxPoolingLayer(Layer):
     """ applies max pooling to a convolutional layer """
 
-    def __init__(self):
+    def __init__(self, pool_size):
+
+        super(MaxPoolingLayer, self).__init__()
+
+        self.pool_size = pool_size
+
+    def fprop(self, activation):
 
         raise NotImplementedError
 
@@ -214,11 +224,9 @@ from deep.train.train import bgd
 from deep.train.train import score
 from deep.dataset.mnist import MNIST
 m = MNIST()
-s = SigmoidLayer(784, 10)
-
-c = ConvolutionalLayer()
-
+c = ConvolutionalLayer(5, 2)
+s = SigmoidLayer(4205, 10)
 mlp = MultiLayerPerceptron([c, s])
 
-bgd(m, mlp, 1)
+bgd(m, mlp)
 score(m, mlp)
