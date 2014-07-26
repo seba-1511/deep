@@ -99,15 +99,19 @@ class SigmoidLayer(LinearLayer):
         self.weights -= learn_rate * gradient
         self.bias -= learn_rate * self.delta.mean(0)
 
-    def sigmoid(self, activation):
+    @staticmethod
+    def sigmoid(activation):
         """ element-wise sigmoid activation function """
 
         return 1.0 / (1.0 + np.exp(-activation))
 
-    def sigmoid_prime(self, activation):
+    @staticmethod
+    def sigmoid_prime(activation):
         """ element-wise derivative of sigmoid activation function """
 
-        return self.sigmoid(activation) * (1.0 - self.sigmoid(activation))
+        s = SigmoidLayer.sigmoid(activation)
+
+        return s * (1.0 - s)
 
 
 class ConvolutionalLayer(Layer):
@@ -122,6 +126,8 @@ class ConvolutionalLayer(Layer):
             high=1.0 / filter_size ** 2,
             size=((filter_count, filter_size, filter_size))
         )
+
+        self.bias = np.zeros(filter_count)
 
     def fprop(self, activation_below):
 
@@ -141,7 +147,7 @@ class ConvolutionalLayer(Layer):
                 filter_maps.append(convolve2d(image, filter))
             activation.append(filter_maps)
 
-        return np.array(activation).reshape(image_count, -1)
+        return SigmoidLayer.sigmoid(np.array(activation).reshape(image_count, -1))
 
     def bprop(self, error):
 
@@ -227,6 +233,7 @@ m = MNIST()
 c = ConvolutionalLayer(5, 2)
 s = SigmoidLayer(4205, 10)
 mlp = MultiLayerPerceptron([c, s])
+
 
 bgd(m, mlp)
 score(m, mlp)
