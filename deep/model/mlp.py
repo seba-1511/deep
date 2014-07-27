@@ -121,13 +121,11 @@ class ConvolutionalLayer(Layer):
 
         super(ConvolutionalLayer, self).__init__()
 
+        self.bias = np.zeros(filter_count)
         self.filters = np.random.uniform(
             low=-1.0 / filter_size ** 2,
             high=1.0 / filter_size ** 2,
-            size=((filter_count, filter_size, filter_size))
-        )
-
-        self.bias = np.zeros(filter_count)
+            size=((filter_count, filter_size, filter_size)))
 
     def fprop(self, activation_below):
 
@@ -147,7 +145,7 @@ class ConvolutionalLayer(Layer):
                 filter_maps.append(convolve2d(image, filter))
             activation.append(filter_maps)
 
-        return SigmoidLayer.sigmoid(np.array(activation).reshape(image_count, -1))
+        return activation
 
     def bprop(self, error):
 
@@ -156,6 +154,7 @@ class ConvolutionalLayer(Layer):
     def update(self, learn_rate):
 
         pass
+
 
 class MaxPoolingLayer(Layer):
     """ applies max pooling to a convolutional layer """
@@ -166,10 +165,41 @@ class MaxPoolingLayer(Layer):
 
         self.pool_size = pool_size
 
-    def fprop(self, activation):
+    def fprop(self, activation_below):
 
-        raise NotImplementedError
+        dim = np.array(activation_below).shape[2] / 2
 
+        pools = []
+
+        for image in activation_below:
+
+            activation = []
+
+            for filter in image:
+
+                pool = np.zeros((dim, dim))
+
+                for row in range(0, len(filter)-2, self.pool_size):
+
+                    for col in range(0, len(filter)-2, self.pool_size):
+
+                        pool[row/2][col/2] = np.max(filter[row:row+self.pool_size,
+                                                       col:col+self.pool_size])
+
+                pools.append(pool)
+
+            activation.append(pools)
+
+        return np.array(activation).reshape(500, -1)
+
+    def bprop(self, error):
+
+        pass
+
+    def update(self, learn_rate):
+
+        pass
+    
 
 class MultiLayerPerceptron(object):
     """ a multi-layer perceptron """
@@ -231,9 +261,8 @@ from deep.train.train import score
 from deep.dataset.mnist import MNIST
 m = MNIST()
 c = ConvolutionalLayer(5, 2)
-s = SigmoidLayer(4205, 10)
-mlp = MultiLayerPerceptron([c, s])
-
+p = MaxPoolingLayer(2)
+s = SigmoidLayer(980, 10)
+mlp = MultiLayerPerceptron([c, p, s])
 
 bgd(m, mlp)
-score(m, mlp)
