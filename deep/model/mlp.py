@@ -114,46 +114,71 @@ class SigmoidLayer(LinearLayer):
         return s * (1.0 - s)
 
 
-class ConvolutionalLayer(Layer):
+class SingleFilterConvolutionalLayer(Layer):
     """ applies a convolution to input """
 
-    def __init__(self, filter_count, filter_size):
+    def __init__(self, filter_size):
 
-        super(ConvolutionalLayer, self).__init__()
+        super(SingleFilterConvolutionalLayer, self).__init__()
 
-        self.bias = np.zeros(filter_count)
-        self.filters = np.random.uniform(
+        self.bias = np.zeros(1)
+        self.filter = np.random.uniform(
             low=-1.0 / filter_size ** 2,
             high=1.0 / filter_size ** 2,
-            size=((filter_count, filter_size, filter_size)))
+            size=((filter_size, filter_size)))
+
+        self.delta = None
+        self.activation_conv = None
+        self.activation_linear = None
+        self.activation_non_linear = None
 
     def fprop(self, activation_below):
 
-        super(ConvolutionalLayer, self).fprop(activation_below)
+        image_dim = np.sqrt(activation_below.shape[-1])
+        activation_below = activation_below.reshape(-1, image_dim, image_dim)
 
-        image_count = activation_below.shape[0]
-        image_dim = np.sqrt(activation_below.shape[1])
-        activation_below = activation_below.reshape((image_count,
-                                                     image_dim,
-                                                     image_dim))
+        super(SingleFilterConvolutionalLayer, self).fprop(activation_below)
 
-        activation = []
+        rotatedFilter = np.fliplr(np.flipud(self.filter))
 
-        for image in activation_below:
-            filter_maps = []
-            for filter in self.filters:
-                filter_maps.append(convolve2d(image, filter))
-            activation.append(filter_maps)
+        self.activation_conv = self.convolve(activation_below, rotatedFilter)
+        self.activation_linear = self.activation_conv + self.bias.reshape(-1, len(self.bias), 1, 1)
+        self.activation_non_linear = SigmoidLayer.sigmoid(self.activation_linear)
 
-        return activation
+        return self.activation_non_linear.reshape(-1, image_dim**2)
 
-    def bprop(self, error):
+    def bprop(self, error_above):
 
-        return error
+        self.delta = error_above * \
+            SigmoidLayer.sigmoid_prime(self.activation_below.reshape(-1, 784))
+
+        self.delta = self.delta.reshape(-1, 28, 28)
+
+        return self.convolve(self.delta, self.filter)
 
     def update(self, learn_rate):
 
-        pass
+        gradient = self.convolve_prime(self.delta, self.activation_below)
+
+        self.filter -= learn_rate * gradient.mean(0)
+        self.bias -= learn_rate * self.delta.mean()
+
+    @staticmethod
+    def convolve(image, kernal):
+
+        activation = []
+        for image in image:
+            activation.append(convolve2d(image, kernal, mode='same'))
+        return np.array(activation)
+
+    @staticmethod
+    def convolve_prime(images, kernals):
+
+        activation = []
+        for image, kernal in zip(images, kernals):
+            activation.append(convolve2d(np.flipud(np.fliplr(image)),
+                                         kernal, mode='valid'))
+        return np.array(activation)
 
 
 class MaxPoolingLayer(Layer):
@@ -199,7 +224,7 @@ class MaxPoolingLayer(Layer):
     def update(self, learn_rate):
 
         pass
-    
+
 
 class MultiLayerPerceptron(object):
     """ a multi-layer perceptron """
@@ -260,9 +285,12 @@ from deep.train.train import bgd
 from deep.train.train import score
 from deep.dataset.mnist import MNIST
 m = MNIST()
-c = ConvolutionalLayer(5, 2)
-p = MaxPoolingLayer(2)
-s = SigmoidLayer(980, 10)
-mlp = MultiLayerPerceptron([c, p, s])
+c = SingleFilterConvolutionalLayer(2)
+s = SigmoidLayer(784, 10)
+mlp = MultiLayerPerceptron([c, s])
 
-bgd(m, mlp)
+#mlp.fprop(np.random.random((5, 784)))
+#mlp.bprop(np.random.random((5, 10)))
+#mlp.update(.1)
+
+bgd(m, mlp, batch_size=500)
