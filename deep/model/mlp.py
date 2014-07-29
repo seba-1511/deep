@@ -5,6 +5,9 @@ Multi-Layer Perceptron
 import numpy as np
 from scipy.signal import convolve2d
 
+# TODO: better names for activation
+
+
 class Layer(object):
     """ abstract layer class """
 
@@ -114,6 +117,7 @@ class SigmoidLayer(LinearLayer):
         return s * (1.0 - s)
 
 
+# TODO: change to multiple filters
 class SingleFilterConvolutionalLayer(Layer):
     """ applies a convolution to input """
 
@@ -145,14 +149,17 @@ class SingleFilterConvolutionalLayer(Layer):
         self.activation_linear = self.activation_conv + self.bias.reshape(-1, len(self.bias), 1, 1)
         self.activation_non_linear = SigmoidLayer.sigmoid(self.activation_linear)
 
-        return self.activation_non_linear.reshape(-1, image_dim**2)
+        # TODO: remove hard code
+        return self.activation_non_linear.reshape(-1, 27**2)
 
     def bprop(self, error_above):
 
+        # TODO: remove hard code
         self.delta = error_above * \
-            SigmoidLayer.sigmoid_prime(self.activation_below.reshape(-1, 784))
+            SigmoidLayer.sigmoid_prime(self.activation_linear.reshape(-1, 729))
 
-        self.delta = self.delta.reshape(-1, 28, 28)
+        # TODO: remove hard code
+        self.delta = self.delta.reshape(-1, 27, 27)
 
         return self.convolve(self.delta, self.filter)
 
@@ -168,7 +175,7 @@ class SingleFilterConvolutionalLayer(Layer):
 
         activation = []
         for image in image:
-            activation.append(convolve2d(image, kernal, mode='same'))
+            activation.append(convolve2d(image, kernal, mode='valid'))
         return np.array(activation)
 
     @staticmethod
@@ -176,10 +183,18 @@ class SingleFilterConvolutionalLayer(Layer):
 
         activation = []
         for image, kernal in zip(images, kernals):
-            activation.append(convolve2d(np.flipud(np.fliplr(image)),
-                                         kernal, mode='valid'))
+            activation.append(convolve2d(kernal, np.flipud(np.fliplr(image)),
+                                         mode='valid'))
+
         return np.array(activation)
 
+    def visualize_filter(self):
+
+        import matplotlib
+        from matplotlib.pyplot import imshow, show
+
+        plt.imshow(self.filter, cmap=matplotlib.cm.binary)
+        plt.show()
 
 class MaxPoolingLayer(Layer):
     """ applies max pooling to a convolutional layer """
@@ -286,11 +301,9 @@ from deep.train.train import score
 from deep.dataset.mnist import MNIST
 m = MNIST()
 c = SingleFilterConvolutionalLayer(2)
-s = SigmoidLayer(784, 10)
+s = SigmoidLayer(729, 10)
 mlp = MultiLayerPerceptron([c, s])
 
-#mlp.fprop(np.random.random((5, 784)))
-#mlp.bprop(np.random.random((5, 10)))
-#mlp.update(.1)
+bgd(m, mlp, batch_size=1)
 
-bgd(m, mlp, batch_size=500)
+c.visualize_filter()

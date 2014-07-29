@@ -13,7 +13,7 @@ def sgd(dataset, model, unsupervised=False):
 def bgd(dataset, model, batch_size=500):
     """ batch gradient descent """
 
-    for epoch in range(1):
+    for epoch in range(25):
 
         for i in range(0, dataset.train_size, batch_size):
 
@@ -24,6 +24,7 @@ def bgd(dataset, model, batch_size=500):
             model.bprop(error)
             model.update(.1)
 
+        score(dataset, model)
 
 def score(dataset, model):
 
