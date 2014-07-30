@@ -67,26 +67,50 @@ class TestSigmoidLayer():
 
         assert np.all(self.layer.weights == np.eye(10, 10) - 10)
 
-"""
+
 class TestLinearConvolutionLayer():
 
     def __init__(self):
 
-        raise NotImplementedError
+        self.layer = mlp.LinearConvolutionLayer(5, 2)
+
+    def test_init(self):
+
+        assert self.layer.weights.shape == (5, 2, 2)
 
     def test_fprop(self):
 
-        raise NotImplementedError
+        # set each filter to 2x2 identity matrix
+        for i in range(5):
+            self.layer.weights[i] = np.eye(2)
+
+        # set input to 3x3 identity matrix and flatten
+        image = np.eye(3).reshape(9)
+
+        # compare input to weights * 2
+        assert np.all(self.layer.fprop(image).reshape(5, 2, 2)
+                      == self.layer.weights * 2)
 
     def test_bprop(self):
 
-        raise NotImplementedError
+        # set weights and error to ones
+        self.layer.weights = np.ones((5, 2, 2))
+        error = np.ones((5, 2, 2))
+
+        # convolved size is image size - filter size + 1 = 3 - 2 + 1
+        self.layer.convolved_image_size = 2
+
+
+
+
+        print self.layer.bprop(error).shape
 
     def test_update(self):
 
         raise NotImplementedError
 
 
+"""
 class TestSigmoidConvolutionLayer():
 
     def __init__(self):
