@@ -319,15 +319,3 @@ class MultiLayerPerceptron(object):
 
         for layer in self.layers:
             layer.update(learn_rate)
-
-
-import matplotlib
-import matplotlib.pyplot as plt
-from deep.train.train import bgd
-from deep.dataset.mnist import MNIST
-m = MNIST()
-c = LinearConvolutionLayer(5, 2)
-s = SigmoidLayer(3645, 10)
-mlp = MultiLayerPerceptron([c, s])
-
-bgd(m, mlp)
