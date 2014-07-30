@@ -3,6 +3,7 @@ Multi-Layer Perceptron
 """
 
 import numpy as np
+from scipy.signal import correlate2d
 from scipy.signal import convolve2d
 
 # TODO: better names for activation
@@ -47,8 +48,7 @@ class LinearLayer(Layer):
         self.weights = np.random.uniform(
             low=-1.0 / input_size,
             high=1.0 / input_size,
-            size=((input_size, output_size))
-        )
+            size=(input_size, output_size))
 
     def fprop(self, activation_below):
         """ forward transformation """
@@ -97,8 +97,7 @@ class SigmoidLayer(LinearLayer):
     def update(self, learn_rate):
         """ update weights """
 
-        gradient = np.dot(self.activation_below.T, self.delta / len(self.delta))
-
+        gradient = np.dot(self.activation_below.T, self.delta)
         self.weights -= learn_rate * gradient
         self.bias -= learn_rate * self.delta.mean(0)
 
@@ -117,84 +116,112 @@ class SigmoidLayer(LinearLayer):
         return s * (1.0 - s)
 
 
-# TODO: change to multiple filters
-class SingleFilterConvolutionalLayer(Layer):
-    """ applies a convolution to input """
+class LinearConvolutionLayer(Layer):
 
-    def __init__(self, filter_size):
+    def __init__(self, number_of_filters, filter_size):
 
-        super(SingleFilterConvolutionalLayer, self).__init__()
+        super(LinearConvolutionLayer, self).__init__()
 
-        self.bias = np.zeros(1)
-        self.filter = np.random.uniform(
-            low=-1.0 / filter_size ** 2,
-            high=1.0 / filter_size ** 2,
-            size=((filter_size, filter_size)))
-
+        self.number_of_filters = number_of_filters
+        self.filter_size = filter_size
+        self.image_size = None
         self.delta = None
-        self.activation_conv = None
         self.activation_linear = None
+        self.convolved_image_size = None
+
+        self.bias = np.zeros(number_of_filters)
+        self.weights = np.random.uniform(
+            low=-1.0 / number_of_filters * filter_size * filter_size,
+            high=1.0 / number_of_filters * filter_size * filter_size,
+            size=(number_of_filters, filter_size, filter_size))
+
+    def fprop(self, activation_below):
+
+        self.image_size = np.sqrt(activation_below.shape[-1])
+        self.convolved_image_size = self.image_size - self.filter_size + 1
+        self.activation_below = activation_below.reshape(-1, self.image_size,
+                                                         self.image_size)
+
+        self.activation_linear = self.correlate(self.activation_below, self.weights)
+
+        return self.activation_linear.reshape(-1, self.number_of_filters
+                                              * self.convolved_image_size
+                                              * self.convolved_image_size)
+
+    def bprop(self, error_above):
+
+        self.delta = error_above.reshape(-1, self.number_of_filters,
+                                          self.convolved_image_size,
+                                          self.convolved_image_size)
+
+        bprop_val = []
+        for filter in range(self.number_of_filters):
+
+            bprop_val.append(self.convolve(self.delta[:, filter, :, :], self.weights))
+
+        return np.array(bprop_val)
+
+    def update(self, learn_rate):
+
+        self.delta = np.sum(self.delta, axis=0)
+        gradient = self.correlate(self.activation_below, self.delta)
+        gradient = np.sum(gradient, axis=0)
+
+        self.weights -= learn_rate * gradient
+        self.bias -= self.delta.reshape(-1, self.convolved_image_size**2).mean(1)
+
+    @staticmethod
+    def correlate(images, filters, mode='valid'):
+
+        convolved_images = []
+        for image in images:
+
+            convolution = []
+            for filter in filters:
+
+                convolution.append(correlate2d(image, filter, mode=mode))
+
+            convolved_images.append(convolution)
+
+        return np.array(convolved_images)
+
+    @staticmethod
+    def convolve(images, filters, mode='full'):
+
+        convolved_images = []
+        for image in images:
+
+            convolution = []
+            for filter in filters:
+
+                convolution.append(convolve2d(image, filter, mode=mode))
+
+            convolved_images.append(convolution)
+
+        return np.array(convolved_images)
+
+
+class SigmoidConvolutionLayer(LinearConvolutionLayer):
+
+    def __init__(self, num_filters, dim_filters):
+
+        super(SigmoidConvolutionLayer, self).__init__(num_filters, dim_filters)
         self.activation_non_linear = None
 
     def fprop(self, activation_below):
 
-        image_dim = np.sqrt(activation_below.shape[-1])
-        activation_below = activation_below.reshape(-1, image_dim, image_dim)
-
-        super(SingleFilterConvolutionalLayer, self).fprop(activation_below)
-
-        rotatedFilter = np.fliplr(np.flipud(self.filter))
-
-        self.activation_conv = self.convolve(activation_below, rotatedFilter)
-        self.activation_linear = self.activation_conv + self.bias.reshape(-1, len(self.bias), 1, 1)
-        self.activation_non_linear = SigmoidLayer.sigmoid(self.activation_linear)
-
-        # TODO: remove hard code
-        return self.activation_non_linear.reshape(-1, 27**2)
+        super(SigmoidConvolutionLayer, self).fprop(activation_below)
+        self.activation_non_linear = SigmoidLayer.sigmoid(self.activation_non_linear)
+        return self.activation_non_linear
 
     def bprop(self, error_above):
 
-        # TODO: remove hard code
-        self.delta = error_above * \
-            SigmoidLayer.sigmoid_prime(self.activation_linear.reshape(-1, 729))
-
-        # TODO: remove hard code
-        self.delta = self.delta.reshape(-1, 27, 27)
-
-        return self.convolve(self.delta, self.filter)
+        raise NotImplementedError
 
     def update(self, learn_rate):
 
-        gradient = self.convolve_prime(self.delta, self.activation_below)
+        raise NotImplementedError
 
-        self.filter -= learn_rate * gradient.mean(0)
-        self.bias -= learn_rate * self.delta.mean()
-
-    @staticmethod
-    def convolve(image, kernal):
-
-        activation = []
-        for image in image:
-            activation.append(convolve2d(image, kernal, mode='valid'))
-        return np.array(activation)
-
-    @staticmethod
-    def convolve_prime(images, kernals):
-
-        activation = []
-        for image, kernal in zip(images, kernals):
-            activation.append(convolve2d(kernal, np.flipud(np.fliplr(image)),
-                                         mode='valid'))
-
-        return np.array(activation)
-
-    def visualize_filter(self):
-
-        import matplotlib
-        from matplotlib.pyplot import imshow, show
-
-        plt.imshow(self.filter, cmap=matplotlib.cm.binary)
-        plt.show()
 
 class MaxPoolingLayer(Layer):
     """ applies max pooling to a convolutional layer """
@@ -297,13 +324,10 @@ class MultiLayerPerceptron(object):
 import matplotlib
 import matplotlib.pyplot as plt
 from deep.train.train import bgd
-from deep.train.train import score
 from deep.dataset.mnist import MNIST
 m = MNIST()
-c = SingleFilterConvolutionalLayer(2)
-s = SigmoidLayer(729, 10)
+c = LinearConvolutionLayer(5, 2)
+s = SigmoidLayer(3645, 10)
 mlp = MultiLayerPerceptron([c, s])
 
-bgd(m, mlp, batch_size=1)
-
-c.visualize_filter()
+bgd(m, mlp)
