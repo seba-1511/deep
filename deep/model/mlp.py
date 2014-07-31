@@ -118,87 +118,58 @@ class SigmoidLayer(LinearLayer):
 
 class LinearConvolutionLayer(Layer):
 
-    def __init__(self, number_of_filters, filter_size):
+    def __init__(self, num_filters, filter_size):
 
         super(LinearConvolutionLayer, self).__init__()
 
-        self.number_of_filters = number_of_filters
-        self.filter_size = filter_size
-        self.image_size = None
         self.delta = None
         self.activation_linear = None
-        self.convolved_image_size = None
 
-        self.bias = np.zeros(number_of_filters)
+        self.bias = np.zeros((1, num_filters, 1, 1))
         self.weights = np.random.uniform(
-            low=-1.0 / number_of_filters * filter_size * filter_size,
-            high=1.0 / number_of_filters * filter_size * filter_size,
-            size=(number_of_filters, filter_size, filter_size))
+            low=-1.0 / num_filters * filter_size * filter_size,
+            high=1.0 / num_filters * filter_size * filter_size,
+            size=(num_filters, filter_size, filter_size))
 
     def fprop(self, activation_below):
 
-        self.image_size = np.sqrt(activation_below.shape[-1])
-        self.convolved_image_size = self.image_size - self.filter_size + 1
-        self.activation_below = activation_below.reshape(-1, self.image_size,
-                                                         self.image_size)
+        image_shape = np.sqrt(activation_below.shape[-1])
+        self.activation_below = activation_below.reshape(-1, image_shape, image_shape)
 
-        self.activation_linear = self.correlate(self.activation_below, self.weights)
+        activation = []
+        for image in self.activation_below:
 
-        return self.activation_linear.reshape(-1, self.number_of_filters
-                                              * self.convolved_image_size
-                                              * self.convolved_image_size)
+            feature_map = []
+            for weight in self.weights:
+                feature_map.append(correlate2d(image, weight, mode='valid'))
+
+            activation.append(feature_map)
+
+        self.activation_linear = np.array(activation) + self.bias
+        return self.activation_linear.reshape(-1, self.activation_linear[0].size)
 
     def bprop(self, error_above):
 
-        self.delta = error_above.reshape(-1, self.number_of_filters,
-                                          self.convolved_image_size,
-                                          self.convolved_image_size)
+        self.delta = error_above.reshape(self.activation_linear.shape)
 
-        bprop_val = []
-        for filter in range(self.number_of_filters):
+        propagation = []
+        for errors in self.delta:
 
-            bprop_val.append(self.convolve(self.delta[:, filter, :, :], self.weights))
+            filter_propagation = []
+            for error, weight in zip(errors, self.weights):
+                filter_propagation.append(convolve2d(error, weight))
+            propagation.append(filter_propagation)
 
-        return np.array(bprop_val)
+        # sum over filters
+        return np.sum(propagation, axis=1)
 
     def update(self, learn_rate):
 
-        self.delta = np.sum(self.delta, axis=0)
-        gradient = self.correlate(self.activation_below, self.delta)
-        gradient = np.sum(gradient, axis=0)
+        for image, errors in zip(self.activation_below, self.delta):
 
-        self.weights -= learn_rate * gradient
-        self.bias -= self.delta.reshape(-1, self.convolved_image_size**2).mean(1)
+            for weight, error in zip(self.weights, errors):
 
-    @staticmethod
-    def correlate(images, filters, mode='valid'):
-
-        convolved_images = []
-        for image in images:
-
-            convolution = []
-            for filter in filters:
-
-                convolution.append(correlate2d(image, filter, mode=mode))
-
-            convolved_images.append(convolution)
-
-        return np.array(convolved_images)
-
-    @staticmethod
-    def convolve(images, filters, mode='full'):
-
-        convolved_images = []
-        for image in images:
-
-            convolution = []
-            for filter in filters:
-
-                convolution.append(convolve2d(image, filter, mode=mode))
-
-            convolved_images.append(convolution)
-
-        return np.array(convolved_images)
+                weight *= learn_rate * correlate2d(image, error, 'valid')
 
 
 class SigmoidConvolutionLayer(LinearConvolutionLayer):
