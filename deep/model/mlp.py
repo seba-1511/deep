@@ -182,16 +182,19 @@ class SigmoidConvolutionLayer(LinearConvolutionLayer):
     def fprop(self, activation_below):
 
         super(SigmoidConvolutionLayer, self).fprop(activation_below)
-        self.activation_non_linear = SigmoidLayer.sigmoid(self.activation_non_linear)
-        return self.activation_non_linear
+        self.activation_non_linear = SigmoidLayer.sigmoid(self.activation_linear)
+        return self.activation_non_linear.reshape(-1, self.activation_linear[0].size)
 
     def bprop(self, error_above):
 
-        raise NotImplementedError
+        error_above = error_above.reshape(self.activation_linear.shape)
+        error = error_above * SigmoidLayer.sigmoid_prime(self.activation_linear)
+
+        return super(SigmoidConvolutionLayer, self).bprop(error)
 
     def update(self, learn_rate):
 
-        raise NotImplementedError
+        super(SigmoidConvolutionLayer, self).update(learn_rate)
 
 
 class MaxPoolingLayer(Layer):
@@ -290,3 +293,14 @@ class MultiLayerPerceptron(object):
 
         for layer in self.layers:
             layer.update(learn_rate)
+
+
+from deep.dataset.mnist import MNIST
+from deep.train.train import bgd
+
+m = MNIST()
+sc = SigmoidConvolutionLayer(5, 2)
+s = SigmoidLayer(3645, 10)
+mlp = MultiLayerPerceptron([sc, s])
+
+bgd(m, mlp)
