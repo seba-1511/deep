@@ -19,24 +19,17 @@ class TestLinearLayer():
 
     def __init__(self):
 
-        self.layer = mlp.LinearLayer(10, 5)
+        self.layer = mlp.LinearLayer(10, 10)
 
-    def test_init(self):
+    def test_convergence(self):
 
-        assert self.layer.weights.shape == (10, 5)
+        for i in range(10):
 
-    def test_fprop(self):
+            error = self.layer.fprop(np.ones((1, 10))) - np.ones(10)
+            self.layer.bprop(error)
+            self.layer.update(.1)
 
-        self.layer.weights = np.eye(10, 5)
-        assert np.all(self.layer.fprop(np.arange(10)) == np.arange(5))
-
-    def test_bprop(self):
-
-        assert False # Todo: implement linear bprop
-
-    def test_update(self):
-
-        assert False # Todo: implement linear update
+        assert np.allclose(self.layer.fprop(np.ones((1, 10))), np.ones(10))
 
 
 class TestSigmoidLayer():
@@ -45,27 +38,15 @@ class TestSigmoidLayer():
 
         self.layer = mlp.SigmoidLayer(10, 10)
 
-    def test_fprop(self):
+    def test_convergence(self):
 
-        self.layer.weights = np.eye(10, 10)
-        assert np.all(self.layer.fprop(np.arange(10)) ==
-                      mlp.SigmoidLayer.sigmoid(np.arange(10)))
+        for i in range(10):
 
-    def test_bprop(self):
+            error = self.layer.fprop(np.ones((1, 10))) - np.ones(10)
+            self.layer.bprop(error)
+            self.layer.update(100)
 
-        self.layer.weights = np.eye(10, 10)
-        self.layer.activation_linear = np.arange(10)
-        assert np.all(self.layer.bprop(np.ones(10)) ==
-                      mlp.SigmoidLayer.sigmoid_prime(np.arange(10)))
-
-    def test_update(self):
-
-        self.layer.weights = np.eye(10, 10)
-        self.layer.activation_below = np.ones(10)
-        self.layer.delta = np.ones(10)
-        self.layer.update(1)
-
-        assert np.all(self.layer.weights == np.eye(10, 10) - 10)
+        assert np.allclose(self.layer.fprop(np.ones((1, 10))), np.ones(10))
 
 
 class TestLinearConvolutionLayer():
@@ -74,40 +55,19 @@ class TestLinearConvolutionLayer():
 
         self.layer = mlp.LinearConvolutionLayer(5, 2)
 
-    def test_init(self):
+    def test_convergence(self):
 
-        assert self.layer.weights.shape == (5, 2, 2)
+        for i in range(10):
 
-    def test_fprop(self):
+            error = self.layer.fprop(np.ones((1, 9))) - np.ones(20)
 
-        # set each filter to 2x2 identity matrix
-        for i in range(5):
-            self.layer.weights[i] = np.eye(2)
+            self.layer.bprop(error)
+            self.layer.update(.10)
+            print np.sum(error**2)
 
-        # set input to 3x3 identity matrix and flatten
-        image = np.eye(3).reshape(9)
+        print self.layer.fprop(np.ones((1, 9)))
 
-        # compare input to weights * 2
-        assert np.all(self.layer.fprop(image).reshape(5, 2, 2)
-                      == self.layer.weights * 2)
-
-    def test_bprop(self):
-
-        # set weights and error to ones
-        self.layer.weights = np.ones((5, 2, 2))
-        error = np.ones((5, 2, 2))
-
-        # convolved size is image size - filter size + 1 = 3 - 2 + 1
-        self.layer.convolved_image_size = 2
-
-
-
-
-        print self.layer.bprop(error).shape
-
-    def test_update(self):
-
-        raise NotImplementedError
+        assert np.allclose(self.layer.fprop(np.ones((1, 10))), np.ones(10))
 
 
 """
