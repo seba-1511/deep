@@ -58,15 +58,18 @@ class LinearLayer(Layer):
 
         return self.activation_linear
 
-    def bprop(self, error):
+    def bprop(self, error_above):
         """ backward transformation """
 
-        raise NotImplementedError
+        self.delta = error_above
+        return np.dot(self.delta, self.weights.T)
 
     def update(self, learn_rate):
         """ update weights """
 
-        raise NotImplementedError
+        gradient = np.dot(self.activation_below.T, self.delta)
+        self.weights -= learn_rate * gradient
+        self.bias -= learn_rate * self.delta.mean(0)
 
 
 class SigmoidLayer(LinearLayer):
@@ -89,15 +92,13 @@ class SigmoidLayer(LinearLayer):
     def bprop(self, error_above):
         """ backwards propagation """
 
-        self.delta = error_above * self.sigmoid_prime(self.activation_linear)
-        return np.dot(self.delta, self.weights.T)
+        error_above *= self.sigmoid_prime(self.activation_linear)
+        return super(SigmoidLayer, self).bprop(error_above)
 
     def update(self, learn_rate):
         """ update weights """
 
-        gradient = np.dot(self.activation_below.T, self.delta)
-        self.weights -= learn_rate * gradient
-        self.bias -= learn_rate * self.delta.mean(0)
+        super(SigmoidLayer, self).update(learn_rate)
 
     @staticmethod
     def sigmoid(activation):
@@ -186,9 +187,9 @@ class SigmoidConvolutionLayer(LinearConvolutionLayer):
     def bprop(self, error_above):
 
         error_above = error_above.reshape(self.activation_linear.shape)
-        error = error_above * SigmoidLayer.sigmoid_prime(self.activation_linear)
+        error_above *= SigmoidLayer.sigmoid_prime(self.activation_linear)
 
-        return super(SigmoidConvolutionLayer, self).bprop(error)
+        return super(SigmoidConvolutionLayer, self).bprop(error_above)
 
     def update(self, learn_rate):
 
