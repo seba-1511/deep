@@ -6,8 +6,6 @@ import numpy as np
 from scipy.signal import correlate2d
 from scipy.signal import convolve2d
 
-# TODO: better names for activation
-
 
 class Layer(object):
     """ abstract layer class """
