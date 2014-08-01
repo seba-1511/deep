@@ -4,6 +4,7 @@ Model Parameter Selection
 
 import numpy as np
 
+
 def sgd(dataset, model, unsupervised=False):
     """ stochastic gradient descent """
 
@@ -13,7 +14,7 @@ def sgd(dataset, model, unsupervised=False):
 def bgd(dataset, model, batch_size=500):
     """ batch gradient descent """
 
-    for epoch in range(25):
+    for epoch in range(1):
 
         for i in range(0, dataset.train_size, batch_size):
 
@@ -21,10 +22,10 @@ def bgd(dataset, model, batch_size=500):
             batch_y = dataset.train_bin_y[i:i+batch_size]
 
             error = model.fprop(batch_x) - batch_y
+            print "batch error", np.sum(error**2)
             model.bprop(error)
             model.update(.1)
 
-        score(dataset, model)
 
 def score(dataset, model):
 
