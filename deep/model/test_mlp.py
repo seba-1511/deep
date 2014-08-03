@@ -2,94 +2,90 @@ import numpy as np
 import mlp
 
 
-class TestLayer():
-
-    def __init__(self):
-
-        self.layer = mlp.Layer()
-
-    def test_fprop(self):
-
-        self.layer.fprop(np.arange(10))
-
-        assert np.all(self.layer.activation_below == np.arange(10))
-
-
 class TestLinearLayer():
 
     def __init__(self):
 
-        self.layer = mlp.LinearLayer(10, 10)
+        self.layer = mlp.LinearLayer(10, 2)
 
     def test_convergence(self):
+        """ testing linear layer convergence """
 
-        for i in range(10):
+        x = np.arange(10).reshape(1, 10)
+        y = np.arange(2).reshape(1, 2)
 
-            error = self.layer.fprop(np.ones((1, 10))) - np.ones(10)
+        for i in range(100):
+
+            error = self.layer.fprop(x) - y
             self.layer.bprop(error)
-            self.layer.update(.1)
+            self.layer.update(.001)
 
-        assert np.allclose(self.layer.fprop(np.ones((1, 10))), np.ones(10))
+        assert np.allclose(self.layer.fprop(x), y)
 
 
 class TestSigmoidLayer():
 
     def __init__(self):
 
-        self.layer = mlp.SigmoidLayer(10, 10)
+        self.layer = mlp.SigmoidLayer(10, 2)
 
     def test_convergence(self):
+        """ testing sigmoid layer convergence """
 
-        for i in range(10):
+        x = np.arange(10).reshape(1, 10)
+        y = np.arange(2).reshape(1, 2)
 
-            error = self.layer.fprop(np.ones((1, 10))) - np.ones(10)
+        for i in range(100):
+
+            error = self.layer.fprop(x) - y
             self.layer.bprop(error)
-            self.layer.update(100)
+            self.layer.update(10)
 
-        assert np.allclose(self.layer.fprop(np.ones((1, 10))), np.ones(10))
+        assert np.allclose(self.layer.fprop(x), y)
 
 
 class TestLinearConvolutionLayer():
 
     def __init__(self):
 
-        self.layer = mlp.LinearConvolutionLayer(5, 2)
+        self.layer = mlp.LinearConvolutionLayer(2, 2)
 
     def test_convergence(self):
+        """ testing linear convolution layer convergence """
 
-        for i in range(10):
+        x = np.arange(9).reshape(1, 9)
+        y = np.ones(8).reshape(1, 8)
 
-            error = self.layer.fprop(np.ones((1, 9))) - np.ones(20)
+        for i in range(100):
 
+            error = self.layer.fprop(x) - y
             self.layer.bprop(error)
-            self.layer.update(.10)
-            print np.sum(error**2)
+            self.layer.update(.005)
 
-        print self.layer.fprop(np.ones((1, 9)))
-
-        assert np.allclose(self.layer.fprop(np.ones((1, 10))), np.ones(10))
+        assert np.allclose(self.layer.fprop(x), y, atol=0.1, rtol=1)
 
 
-"""
 class TestSigmoidConvolutionLayer():
 
     def __init__(self):
 
-        raise NotImplementedError
+        self.layer = mlp.SigmoidConvolutionLayer(2, 2)
 
-    def test_fprop(self):
+    def test_convergence(self):
+        """ testing sigmoid convolution layer convergence """
 
-        raise NotImplementedError
+        x = np.arange(9).reshape(1, 9)
+        y = np.ones(8).reshape(1, 8)
 
-    def test_bprop(self):
+        for i in range(100):
 
-        raise NotImplementedError
+            error = self.layer.fprop(x) - y
+            self.layer.bprop(error)
+            self.layer.update(10)
 
-    def test_update(self):
+        assert np.allclose(self.layer.fprop(x), y, atol=0.1, rtol=1)
 
-        raise NotImplementedError
-
-
+"""
 class TestMultiLayerPerceptron():
 
     def __init__(self):
