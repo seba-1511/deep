@@ -18,7 +18,7 @@ class Layer(object):
     def fprop(self, activation_below):
         """ save weights for bprop """
 
-        self.activation_below = activation_below
+        raise NotImplementedError
 
     def bprop(self, error):
         """ does not implement bprop """
@@ -51,7 +51,7 @@ class LinearLayer(Layer):
     def fprop(self, activation_below):
         """ forward transformation """
 
-        super(LinearLayer, self).fprop(activation_below)
+        self.activation_below = activation_below
 
         self.activation_linear = np.dot(activation_below, self.weights) \
             + self.bias
@@ -208,30 +208,10 @@ class MaxPoolingLayer(Layer):
 
     def fprop(self, activation_below):
 
-        dim = np.array(activation_below).shape[2] / 2
+        print activation_below.shape
 
-        pools = []
 
-        for image in activation_below:
 
-            activation = []
-
-            for filter in image:
-
-                pool = np.zeros((dim, dim))
-
-                for row in range(0, len(filter)-2, self.pool_size):
-
-                    for col in range(0, len(filter)-2, self.pool_size):
-
-                        pool[row/2][col/2] = np.max(filter[row:row+self.pool_size,
-                                                       col:col+self.pool_size])
-
-                pools.append(pool)
-
-            activation.append(pools)
-
-        return np.array(activation).reshape(500, -1)
 
     def bprop(self, error):
 
@@ -293,3 +273,11 @@ class MultiLayerPerceptron(object):
 
         for layer in self.layers:
             layer.update(learn_rate)
+
+
+m = MaxPoolingLayer(2)
+c = LinearConvolutionLayer(5, 2)
+
+mlp = MultiLayerPerceptron([c, m])
+
+print mlp.fprop(np.ones((3, 9)))
