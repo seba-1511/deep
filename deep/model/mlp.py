@@ -168,7 +168,8 @@ class LinearConvolutionLayer(Layer):
 
             for weight, error in zip(self.weights, errors):
 
-                weight *= learn_rate * correlate2d(image, error, 'valid')
+                # TODO: add bias update
+                weight -= learn_rate * correlate2d(image, error, 'valid')
 
 
 class SigmoidConvolutionLayer(LinearConvolutionLayer):
