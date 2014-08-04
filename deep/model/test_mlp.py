@@ -85,22 +85,26 @@ class TestSigmoidConvolutionLayer():
 
         assert np.allclose(self.layer.fprop(x), y, atol=0.1, rtol=1)
 
-"""
+
 class TestMultiLayerPerceptron():
 
     def __init__(self):
 
-        raise NotImplementedError
+        layer1 = mlp.LinearLayer(10, 5)
+        layer2 = mlp.LinearLayer(5, 2)
+        self.mlp = mlp.MultiLayerPerceptron([layer1, layer2])
 
-    def test_fprop(self):
+    def test_convergence(self):
+        """ testing multi-layer perceptron convergence """
 
-        raise NotImplementedError
+        x = np.arange(10).reshape(1, 10)
+        y = np.arange(2).reshape(1, 2)
 
-    def test_bprop(self):
+        for i in range(100):
 
-        raise NotImplementedError
+            error = self.mlp.fprop(x) - y
+            self.mlp.bprop(error)
+            self.mlp.update(.01)
 
-    def test_update(self):
+        assert np.allclose(self.mlp.fprop(x), y)
 
-        raise NotImplementedError
-"""
