@@ -1,5 +1,39 @@
-"""
-Multi-Layer Perceptron
+"""Multi-Layer Perceptron
+
+Layers
+------
+Linear Layer
+Sigmoid Layer
+Linear Convolution Layer
+Sigmoid Convolution Layer
+
+WIP
+---
+Max Pooling Layer
+
+Todo
+----
+Tanh Layer
+Mean Pooling Layer
+Linear Rectifier Layer
+Maxout Layer
+
+References
+----------
+Notation reflects these tutorials
+
+"Multi-Layer Neural Network"
+<http://ufldl.stanford.edu/tutorial/supervised/MultiLayerNeuralNetworks/>
+
+"Convolutional Neural Network"
+<http://ufldl.stanford.edu/tutorial/supervised/ConvolutionalNeuralNetwork/>
+
+"Multilayer Perceptron"
+<http://deeplearning.net/tutorial/mlp.html#mlp>
+
+"Convolutional Neural Networks (LeNet)"
+<http://deeplearning.net/tutorial/lenet.html#lenet>
+
 """
 
 import numpy as np
@@ -8,91 +42,134 @@ from scipy.signal import convolve2d
 
 
 class Layer(object):
-    """ abstract layer class """
+    """Abstract Layer
 
-    def __init__(self):
-        """ common initialization """
+    Base class for all layers in this module. Randomly initializes weights
+    of all layers
 
-        self.activation_below = None
+    Parameters
+    ----------
+    W_shape : tuple
+        Shape of weight array
+
+    b_shape : tuples
+        Shape of bias array
+
+    Attributes
+    ----------
+    W : array
+        Shape is defined by W_shape
+
+    b : array
+        Shape is defined by b_shape
+
+    """
+    def __init__(self, W_shape, b_shape):
+
+        self.W_shape = W_shape
+        self.b_shape = b_shape
+
+        self.b = np.zeros(b_shape)
+        self.W = np.random.uniform(
+            low=-1.0 / np.product(W_shape),
+            high=1.0 / np.product(W_shape),
+            size=W_shape)
 
     def fprop(self, activation_below):
-        """ save weights for bprop """
 
         raise NotImplementedError
 
     def bprop(self, error):
-        """ does not implement bprop """
 
         raise NotImplementedError
 
     def update(self, learn_rate):
-        """ does not implement update """
 
         raise NotImplementedError
 
 
 class LinearLayer(Layer):
-    """ applies a linear transformation to input """
+    """Linear Layer
 
-    def __init__(self, input_size, output_size):
+    Applies a linear transformation to input. Base for non-linear layers.
+
+    Parameters
+    ----------
+    n_in : int
+        size of input
+
+    n_out : int
+        size of output
+
+    Attributes
+    ----------
+    W : array
+        weights
+
+    b : array
+        bias
+
+    delta : array
+        delta
+
+    z : array
+        linear transformation
+
+    """
+    def __init__(self, n_in, n_out):
         """ initialize weights uniformly """
 
-        super(LinearLayer, self).__init__()
+        W_shape = (n_in, n_out)
+        b_shape = (n_out)
+
+        super(LinearLayer, self).__init__(W_shape, b_shape)
 
         self.delta = None
-        self.activation_linear = None
+        self.z = None
 
-        self.bias = np.zeros(output_size)
-        self.weights = np.random.uniform(
-            low=-1.0 / input_size,
-            high=1.0 / input_size,
-            size=(input_size, output_size))
-
-    def fprop(self, activation_below):
+    def fprop(self, x):
         """ forward transformation """
 
-        self.activation_below = activation_below
+        self.x = x
+        self.z = np.dot(x, self.W) + self.b
 
-        self.activation_linear = np.dot(activation_below, self.weights) \
-            + self.bias
-
-        return self.activation_linear
+        return self.z
 
     def bprop(self, error_above):
         """ backward transformation """
 
         self.delta = error_above
-        return np.dot(self.delta, self.weights.T)
+        return np.dot(self.delta, self.W.T)
 
     def update(self, learn_rate):
         """ update weights """
 
-        gradient = np.dot(self.activation_below.T, self.delta)
-        self.weights -= learn_rate * gradient
-        self.bias -= learn_rate * self.delta.mean(0)
+        gradient = np.dot(self.x.T, self.delta)
+        self.W -= learn_rate * gradient
+        self.b -= learn_rate * self.delta.mean(0)
 
 
 class SigmoidLayer(LinearLayer):
     """ applies the sigmoid non-linearity to linear layer """
 
-    def __init__(self, input_size, output_size):
+    def __init__(self, n_in, n_out):
 
-        super(SigmoidLayer, self).__init__(input_size, output_size)
+        super(SigmoidLayer, self).__init__(n_in, n_out)
 
         self.activation_non_linear = None
 
-    def fprop(self, activation_below):
+    def fprop(self, x):
         """ forwards propagation """
 
-        super(SigmoidLayer, self).fprop(activation_below)
+        super(SigmoidLayer, self).fprop(x)
 
-        self.activation_non_linear = self.sigmoid(self.activation_linear)
+        self.activation_non_linear = self.sigmoid(self.z)
         return self.activation_non_linear
 
     def bprop(self, error_above):
         """ backwards propagation """
 
-        error_above *= self.sigmoid_prime(self.activation_linear)
+        error_above *= self.sigmoid_prime(self.z)
         return super(SigmoidLayer, self).bprop(error_above)
 
     def update(self, learn_rate):
@@ -124,8 +201,8 @@ class LinearConvolutionLayer(Layer):
         self.delta = None
         self.activation_linear = None
 
-        self.bias = np.zeros((1, num_filters, 1, 1))
-        self.weights = np.random.uniform(
+        self.b = np.zeros((1, num_filters, 1, 1))
+        self.W = np.random.uniform(
             low=-1.0 / num_filters * filter_size * filter_size,
             high=1.0 / num_filters * filter_size * filter_size,
             size=(num_filters, filter_size, filter_size))
@@ -139,12 +216,12 @@ class LinearConvolutionLayer(Layer):
         for image in self.activation_below:
 
             feature_map = []
-            for weight in self.weights:
+            for weight in self.W:
                 feature_map.append(correlate2d(image, weight, mode='valid'))
 
             activation.append(feature_map)
 
-        self.activation_linear = np.array(activation) + self.bias
+        self.activation_linear = np.array(activation) + self.b
         return self.activation_linear.reshape(-1, self.activation_linear[0].size)
 
     def bprop(self, error_above):
@@ -155,7 +232,7 @@ class LinearConvolutionLayer(Layer):
         for errors in self.delta:
 
             filter_propagation = []
-            for error, weight in zip(errors, self.weights):
+            for error, weight in zip(errors, self.W):
                 filter_propagation.append(convolve2d(error, weight))
             propagation.append(filter_propagation)
 
@@ -166,7 +243,7 @@ class LinearConvolutionLayer(Layer):
 
         for image, errors in zip(self.activation_below, self.delta):
 
-            for weight, error in zip(self.weights, errors):
+            for weight, error in zip(self.W, errors):
 
                 # TODO: add bias update
                 weight -= learn_rate * correlate2d(image, error, 'valid')
@@ -222,7 +299,7 @@ class MaxPoolingLayer(Layer):
         pass
 
 
-class MultiLayerPerceptron(object):
+class MultiLayerPerceptron(Layer):
     """ a multi-layer perceptron """
 
     def __init__(self, layers):
