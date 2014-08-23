@@ -119,8 +119,8 @@ class LinearLayer(Layer):
     def __init__(self, n_in, n_out):
         """ initialize weights uniformly """
 
-        W_shape = (n_in, n_out)
-        b_shape = (n_out)
+        W_shape = n_in, n_out
+        b_shape = n_out
 
         super(LinearLayer, self).__init__(W_shape, b_shape)
 
@@ -196,16 +196,13 @@ class LinearConvolutionLayer(Layer):
 
     def __init__(self, num_filters, filter_size):
 
-        super(LinearConvolutionLayer, self).__init__()
+        W_shape = num_filters, filter_size, filter_size
+        b_shape = 1, num_filters, 1, 1
+
+        super(LinearConvolutionLayer, self).__init__(W_shape, b_shape)
 
         self.delta = None
         self.activation_linear = None
-
-        self.b = np.zeros((1, num_filters, 1, 1))
-        self.W = np.random.uniform(
-            low=-1.0 / num_filters * filter_size * filter_size,
-            high=1.0 / num_filters * filter_size * filter_size,
-            size=(num_filters, filter_size, filter_size))
 
     def fprop(self, activation_below):
 
@@ -287,9 +284,6 @@ class MaxPoolingLayer(Layer):
 
         print activation_below.shape
 
-
-
-
     def bprop(self, error):
 
         pass
@@ -352,9 +346,13 @@ class MultiLayerPerceptron(Layer):
             layer.update(learn_rate)
 
 
-m = MaxPoolingLayer(2)
-c = LinearConvolutionLayer(5, 2)
+import deep.dataset.mnist
+import deep.train.train
 
-mlp = MultiLayerPerceptron([c, m])
+M = deep.dataset.mnist.MNIST()
+s1 = SigmoidConvolutionLayer(10, 3)
+s2 = SigmoidLayer(6760, 10)
 
-print mlp.fprop(np.ones((3, 9)))
+mlp = MultiLayerPerceptron([s1, s2])
+
+deep.train.train.bgd(M, mlp)

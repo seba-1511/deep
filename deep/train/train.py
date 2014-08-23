@@ -24,7 +24,7 @@ def bgd(dataset, model, batch_size=500):
             error = model.fprop(batch_x) - batch_y
             print "batch error", np.sum(error**2)
             model.bprop(error)
-            model.update(.1)
+            model.update(10)
 
 
 def score(dataset, model):
