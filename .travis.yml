@@ -3,8 +3,10 @@ python:
   - "2.7"
 
 install: PLEASE CHANGE ME
-    - "pip install numpy"
-    - "pip install nose"
+- "pip install -U setuptools"
+- "pip install -U pip"
+
+- "pip install numpy"
     
 script:
     - "nosetests"
