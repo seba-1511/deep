@@ -1,9 +1,26 @@
+import numpy as np
+import matplotlib.pyplot as plt
+from scipy import stats
+
+
+def multivariate_gaussian_density(X, means, covars):
+
+    n_features = X.shape[1]
+
+    for index, (mean, covar) in enumerate(zip(means, covars)):
+
+        variance = np.dot(X - mean, np.dot(X - mean, covar).T)
+
+        det = np.linalg.det(covar)
+
+        return 1 / (2 * np.pi) ** (n_features / 2) / det ** .5 * np.exp(-.5 * variance)
+
+
 class GaussianMixture(object):
 
-    def __init__(self, n_clusters=2):
+    def __init__(self, n_components=3):
 
-        self.n_clusters = n_clusters
-
+        self.n_components = n_components
 
     def e_step(self):
 
@@ -13,43 +30,43 @@ class GaussianMixture(object):
 
         raise NotImplementedError
 
-    def fit(self, X):
+    def fit(self, X=None):
 
-        raise NotImplementedError
+        if not X:
+            np.random.seed(0)
+            X = np.random.random((15, 2))
+            X[:5] += 1
+            X[:10] += 2
 
-import matplotlib.pyplot as plt
-import matplotlib as mpl
-import numpy as np
+        n_samples, n_features = X.shape
 
-from sklearn import datasets
-from sklearn.cross_validation import StratifiedKFold
-from sklearn.mixture import GMM
+        means = np.random.random((n_features, self.n_components))
+        covars = np.array([np.eye(n_features) for _ in range(self.n_components)])
+        weights = np.tile(1.0 / self.n_components, self.n_components)
 
 
-def make_ellipses(gmm, ax):
-    for n, color in enumerate('rg'):
-        v, w = np.linalg.eigh(gmm._get_covars()[n][:2, :2])
-        u = w[0] / np.linalg.norm(w[0])
-        angle = np.arctan2(u[1], u[0])
-        angle = 180 * angle / np.pi  # convert to degrees
-        v *= 9
-        ell = mpl.patches.Ellipse(gmm.means_[n, :2], v[0], v[1],
-                                  180 + angle, color=color)
-        ell.set_clip_box(ax.bbox)
-        ell.set_alpha(0.5)
-        ax.add_artist(ell)
+
+    def plot(self, X, centers):
+
+        for x, y in centers:
+            plt.scatter(x, y, c='r', s=50)
+
+        for x, y in X:
+            plt.scatter(x, y)
+        plt.show()
+
+
 
 
 np.random.seed(0)
-X = np.random.random((10, 2))
+X = np.random.random((15, 2))
 X[:5] += 1
+X[:10] += 2
 
-classifier = GMM(n_components=2)
-classifier.fit(X)
+means = np.random.random((3, 2))
+covars = np.array([np.eye(2) for _ in range(3)])
 
-h = plt.subplot(111)
-make_ellipses(classifier, h)
+print multivariate_gaussian_density(X, means, covars)
 
-plt.scatter(X[:, 0], X[:, 1])
-
-plt.show()
+#gmm = GaussianMixture()
+#gmm.fit()

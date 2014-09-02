@@ -1,12 +1,17 @@
 language: python
+
 python:
   - "2.7"
 
-install: PLEASE CHANGE ME
-- "pip install -U setuptools"
-- "pip install -U pip"
+virtualenv:
+  system_site_packages: true
 
-- "pip install numpy" 
-    
-script:
-    - "nosetests"
+before_install:
+  - sudo apt-get -qq update
+  - sudo apt-get install git gfortran g++
+  - sudo apt-get install libatlas-base-dev libblas-dev liblapack-dev
+
+install:
+   - "pip install . --use-mirrors"
+
+script: nosetests
