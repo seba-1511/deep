@@ -1,17 +1,10 @@
 language: python
-
 python:
   - "2.7"
-
 virtualenv:
   system_site_packages: true
+install: 
+  - sudo apt-get install -qq python-numpy python-scipy
+  - pip install scikit-learn
 
-before_install:
-  - sudo apt-get -qq update
-  - sudo apt-get install git gfortran g++
-  - sudo apt-get install libatlas-base-dev libblas-dev liblapack-dev
-
-install:
-   - "pip install . --use-mirrors"
-
-script: nosetests
+script: nosetests -s -v

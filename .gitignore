@@ -1,7 +1,0 @@
-# compiled
-*.pyc
-
-# folders
-.idea
-data/
-corex/

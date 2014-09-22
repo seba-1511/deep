@@ -1,0 +1,1342 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ChangeListManager">
+    <list default="true" id="bca719b8-d8ca-4a75-ad96-b61a6b7efe32" name="Default" comment="">
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/deep/datasets/data/digits.csv.gz" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/deep/datasets/data/mnist.pkl.gz" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/deep/datasets/__init__.py" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/deep/datasets/tests/__init__.py" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/deep/neural_network/__init__.py" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/deep/neural_network/autoencoder.py" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/deep/datasets/base.py" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/deep/neural_network/base.py" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/deep/datasets/benchmark.py" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/deep/datasets/data/iris.csv" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/deep/neural_network/layers.py" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/deep/neural_network/mlp.py" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/deep/neural_network/noise.py" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/deep/neural_network/tests/test_autoencoder.py" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/deep/datasets/tests/test_base.py" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/deep/neural_network/tests/test_mlp.py" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/.gitignore" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/.travis.yml" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/README.md" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/deep/dataset/__init__.py" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/deep/dataset/dataset.py" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/deep/dataset/mnist.py" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/deep/model/__init__.py" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/deep/model/gaussian_mixture.py" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/deep/model/k_means.py" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/deep/model/mlp.py" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/deep/model/test_mlp.py" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/deep/train/__init__.py" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/deep/train/train.py" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/dummy/__init__.py" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/setup.py" afterPath="" />
+    </list>
+    <ignored path="deep.iws" />
+    <ignored path=".idea/workspace.xml" />
+    <option name="TRACKING_ENABLED" value="true" />
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="ChangesViewManager" flattened_view="true" show_ignored="false" />
+  <component name="CreatePatchCommitExecutor">
+    <option name="PATCH_PATH" value="" />
+  </component>
+  <component name="DaemonCodeAnalyzer">
+    <disable_hints />
+  </component>
+  <component name="ExecutionTargetManager" SELECTED_TARGET="default_target" />
+  <component name="FavoritesManager">
+    <favorites_list name="deep" />
+  </component>
+  <component name="FileEditorManager">
+    <splitter split-orientation="horizontal" split-proportion="0.4451389">
+      <split-first>
+        <leaf>
+          <file leaf-file-name="autoencoder.py" pinned="false" current="false" current-in-tab="false">
+            <entry file="file://$PROJECT_DIR$/deep/neural_network/autoencoder.py">
+              <provider selected="true" editor-type-id="text-editor">
+                <state line="8" column="0" selection-start="234" selection-end="234" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="1650">
+                  <folding>
+                    <element signature="e#502#820#0" expanded="true" />
+                    <element signature="e#2335#3034#0" expanded="true" />
+                    <element signature="e#3068#3161#0" expanded="true" />
+                    <element signature="e#3350#3711#0" expanded="true" />
+                    <element signature="e#3970#6401#0" expanded="false" />
+                  </folding>
+                </state>
+              </provider>
+            </entry>
+          </file>
+          <file leaf-file-name="layers.py" pinned="false" current="false" current-in-tab="false">
+            <entry file="file://$PROJECT_DIR$/deep/neural_network/layers.py">
+              <provider selected="true" editor-type-id="text-editor">
+                <state line="53" column="0" selection-start="1450" selection-end="1450" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="675">
+                  <folding>
+                    <element signature="e#839#939#0" expanded="true" />
+                    <element signature="e#1391#1448#0" expanded="true" />
+                    <element signature="e#1524#1625#0" expanded="true" />
+                  </folding>
+                </state>
+              </provider>
+            </entry>
+          </file>
+          <file leaf-file-name="benchmark.py" pinned="false" current="false" current-in-tab="true">
+            <entry file="file://$PROJECT_DIR$/deep/datasets/benchmark.py">
+              <provider selected="true" editor-type-id="text-editor">
+                <state line="70" column="25" selection-start="1404" selection-end="1404" vertical-scroll-proportion="0.6055046" vertical-offset="0" max-vertical-offset="545">
+                  <folding />
+                </state>
+              </provider>
+            </entry>
+          </file>
+          <file leaf-file-name="base.py" pinned="false" current="false" current-in-tab="false">
+            <entry file="file://$PROJECT_DIR$/../reference_repos/scikit-learn-master/sklearn/svm/base.py">
+              <provider selected="true" editor-type-id="text-editor">
+                <state line="792" column="0" selection-start="30132" selection-end="30132" vertical-scroll-proportion="0.0" vertical-offset="803" max-vertical-offset="1335">
+                  <folding>
+                    <element signature="e#632#767#1" expanded="false" />
+                    <element signature="e#2557#3204#0" expanded="true" />
+                    <element signature="e#3422#4430#1" expanded="false" />
+                    <element signature="e#6915#7041#1" expanded="false" />
+                    <element signature="e#10421#10712#1" expanded="false" />
+                    <element signature="e#13132#13498#1" expanded="false" />
+                    <element signature="e#16631#21896#0" expanded="false" />
+                    <element signature="e#17159#17500#1" expanded="false" />
+                    <element signature="e#18279#19133#1" expanded="false" />
+                    <element signature="e#19477#20341#1" expanded="false" />
+                    <element signature="e#21968#30032#0" expanded="false" />
+                    <element signature="e#23421#23633#1" expanded="false" />
+                    <element signature="e#25068#25536#1" expanded="false" />
+                  </folding>
+                </state>
+              </provider>
+            </entry>
+          </file>
+          <file leaf-file-name="base.py" pinned="false" current="false" current-in-tab="false">
+            <entry file="file://$PROJECT_DIR$/../reference_repos/scikit-learn-master/sklearn/linear_model/base.py">
+              <provider selected="true" editor-type-id="text-editor">
+                <state line="163" column="0" selection-start="5295" selection-end="5295" vertical-scroll-proportion="0.0" vertical-offset="310" max-vertical-offset="1575">
+                  <folding>
+                    <element signature="e#1308#1513#1" expanded="false" />
+                    <element signature="e#2735#2988#1" expanded="false" />
+                    <element signature="e#4056#4072#0" expanded="true" />
+                    <element signature="e#4118#4415#1" expanded="false" />
+                    <element signature="e#4631#4920#1" expanded="false" />
+                    <element signature="e#5618#6216#1" expanded="false" />
+                    <element signature="e#6697#7001#1" expanded="false" />
+                    <element signature="e#7271#7515#1" expanded="false" />
+                    <element signature="e#7948#9814#0" expanded="false" />
+                    <element signature="e#8095#8489#1" expanded="false" />
+                    <element signature="e#8740#9631#1" expanded="false" />
+                    <element signature="e#11136#12708#0" expanded="true" />
+                    <element signature="e#11136#11666#1" expanded="false" />
+                  </folding>
+                </state>
+              </provider>
+            </entry>
+          </file>
+          <file leaf-file-name="logistic.py" pinned="false" current="false" current-in-tab="false">
+            <entry file="file://$PROJECT_DIR$/../reference_repos/scikit-learn-master/sklearn/linear_model/logistic.py">
+              <provider selected="true" editor-type-id="text-editor">
+                <state line="718" column="48" selection-start="26022" selection-end="26043" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="1005">
+                  <folding />
+                </state>
+              </provider>
+            </entry>
+          </file>
+          <file leaf-file-name="base.py" pinned="false" current="false" current-in-tab="false">
+            <entry file="file://$PROJECT_DIR$/../reference_repos/scikit-learn-master/sklearn/neighbors/base.py">
+              <provider selected="true" editor-type-id="text-editor">
+                <state line="95" column="23" selection-start="3298" selection-end="3298" vertical-scroll-proportion="0.0" vertical-offset="398" max-vertical-offset="2340">
+                  <folding>
+                    <element signature="e#1862#1866#0" expanded="false" />
+                    <element signature="e#2368#2747#1" expanded="false" />
+                    <element signature="e#3307#3311#0" expanded="true" />
+                    <element signature="e#8232#11552#0" expanded="true" />
+                    <element signature="e#8232#9925#1" expanded="false" />
+                    <element signature="e#11661#13024#1" expanded="false" />
+                    <element signature="e#14127#21190#0" expanded="false" />
+                    <element signature="e#14254#16263#1" expanded="false" />
+                    <element signature="e#18582#19928#1" expanded="false" />
+                    <element signature="e#21233#21823#0" expanded="false" />
+                    <element signature="e#21262#21664#1" expanded="false" />
+                    <element signature="e#21897#23272#0" expanded="true" />
+                    <element signature="e#21897#22266#1" expanded="false" />
+                    <element signature="e#23346#23603#0" expanded="true" />
+                  </folding>
+                </state>
+              </provider>
+            </entry>
+          </file>
+          <file leaf-file-name="mlp.py" pinned="false" current="false" current-in-tab="false">
+            <entry file="file://$PROJECT_DIR$/deep/neural_network/mlp.py">
+              <provider selected="true" editor-type-id="text-editor">
+                <state line="64" column="25" selection-start="2150" selection-end="2150" vertical-scroll-proportion="0.0" vertical-offset="353" max-vertical-offset="885">
+                  <folding>
+                    <element signature="e#750#827#0" expanded="true" />
+                    <marker date="1411413557000" expanded="true" signature="0:123" placeholder="import ..." />
+                    <marker date="1411413557000" expanded="true" signature="1081:1166" placeholder="..." />
+                  </folding>
+                </state>
+              </provider>
+            </entry>
+          </file>
+        </leaf>
+      </split-first>
+      <split-second>
+        <leaf>
+          <file leaf-file-name="base.py" pinned="false" current="false" current-in-tab="false">
+            <entry file="file://$PROJECT_DIR$/deep/neural_network/base.py">
+              <provider selected="true" editor-type-id="text-editor">
+                <state line="128" column="0" selection-start="4035" selection-end="4035" vertical-scroll-proportion="0.0" vertical-offset="647" max-vertical-offset="1245">
+                  <folding>
+                    <element signature="e#0#39#0" expanded="true" />
+                    <element signature="e#666#684#0" expanded="true" />
+                    <element signature="e#719#795#0" expanded="true" />
+                    <element signature="e#1473#2523#0" expanded="true" />
+                  </folding>
+                </state>
+              </provider>
+            </entry>
+          </file>
+          <file leaf-file-name="bgd.py" pinned="false" current="false" current-in-tab="false">
+            <entry file="file://$PROJECT_DIR$/../reference_repos/pylearn2/pylearn2/training_algorithms/bgd.py">
+              <provider selected="true" editor-type-id="text-editor">
+                <state line="45" column="32" selection-start="1577" selection-end="1648" vertical-scroll-proportion="0.0" vertical-offset="60" max-vertical-offset="1875">
+                  <folding>
+                    <element signature="e#16490#16532#1" expanded="true" />
+                  </folding>
+                </state>
+              </provider>
+            </entry>
+          </file>
+          <file leaf-file-name="sgd.py" pinned="false" current="false" current-in-tab="false">
+            <entry file="file://$PROJECT_DIR$/../reference_repos/pylearn2/pylearn2/training_algorithms/sgd.py">
+              <provider selected="true" editor-type-id="text-editor">
+                <state line="44" column="20" selection-start="1469" selection-end="1478" vertical-scroll-proportion="0.0" vertical-offset="2040" max-vertical-offset="7725">
+                  <folding>
+                    <element signature="e#9949#18882#0" expanded="true" />
+                    <element signature="e#18922#21712#0" expanded="true" />
+                    <element signature="e#32657#33053#1" expanded="true" />
+                  </folding>
+                </state>
+              </provider>
+            </entry>
+          </file>
+          <file leaf-file-name="learning_curve.py" pinned="false" current="false" current-in-tab="false">
+            <entry file="file://$PROJECT_DIR$/../reference_repos/scikit-learn-master/sklearn/learning_curve.py">
+              <provider selected="true" editor-type-id="text-editor">
+                <state line="243" column="9" selection-start="10883" selection-end="10953" vertical-scroll-proportion="0.0" vertical-offset="1950" max-vertical-offset="3465">
+                  <folding>
+                    <element signature="e#706#6202#0" expanded="true" />
+                  </folding>
+                </state>
+              </provider>
+            </entry>
+          </file>
+          <file leaf-file-name="graph.py" pinned="false" current="true" current-in-tab="true">
+            <entry file="file://$PROJECT_DIR$/../reference_repos/scikit-learn-master/sklearn/utils/graph.py">
+              <provider selected="true" editor-type-id="text-editor">
+                <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="570">
+                  <folding />
+                </state>
+              </provider>
+            </entry>
+          </file>
+        </leaf>
+      </split-second>
+    </splitter>
+  </component>
+  <component name="FindManager">
+    <FindUsagesManager>
+      <setting name="OPEN_NEW_TAB" value="false" />
+    </FindUsagesManager>
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="IdeDocumentHistory">
+    <option name="changedFiles">
+      <list>
+        <option value="$PROJECT_DIR$/../reference_repos/scikit-learn-master/sklearn/neural_network/rbm.py" />
+        <option value="$PROJECT_DIR$/__init__.py" />
+        <option value="$PROJECT_DIR$/base.py" />
+        <option value="$PROJECT_DIR$/deep/autoencoder/autoencoder.py" />
+        <option value="$PROJECT_DIR$/deep/autoencoder/datasets/base.py" />
+        <option value="$PROJECT_DIR$/deep/autoencoder/datasets/data/tests.py" />
+        <option value="$PROJECT_DIR$/deep/autoencoder/datasets/tests.py" />
+        <option value="$PROJECT_DIR$/deep/autoencoder/datasets/tests/test_base.py" />
+        <option value="$PROJECT_DIR$/deep/datasets/tests/test_base.py" />
+        <option value="$PROJECT_DIR$/deep/datasets/__init__.py" />
+        <option value="$PROJECT_DIR$/deep/autoencoder/tests/test_autoencoder.py" />
+        <option value="$PROJECT_DIR$/deep/autoencoder/tests/test_denoising.py" />
+        <option value="$PROJECT_DIR$/deep/autoencoder/denoising.py" />
+        <option value="$PROJECT_DIR$/deep/autoencoder/__init__.py" />
+        <option value="$PROJECT_DIR$/deep/autoencoder/base.py" />
+        <option value="$PROJECT_DIR$/deep/autoencoder/tests/test_base.py" />
+        <option value="$PROJECT_DIR$/deep/base.py" />
+        <option value="$PROJECT_DIR$/deep/neural_network/multilayer_perceptron.py" />
+        <option value="$PROJECT_DIR$/deep/neural_network/tests/test_base.py" />
+        <option value="$PROJECT_DIR$/deep/neural_network/tests/test_autoencoder.py" />
+        <option value="$PROJECT_DIR$/../reference_repos/pylearn2/pylearn2/models/autoencoder.py" />
+        <option value="$PROJECT_DIR$/../reference_repos/scikit-learn-master/sklearn/cluster/hierarchical.py" />
+        <option value="$PROJECT_DIR$/../lisa/GSN-master/model.py" />
+        <option value="$PROJECT_DIR$/deep/neural_network/noise.py" />
+        <option value="$PROJECT_DIR$/deep/neural_network/__init__.py" />
+        <option value="$PROJECT_DIR$/deep/neural_network/tests/test_mlp.py" />
+        <option value="$PROJECT_DIR$/deep/datasets/data/benchmark.py" />
+        <option value="$PROJECT_DIR$/deep/datasets/base.py" />
+        <option value="$PROJECT_DIR$/../reference_repos/scikit-learn-master/sklearn/base.py" />
+        <option value="$PROJECT_DIR$/deep/learning_curve (update sklearn and remove).py" />
+        <option value="$PROJECT_DIR$/deep/neural_network/cost.py" />
+        <option value="$PROJECT_DIR$/deep/neural_network/mlp.py" />
+        <option value="$PROJECT_DIR$/deep/train.py" />
+        <option value="$PROJECT_DIR$/../reference_repos/scikit-learn-master/sklearn/svm/base.py" />
+        <option value="$PROJECT_DIR$/deep/neural_network/layers.py" />
+        <option value="$PROJECT_DIR$/deep/neural_network/autoencoder.py" />
+        <option value="$PROJECT_DIR$/deep/neural_network/base.py" />
+        <option value="$PROJECT_DIR$/deep/datasets/benchmark.py" />
+      </list>
+    </option>
+  </component>
+  <component name="ProjectFrameBounds">
+    <option name="y" value="22" />
+    <option name="width" value="1440" />
+    <option name="height" value="874" />
+  </component>
+  <component name="ProjectLevelVcsManager" settingsEditedManually="false">
+    <OptionsSetting value="true" id="Add" />
+    <OptionsSetting value="true" id="Remove" />
+    <OptionsSetting value="true" id="Checkout" />
+    <OptionsSetting value="true" id="Update" />
+    <OptionsSetting value="true" id="Status" />
+    <OptionsSetting value="true" id="Edit" />
+    <ConfirmationsSetting value="0" id="Add" />
+    <ConfirmationsSetting value="0" id="Remove" />
+  </component>
+  <component name="ProjectReloadState">
+    <option name="STATE" value="0" />
+  </component>
+  <component name="ProjectView">
+    <navigator currentView="ProjectPane" proportions="" version="1" splitterProportion="0.5">
+      <flattenPackages />
+      <showMembers />
+      <showModules />
+      <showLibraryContents />
+      <hideEmptyPackages />
+      <abbreviatePackageNames />
+      <autoscrollToSource />
+      <autoscrollFromSource />
+      <sortByType />
+    </navigator>
+    <panes>
+      <pane id="Scope" />
+      <pane id="ProjectPane">
+        <subPane>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="deep" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="deep" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="deep" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="deep" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="deep" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="deep" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="deep" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="neural_network" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="deep" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="deep" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="deep" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="neural_network" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="tests" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="deep" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="deep" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="deep" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="datasets" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="deep" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="deep" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="deep" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="datasets" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="tests" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="deep" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="deep" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="deep" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="datasets" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="data" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+        </subPane>
+      </pane>
+    </panes>
+  </component>
+  <component name="PropertiesComponent">
+    <property name="recentsLimit" value="5" />
+    <property name="SearchEverywhereHistory" value="&#10;\&quot;?&#10;def&#10;tests" />
+    <property name="FullScreen" value="false" />
+  </component>
+  <component name="PyConsoleOptionsProvider">
+    <option name="myPythonConsoleState">
+      <console-settings />
+    </option>
+  </component>
+  <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/deep/neural_network/tests" />
+      <recent name="$PROJECT_DIR$/deep/autoencoder/tests" />
+      <recent name="$PROJECT_DIR$/deep/autoencoder/datasets/data" />
+    </key>
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/deep/datasets" />
+      <recent name="$PROJECT_DIR$/deep" />
+      <recent name="$PROJECT_DIR$/deep/autoencoder/datasets" />
+    </key>
+  </component>
+  <component name="RunManager" selected="Python.benchmark">
+    <configuration default="false" name="autoencoder" type="PythonConfigurationType" factoryName="Python" temporary="true">
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/deep/neural_network" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <module name="deep" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/deep/neural_network/autoencoder.py" />
+      <option name="PARAMETERS" value="" />
+      <RunnerSettings RunnerId="PythonRunner" />
+      <ConfigurationWrapper RunnerId="PythonRunner" />
+      <method />
+    </configuration>
+    <configuration default="false" name="benchmark" type="PythonConfigurationType" factoryName="Python" temporary="true">
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/deep/datasets" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <module name="deep" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/deep/datasets/benchmark.py" />
+      <option name="PARAMETERS" value="" />
+      <RunnerSettings RunnerId="PythonRunner" />
+      <ConfigurationWrapper RunnerId="PythonRunner" />
+      <method />
+    </configuration>
+    <configuration default="false" name="layers" type="PythonConfigurationType" factoryName="Python" temporary="true">
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/deep/neural_network" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <module name="deep" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/deep/neural_network/layers.py" />
+      <option name="PARAMETERS" value="" />
+      <RunnerSettings RunnerId="PythonRunner" />
+      <ConfigurationWrapper RunnerId="PythonRunner" />
+      <method />
+    </configuration>
+    <configuration default="false" name="SdA" type="PythonConfigurationType" factoryName="Python" temporary="true">
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/../reference_repos/theano_deep_learning/code" />
+      <option name="IS_MODULE_SDK" value="false" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <module name="deep" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/../reference_repos/theano_deep_learning/code/SdA.py" />
+      <option name="PARAMETERS" value="" />
+      <RunnerSettings RunnerId="PythonRunner" />
+      <ConfigurationWrapper RunnerId="PythonRunner" />
+      <method />
+    </configuration>
+    <configuration default="false" name="learning_curve (update sklearn and remove)" type="PythonConfigurationType" factoryName="Python" temporary="true">
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/deep" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <module name="deep" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/deep/learning_curve (update sklearn and remove).py" />
+      <option name="PARAMETERS" value="" />
+      <RunnerSettings RunnerId="PythonRunner" />
+      <ConfigurationWrapper RunnerId="PythonRunner" />
+      <method />
+    </configuration>
+    <configuration default="true" type="tests" factoryName="py.test">
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs />
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="" />
+      <option name="IS_MODULE_SDK" value="false" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <module name="deep" />
+      <option name="SCRIPT_NAME" value="" />
+      <option name="CLASS_NAME" value="" />
+      <option name="METHOD_NAME" value="" />
+      <option name="FOLDER_NAME" value="" />
+      <option name="TEST_TYPE" value="TEST_SCRIPT" />
+      <option name="PATTERN" value="" />
+      <option name="USE_PATTERN" value="false" />
+      <option name="testToRun" value="" />
+      <option name="keywords" value="" />
+      <option name="params" value="" />
+      <option name="USE_PARAM" value="false" />
+      <option name="USE_KEYWORD" value="false" />
+      <method />
+    </configuration>
+    <configuration default="true" type="tests" factoryName="Nosetests">
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs />
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="" />
+      <option name="IS_MODULE_SDK" value="false" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <module name="deep" />
+      <option name="SCRIPT_NAME" value="" />
+      <option name="CLASS_NAME" value="" />
+      <option name="METHOD_NAME" value="" />
+      <option name="FOLDER_NAME" value="" />
+      <option name="TEST_TYPE" value="TEST_SCRIPT" />
+      <option name="PATTERN" value="" />
+      <option name="USE_PATTERN" value="false" />
+      <option name="PARAMS" value="" />
+      <option name="USE_PARAM" value="false" />
+      <method />
+    </configuration>
+    <configuration default="true" type="PythonConfigurationType" factoryName="Python">
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="" />
+      <option name="IS_MODULE_SDK" value="false" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <module name="deep" />
+      <option name="SCRIPT_NAME" value="" />
+      <option name="PARAMETERS" value="" />
+      <method />
+    </configuration>
+    <configuration default="true" type="tests" factoryName="Unittests">
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs />
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="" />
+      <option name="IS_MODULE_SDK" value="false" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <module name="deep" />
+      <option name="SCRIPT_NAME" value="" />
+      <option name="CLASS_NAME" value="" />
+      <option name="METHOD_NAME" value="" />
+      <option name="FOLDER_NAME" value="" />
+      <option name="TEST_TYPE" value="TEST_SCRIPT" />
+      <option name="PATTERN" value="" />
+      <option name="USE_PATTERN" value="false" />
+      <option name="PUREUNITTEST" value="true" />
+      <option name="PARAMS" value="" />
+      <option name="USE_PARAM" value="false" />
+      <method />
+    </configuration>
+    <configuration default="true" type="tests" factoryName="Doctests">
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs />
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="" />
+      <option name="IS_MODULE_SDK" value="false" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <module name="deep" />
+      <option name="SCRIPT_NAME" value="" />
+      <option name="CLASS_NAME" value="" />
+      <option name="METHOD_NAME" value="" />
+      <option name="FOLDER_NAME" value="" />
+      <option name="TEST_TYPE" value="TEST_SCRIPT" />
+      <option name="PATTERN" value="" />
+      <option name="USE_PATTERN" value="false" />
+      <method />
+    </configuration>
+    <configuration default="true" type="tests" factoryName="Attests">
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs />
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="" />
+      <option name="IS_MODULE_SDK" value="false" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <module name="deep" />
+      <option name="SCRIPT_NAME" value="" />
+      <option name="CLASS_NAME" value="" />
+      <option name="METHOD_NAME" value="" />
+      <option name="FOLDER_NAME" value="" />
+      <option name="TEST_TYPE" value="TEST_SCRIPT" />
+      <option name="PATTERN" value="" />
+      <option name="USE_PATTERN" value="false" />
+      <method />
+    </configuration>
+    <list size="5">
+      <item index="0" class="java.lang.String" itemvalue="Python.autoencoder" />
+      <item index="1" class="java.lang.String" itemvalue="Python.benchmark" />
+      <item index="2" class="java.lang.String" itemvalue="Python.layers" />
+      <item index="3" class="java.lang.String" itemvalue="Python.SdA" />
+      <item index="4" class="java.lang.String" itemvalue="Python.learning_curve (update sklearn and remove)" />
+    </list>
+    <recent_temporary>
+      <list size="5">
+        <item index="0" class="java.lang.String" itemvalue="Python.benchmark" />
+        <item index="1" class="java.lang.String" itemvalue="Python.autoencoder" />
+        <item index="2" class="java.lang.String" itemvalue="Python.learning_curve (update sklearn and remove)" />
+        <item index="3" class="java.lang.String" itemvalue="Python.SdA" />
+        <item index="4" class="java.lang.String" itemvalue="Python.layers" />
+      </list>
+    </recent_temporary>
+  </component>
+  <component name="ShelveChangesManager" show_recycled="false" />
+  <component name="SvnConfiguration" maxAnnotateRevisions="500" myUseAcceleration="nothing" myAutoUpdateAfterCommit="false" cleanupOnStartRun="false" SSL_PROTOCOLS="sslv3">
+    <option name="USER" value="" />
+    <option name="PASSWORD" value="" />
+    <option name="mySSHConnectionTimeout" value="30000" />
+    <option name="mySSHReadTimeout" value="30000" />
+    <option name="LAST_MERGED_REVISION" />
+    <option name="MERGE_DRY_RUN" value="false" />
+    <option name="MERGE_DIFF_USE_ANCESTRY" value="true" />
+    <option name="UPDATE_LOCK_ON_DEMAND" value="false" />
+    <option name="IGNORE_SPACES_IN_MERGE" value="false" />
+    <option name="CHECK_NESTED_FOR_QUICK_MERGE" value="false" />
+    <option name="IGNORE_SPACES_IN_ANNOTATE" value="true" />
+    <option name="SHOW_MERGE_SOURCES_IN_ANNOTATE" value="true" />
+    <option name="FORCE_UPDATE" value="false" />
+    <option name="IGNORE_EXTERNALS" value="false" />
+    <myIsUseDefaultProxy>false</myIsUseDefaultProxy>
+  </component>
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="bca719b8-d8ca-4a75-ad96-b61a6b7efe32" name="Default" comment="" />
+      <created>1411171223085</created>
+      <updated>1411171223085</updated>
+    </task>
+    <servers />
+  </component>
+  <component name="ToolWindowManager">
+    <frame x="0" y="22" width="1440" height="874" extended-state="6" />
+    <editor active="true" />
+    <layout>
+      <window_info id="Changes" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
+      <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
+      <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
+      <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="0" side_tool="true" content_ui="tabs" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.15138888" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
+      <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="0" side_tool="true" content_ui="tabs" />
+      <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="0" side_tool="true" content_ui="tabs" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.3004695" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
+      <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
+      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.3298122" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
+    </layout>
+  </component>
+  <component name="Vcs.Log.UiProperties">
+    <option name="RECENTLY_FILTERED_USER_GROUPS">
+      <collection />
+    </option>
+  </component>
+  <component name="VcsContentAnnotationSettings">
+    <option name="myLimit" value="2678400000" />
+  </component>
+  <component name="VcsManagerConfiguration">
+    <option name="myTodoPanelSettings">
+      <TodoPanelSettings />
+    </option>
+  </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager />
+  </component>
+  <component name="editorHistoryManager">
+    <entry file="file://$PROJECT_DIR$/../reference_repos/pylearn2/pylearn2/costs/cost.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="583" column="43" selection-start="20036" selection-end="20036" vertical-scroll-proportion="2.0627804" vertical-offset="0" max-vertical-offset="2175" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/../reference_repos/pylearn2/pylearn2/costs/autoencoder.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="1005" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/../reference_repos/scikit-learn-master/sklearn/neighbors/classification.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="121" column="25" selection-start="4603" selection-end="4603" vertical-scroll-proportion="-0.39318886" vertical-offset="569" max-vertical-offset="1215" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/../reference_repos/scikit-learn-master/sklearn/mixture/gmm.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="708" column="47" selection-start="26731" selection-end="26748" vertical-scroll-proportion="2.3916812" vertical-offset="0" max-vertical-offset="1500" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/deep/neural_network/tests/test_autoencoder.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="3" column="0" selection-start="119" selection-end="119" vertical-scroll-proportion="-0.06321839" vertical-offset="78" max-vertical-offset="600" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/../lisa/dae.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="16" column="0" selection-start="255" selection-end="587" vertical-scroll-proportion="0.23751523" vertical-offset="0" max-vertical-offset="821" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/../reference_repos/pylearn2/pylearn2/models/gsn.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="123" column="14" selection-start="4396" selection-end="4396" vertical-scroll-proportion="0.0" vertical-offset="210" max-vertical-offset="1725" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/../reference_repos/scikit-learn-master/sklearn/cluster/hierarchical.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="829" column="1" selection-start="31504" selection-end="31504" vertical-scroll-proportion="0.97011954" vertical-offset="196" max-vertical-offset="1260" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/../reference_repos/pylearn2/pylearn2/models/autoencoder.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="749" column="24" selection-start="24560" selection-end="24560" vertical-scroll-proportion="0.9678801" vertical-offset="1901" max-vertical-offset="3165" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/../lisa/GSN-master/model.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="171" column="85" selection-start="6450" selection-end="6465" vertical-scroll-proportion="0.3610586" vertical-offset="1834" max-vertical-offset="7545" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/../lisa/utils.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="24" column="0" selection-start="173" selection-end="587" vertical-scroll-proportion="0.4864865" vertical-offset="0" max-vertical-offset="645" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/../reference_repos/pylearn2/pylearn2/scripts/papers/jia_huang_wkshp_11/extract_features.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="1770" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/../reference_repos/theano_deep_learning/code/convolutional_mlp.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="225" column="43" selection-start="9081" selection-end="9085" vertical-scroll-proportion="-0.95422536" vertical-offset="3377" max-vertical-offset="4080" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/deep/neural_network/tests/test_mlp.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="14" column="30" selection-start="359" selection-end="359" vertical-scroll-proportion="0.2112676" vertical-offset="0" max-vertical-offset="568" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/deep/neural_network/__init__.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="4" column="0" selection-start="236" selection-end="236" vertical-scroll-proportion="0.02640845" vertical-offset="0" max-vertical-offset="568" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/../reference_repos/theano_deep_learning/code/dA.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="125" column="26" selection-start="5292" selection-end="5292" vertical-scroll-proportion="0.0" vertical-offset="885" max-vertical-offset="2115" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/deep/neural_network/noise.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="9" column="0" selection-start="350" selection-end="350" vertical-scroll-proportion="0.23767605" vertical-offset="0" max-vertical-offset="568" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/../reference_repos/theano_deep_learning/code/DBN.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="259" column="52" selection-start="10787" selection-end="10787" vertical-scroll-proportion="-3.0669014" vertical-offset="2012" max-vertical-offset="2580" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/../reference_repos/theano_deep_learning/code/rbm.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="660">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/../reference_repos/scikit-learn-master/sklearn/neural_network/rbm.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="105" column="27" selection-start="3546" selection-end="3546" vertical-scroll-proportion="0.34330985" vertical-offset="150" max-vertical-offset="930">
+          <folding>
+            <element signature="e#3555#4014#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/../reference_repos/scikit-learn-master/sklearn/grid_search.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="743" column="36" selection-start="28090" selection-end="28090" vertical-scroll-proportion="4.8292255" vertical-offset="1052" max-vertical-offset="3900">
+          <folding>
+            <element signature="e#22026#26744#1" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/../reference_repos/scikit-learn-master/sklearn/pipeline.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="84" column="24" selection-start="2557" selection-end="2564" vertical-scroll-proportion="-6.1923075" vertical-offset="1099" max-vertical-offset="6570">
+          <folding>
+            <element signature="e#0#136#1" expanded="false" />
+            <element signature="e#285#320#0" expanded="false" />
+            <element signature="e#768#2661#1" expanded="false" />
+            <element signature="e#3750#4107#0" expanded="false" />
+            <element signature="e#4193#4785#0" expanded="false" />
+            <element signature="e#4839#5122#0" expanded="false" />
+            <element signature="e#5186#5630#0" expanded="false" />
+            <element signature="e#5666#5970#0" expanded="false" />
+            <element signature="e#6012#6334#0" expanded="false" />
+            <element signature="e#6380#6714#0" expanded="false" />
+            <element signature="e#6760#6911#0" expanded="false" />
+            <element signature="e#6949#7224#0" expanded="false" />
+            <element signature="e#7270#7433#0" expanded="false" />
+            <element signature="e#7475#7776#0" expanded="false" />
+            <element signature="e#7825#7935#0" expanded="false" />
+            <element signature="e#7976#8516#0" expanded="false" />
+            <element signature="e#8550#9288#0" expanded="false" />
+            <element signature="e#9340#9368#0" expanded="false" />
+            <element signature="e#9438#9676#0" expanded="false" />
+            <element signature="e#9790#10570#0" expanded="false" />
+            <element signature="e#10630#11376#1" expanded="false" />
+            <element signature="e#11463#11587#0" expanded="false" />
+            <element signature="e#11630#12241#0" expanded="false" />
+            <element signature="e#12281#12719#0" expanded="false" />
+            <element signature="e#12783#13771#0" expanded="false" />
+            <element signature="e#13809#14622#0" expanded="false" />
+            <element signature="e#14669#15016#0" expanded="false" />
+            <element signature="e#15080#15221#0" expanded="false" />
+            <element signature="e#15379#16438#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/../reference_repos/scikit-learn-master/setup.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="35" column="29" selection-start="1140" selection-end="1149" vertical-scroll-proportion="0.55350554" vertical-offset="180" max-vertical-offset="1140">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/../reference_repos/scikit-learn-master/sklearn/__init__.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="22" column="0" selection-start="773" selection-end="773" vertical-scroll-proportion="0.4947183" vertical-offset="49" max-vertical-offset="1050">
+          <folding>
+            <element signature="e#0#501#1" expanded="false" />
+            <element signature="e#502#512#0" expanded="false" />
+            <element signature="e#1773#2259#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/../reference_repos/pylearn2/pylearn2/models/maxout.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="1216" column="15" selection-start="47324" selection-end="47324" vertical-scroll-proportion="2.2447183" vertical-offset="1470" max-vertical-offset="3570">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/../reference_repos/scikit-learn-master/sklearn/cross_validation.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="41" column="20" selection-start="1241" selection-end="1249" vertical-scroll-proportion="-2.5184503" vertical-offset="1635" max-vertical-offset="10485">
+          <folding>
+            <element signature="e#1691#2106#0" expanded="false" />
+            <element signature="e#8326#10039#1" expanded="false" />
+            <element signature="e#38897#41674#0" expanded="false" />
+            <element signature="e#41861#44995#0" expanded="false" />
+            <element signature="e#45065#46266#0" expanded="false" />
+            <element signature="e#46320#46700#0" expanded="false" />
+            <element signature="e#47459#48419#0" expanded="false" />
+            <element signature="e#49808#52820#0" expanded="false" />
+            <element signature="e#52943#56345#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/../reference_repos/scikit-learn-master/sklearn/externals/six.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="562" column="0" selection-start="20048" selection-end="20048" vertical-scroll-proportion="0.375" vertical-offset="6396" max-vertical-offset="6900">
+          <folding>
+            <element signature="e#1164#1179#0" expanded="false" />
+            <element signature="e#17894#17990#0" expanded="false" />
+            <element signature="e#20087#20168#0" expanded="false" />
+            <element signature="e#20204#20587#0" expanded="false" />
+            <element signature="e#20295#20568#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/../reference_repos/theano_deep_learning/code/SdA.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="332" column="27" selection-start="13893" selection-end="13941" vertical-scroll-proportion="0.6830986" vertical-offset="1097" max-vertical-offset="3300">
+          <folding>
+            <element signature="e#7345#9444#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/../reference_repos/scikit-learn-master/sklearn/neighbors/unsupervised.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="78" column="79" selection-start="2770" selection-end="2770" vertical-scroll-proportion="0.26408452" vertical-offset="0" max-vertical-offset="568">
+          <folding>
+            <element signature="e#2779#2981#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/deep/datasets/base.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="65" column="29" selection-start="1870" selection-end="1870" vertical-scroll-proportion="0.7631579" vertical-offset="74" max-vertical-offset="630">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/../reference_repos/scikit-learn-master/sklearn/neighbors/tests/test_neighbors.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="76" column="31" selection-start="2642" selection-end="2642" vertical-scroll-proportion="-2.9729729" vertical-offset="2100" max-vertical-offset="2655">
+          <folding>
+            <element signature="e#2647#3147#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/../reference_repos/scikit-learn-master/sklearn/decomposition/pca.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="452" column="15" selection-start="15538" selection-end="15538" vertical-scroll-proportion="0.60387325" vertical-offset="1427" max-vertical-offset="2205">
+          <folding>
+            <element signature="e#8183#10818#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/../reference_repos/scikit-learn-master/sklearn/linear_model/logistic.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="718" column="48" selection-start="26022" selection-end="26043" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="1005">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/../reference_repos/scikit-learn-master/sklearn/base.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="270" column="8" selection-start="10401" selection-end="10401" vertical-scroll-proportion="0.45383105" vertical-offset="129" max-vertical-offset="1245">
+          <folding>
+            <element signature="e#355#899#1" expanded="false" />
+            <element signature="e#4043#4370#1" expanded="false" />
+            <element signature="e#5807#10175#0" expanded="false" />
+            <element signature="e#7204#7576#1" expanded="false" />
+            <element signature="e#8644#8998#1" expanded="false" />
+            <element signature="e#11329#12337#0" expanded="false" />
+            <element signature="e#11450#12222#1" expanded="false" />
+            <element signature="e#12449#13019#0" expanded="false" />
+            <element signature="e#12557#12838#1" expanded="false" />
+            <element signature="e#13056#14561#0" expanded="false" />
+            <element signature="e#13169#13298#1" expanded="false" />
+            <element signature="e#13379#13774#1" expanded="false" />
+            <element signature="e#13929#14097#1" expanded="false" />
+            <element signature="e#14258#14431#1" expanded="false" />
+            <element signature="e#14677#15709#0" expanded="false" />
+            <element signature="e#14796#15288#1" expanded="false" />
+            <element signature="e#15827#15925#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/../reference_repos/pylearn2/pylearn2/models/mlp.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="432" column="56" selection-start="15207" selection-end="15207" vertical-scroll-proportion="0.15413533" vertical-offset="623" max-vertical-offset="4755">
+          <folding>
+            <element signature="e#2765#13275#0" expanded="false" />
+            <element signature="e#3530#3759#1" expanded="false" />
+            <element signature="e#3880#4132#1" expanded="false" />
+            <element signature="e#4273#5096#1" expanded="false" />
+            <element signature="e#5589#6577#1" expanded="false" />
+            <element signature="e#6651#6995#1" expanded="false" />
+            <element signature="e#7116#7799#1" expanded="false" />
+            <element signature="e#7985#8331#1" expanded="false" />
+            <element signature="e#8558#8782#1" expanded="false" />
+            <element signature="e#8959#9343#1" expanded="false" />
+            <element signature="e#9486#9869#1" expanded="false" />
+            <element signature="e#10061#10442#1" expanded="false" />
+            <element signature="e#10634#10688#1" expanded="false" />
+            <element signature="e#10771#11656#1" expanded="false" />
+            <element signature="e#11820#12704#1" expanded="false" />
+            <element signature="e#12867#13164#1" expanded="false" />
+            <element signature="e#17165#17219#1" expanded="false" />
+            <element signature="e#18110#18263#1" expanded="false" />
+            <element signature="e#19002#19141#1" expanded="false" />
+            <element signature="e#19598#19898#1" expanded="false" />
+            <element signature="e#23737#23937#1" expanded="false" />
+            <element signature="e#27701#28871#1" expanded="false" />
+            <element signature="e#30560#31743#1" expanded="false" />
+            <element signature="e#32806#33106#1" expanded="false" />
+            <element signature="e#34482#34536#1" expanded="false" />
+            <element signature="e#34897#35184#1" expanded="false" />
+            <element signature="e#36005#36449#1" expanded="false" />
+            <element signature="e#38199#38478#1" expanded="false" />
+            <element signature="e#38667#38800#1" expanded="false" />
+            <element signature="e#39047#39209#1" expanded="false" />
+            <element signature="e#39613#53713#0" expanded="false" />
+            <element signature="e#53746#68716#0" expanded="false" />
+            <element signature="e#60667#60721#1" expanded="false" />
+            <element signature="e#68744#86014#0" expanded="false" />
+            <element signature="e#79429#79483#1" expanded="false" />
+            <element signature="e#84410#84620#1" expanded="false" />
+            <element signature="e#86041#86553#0" expanded="false" />
+            <element signature="e#86583#95069#0" expanded="false" />
+            <element signature="e#88237#89158#1" expanded="false" />
+            <element signature="e#89286#90450#1" expanded="false" />
+            <element signature="e#90812#91244#1" expanded="false" />
+            <element signature="e#95107#95968#0" expanded="false" />
+            <element signature="e#95999#96521#0" expanded="false" />
+            <element signature="e#96557#97217#0" expanded="false" />
+            <element signature="e#97256#100251#0" expanded="false" />
+            <element signature="e#97361#97704#1" expanded="false" />
+            <element signature="e#97822#98432#1" expanded="false" />
+            <element signature="e#99229#100161#1" expanded="false" />
+            <element signature="e#100308#101185#0" expanded="false" />
+            <element signature="e#101243#102072#0" expanded="false" />
+            <element signature="e#101488#101680#1" expanded="false" />
+            <element signature="e#101840#101928#1" expanded="false" />
+            <element signature="e#102128#104729#0" expanded="false" />
+            <element signature="e#102664#102750#1" expanded="false" />
+            <element signature="e#104782#105125#0" expanded="false" />
+            <element signature="e#104989#105072#1" expanded="false" />
+            <element signature="e#105159#123589#0" expanded="false" />
+            <element signature="e#110476#110720#1" expanded="false" />
+            <element signature="e#111675#111875#1" expanded="false" />
+            <element signature="e#122354#123003#1" expanded="false" />
+            <element signature="e#123637#129162#0" expanded="false" />
+            <element signature="e#129227#130101#1" expanded="false" />
+            <element signature="e#132787#133585#1" expanded="false" />
+            <element signature="e#136096#136699#1" expanded="false" />
+            <element signature="e#140127#146083#0" expanded="false" />
+            <element signature="e#146147#146637#1" expanded="false" />
+            <element signature="e#146748#147141#1" expanded="false" />
+            <element signature="e#147240#147600#1" expanded="false" />
+            <element signature="e#147686#147914#1" expanded="false" />
+            <element signature="e#147985#149866#0" expanded="false" />
+            <element signature="e#149902#160757#0" expanded="false" />
+            <element signature="e#157095#157847#1" expanded="false" />
+            <element signature="e#157970#158706#1" expanded="false" />
+            <element signature="e#160793#165040#0" expanded="false" />
+            <element signature="e#165073#167515#0" expanded="false" />
+            <element signature="e#167651#168553#1" expanded="false" />
+            <element signature="e#169461#171025#1" expanded="false" />
+            <element signature="e#172216#173229#1" expanded="false" />
+            <element signature="e#174095#174681#1" expanded="false" />
+            <element signature="e#175033#175175#0" expanded="false" />
+            <element signature="e#175220#175531#1" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/deep/neural_network/mlp.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="64" column="25" selection-start="2150" selection-end="2150" vertical-scroll-proportion="0.0" vertical-offset="353" max-vertical-offset="885">
+          <folding>
+            <element signature="e#750#827#0" expanded="true" />
+            <marker date="1411413557000" expanded="true" signature="0:123" placeholder="import ..." />
+            <marker date="1411413557000" expanded="true" signature="1081:1166" placeholder="..." />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/../reference_repos/scikit-learn-master/sklearn/linear_model/bayes.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="120" column="24" selection-start="3887" selection-end="3887" vertical-scroll-proportion="-1.8477443" vertical-offset="1388" max-vertical-offset="1920">
+          <folding>
+            <element signature="e#3896#7300#0" expanded="false" />
+            <element signature="e#3896#4193#1" expanded="false" />
+            <element signature="e#11454#11983#1" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/../reference_repos/pylearn2/pylearn2/train.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="-0.24770643" vertical-offset="135" max-vertical-offset="735">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/../reference_repos/pylearn2/pylearn2/training_algorithms/default.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="164" column="0" selection-start="6749" selection-end="6749" vertical-scroll-proportion="0.44894367" vertical-offset="0" max-vertical-offset="568">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/../reference_repos/pylearn2/pylearn2/training_algorithms/bgd.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="45" column="32" selection-start="1577" selection-end="1648" vertical-scroll-proportion="0.0" vertical-offset="60" max-vertical-offset="1875">
+          <folding>
+            <element signature="e#16490#16532#1" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/../reference_repos/pylearn2/pylearn2/training_algorithms/training_algorithm.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="88" column="39" selection-start="2818" selection-end="2818" vertical-scroll-proportion="0.33978873" vertical-offset="872" max-vertical-offset="1440">
+          <folding>
+            <element signature="e#766#1321#0" expanded="false" />
+            <element signature="e#1361#1727#0" expanded="false" />
+            <element signature="e#1796#2777#0" expanded="false" />
+            <element signature="e#2827#3210#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/../reference_repos/pylearn2/pylearn2/training_algorithms/sgd.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="44" column="20" selection-start="1469" selection-end="1478" vertical-scroll-proportion="0.0" vertical-offset="2040" max-vertical-offset="7725">
+          <folding>
+            <element signature="e#9949#18882#0" expanded="true" />
+            <element signature="e#18922#21712#0" expanded="true" />
+            <element signature="e#32657#33053#1" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/../reference_repos/scikit-learn-master/sklearn/linear_model/base.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="163" column="0" selection-start="5295" selection-end="5295" vertical-scroll-proportion="0.0" vertical-offset="310" max-vertical-offset="1575">
+          <folding>
+            <element signature="e#1308#1513#1" expanded="false" />
+            <element signature="e#2735#2988#1" expanded="false" />
+            <element signature="e#4056#4072#0" expanded="true" />
+            <element signature="e#4118#4415#1" expanded="false" />
+            <element signature="e#4631#4920#1" expanded="false" />
+            <element signature="e#5618#6216#1" expanded="false" />
+            <element signature="e#6697#7001#1" expanded="false" />
+            <element signature="e#7271#7515#1" expanded="false" />
+            <element signature="e#7948#9814#0" expanded="false" />
+            <element signature="e#8095#8489#1" expanded="false" />
+            <element signature="e#8740#9631#1" expanded="false" />
+            <element signature="e#11136#12708#0" expanded="true" />
+            <element signature="e#11136#11666#1" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/../reference_repos/scikit-learn-master/sklearn/neighbors/base.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="95" column="23" selection-start="3298" selection-end="3298" vertical-scroll-proportion="0.0" vertical-offset="293" max-vertical-offset="2340">
+          <folding>
+            <element signature="e#1862#1866#0" expanded="false" />
+            <element signature="e#2368#2747#1" expanded="false" />
+            <element signature="e#3307#3311#0" expanded="true" />
+            <element signature="e#8232#11552#0" expanded="true" />
+            <element signature="e#8232#9925#1" expanded="false" />
+            <element signature="e#11661#13024#1" expanded="false" />
+            <element signature="e#14127#21190#0" expanded="false" />
+            <element signature="e#14254#16263#1" expanded="false" />
+            <element signature="e#18582#19928#1" expanded="false" />
+            <element signature="e#21233#21823#0" expanded="false" />
+            <element signature="e#21262#21664#1" expanded="false" />
+            <element signature="e#21897#23272#0" expanded="true" />
+            <element signature="e#21897#22266#1" expanded="false" />
+            <element signature="e#23346#23603#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/deep/neural_network/layers.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="53" column="0" selection-start="1450" selection-end="1450" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="675">
+          <folding>
+            <element signature="e#839#939#0" expanded="true" />
+            <element signature="e#1391#1448#0" expanded="true" />
+            <element signature="e#1524#1625#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/deep/neural_network/base.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="128" column="0" selection-start="4035" selection-end="4035" vertical-scroll-proportion="0.0" vertical-offset="647" max-vertical-offset="1245">
+          <folding>
+            <element signature="e#0#39#0" expanded="true" />
+            <element signature="e#666#684#0" expanded="true" />
+            <element signature="e#719#795#0" expanded="true" />
+            <element signature="e#1473#2523#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/../reference_repos/scikit-learn-master/sklearn/svm/base.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="792" column="0" selection-start="30132" selection-end="30132" vertical-scroll-proportion="0.0" vertical-offset="803" max-vertical-offset="1335">
+          <folding>
+            <element signature="e#632#767#1" expanded="false" />
+            <element signature="e#2557#3204#0" expanded="true" />
+            <element signature="e#3422#4430#1" expanded="false" />
+            <element signature="e#6915#7041#1" expanded="false" />
+            <element signature="e#10421#10712#1" expanded="false" />
+            <element signature="e#13132#13498#1" expanded="false" />
+            <element signature="e#16631#21896#0" expanded="false" />
+            <element signature="e#17159#17500#1" expanded="false" />
+            <element signature="e#18279#19133#1" expanded="false" />
+            <element signature="e#19477#20341#1" expanded="false" />
+            <element signature="e#21968#30032#0" expanded="false" />
+            <element signature="e#23421#23633#1" expanded="false" />
+            <element signature="e#25068#25536#1" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/deep/neural_network/autoencoder.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="8" column="0" selection-start="234" selection-end="234" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="1650">
+          <folding>
+            <element signature="e#502#820#0" expanded="true" />
+            <element signature="e#2335#3034#0" expanded="true" />
+            <element signature="e#3068#3161#0" expanded="true" />
+            <element signature="e#3350#3711#0" expanded="true" />
+            <element signature="e#3970#6401#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/deep/datasets/benchmark.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="70" column="25" selection-start="1404" selection-end="1404" vertical-scroll-proportion="0.6055046" vertical-offset="0" max-vertical-offset="545">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/../reference_repos/scikit-learn-master/sklearn/learning_curve.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="243" column="9" selection-start="10883" selection-end="10953" vertical-scroll-proportion="0.0" vertical-offset="1950" max-vertical-offset="3465">
+          <folding>
+            <element signature="e#706#6202#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/../reference_repos/scikit-learn-master/sklearn/utils/graph.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="570">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+  </component>
+</project>
+
