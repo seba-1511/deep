@@ -6,5 +6,6 @@ virtualenv:
 install: 
   - sudo apt-get install -qq python-numpy python-scipy
   - pip install scikit-learn
+  - pip install theano
 
 script: nosetests -s -v
