@@ -1,22 +1,6 @@
-from deep.datasets import load_iris
-from deep.datasets import load_digits
 from deep.datasets import load_mnist
 
 import numpy as np
-
-
-def test_load_iris():
-    X, y = load_iris()
-    assert(X.shape == (150, 4))
-    assert(y.shape == (150,))
-    assert(np.unique(y).size == 3)
-
-
-def test_load_digits():
-    X, y = load_digits()
-    assert(X.shape == (1797, 64))
-    assert(y.shape == (1797,))
-    assert(np.unique(y).size == 10)
 
 
 def test_load_mnist():

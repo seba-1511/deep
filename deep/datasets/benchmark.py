@@ -59,16 +59,3 @@ def benchmark_unsupervised_digits(model):
 
     model.fit(X_train)
     model.score(X_test)
-
-from deep.neural_network import TheanoMultiLayerPerceptron
-from deep.neural_network import SigmoidLayer, SoftMaxLayer
-
-
-from sklearn.linear_model import LogisticRegression
-from sklearn.learning_curve import learning_curve
-X, y = load_digits()
-
-clf = LogisticRegression()
-print learning_curve(clf, X, y)
-
-print y.shape
