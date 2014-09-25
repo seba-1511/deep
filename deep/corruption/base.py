@@ -17,14 +17,14 @@ class Corruption(six.with_metaclass(ABCMeta, BaseEstimator)):
     def corrupt(self, x):
         """ Corrupt input. """
 
-    def __repr__(self):
-        return self.__class__.__name__ + "(" + str(self.corruption_level) + ")"
 
+class NoCorruption(Corruption):
 
-class DummyCorruption(Corruption):
+    def __init__(self):
+        pass
 
-    def corrupt(self, inputs):
-        return inputs
+    def corrupt(self, x):
+        return x
 
 
 class BinomialCorruption(Corruption):
@@ -35,14 +35,14 @@ class BinomialCorruption(Corruption):
                                             dtype=theano.config.floatX)
 
 
-class DropoutCorruptor(BinomialCorruption):
+class DropoutCorruption(BinomialCorruption):
 
     def corrupt(self, x):
         if self.corruption_level < 1e-5:
             return x
         else:
-            dropped = super(DropoutCorruptor, self).corrupt(x)
-            return dropped * 1.0 / (1.0 - self.corruption_level)
+            x = super(DropoutCorruption, self).corrupt(x)
+            return x * 1.0 / (1.0 - self.corruption_level)
 
 
 class GaussianCorruption(Corruption):

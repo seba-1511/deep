@@ -1,1 +1,2 @@
-[![Build Status](https://travis-ci.org/GabrielPereyra/deep.svg?branch=master)](https://travis-ci.org/GabrielPereyra/deep)
+.. image:: https://travis-ci.org/GabrielPereyra/deep.svg?branch=master
+    :target: https://travis-ci.org/GabrielPereyra/deep

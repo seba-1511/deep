@@ -1,8 +1,6 @@
 from abc import ABCMeta, abstractmethod
 from sklearn.externals import six
-from sklearn.base import TransformerMixin
-
-from deep.layer import SigmoidLayer
+from sklearn.base import BaseEstimator, TransformerMixin
 
 import time
 import theano
@@ -10,11 +8,11 @@ import theano.tensor as T
 import numpy as np
 
 
-class AutoencoderBase(six.with_metaclass(ABCMeta), TransformerMixin):
+class AutoencoderBase(six.with_metaclass(ABCMeta), BaseEstimator, TransformerMixin):
 
     @abstractmethod
-    def __init__(self, encoder=SigmoidLayer(10), learning_rate=1, batch_size=10,
-                 n_iter=10, verbose=1):
+    def __init__(self, encoder, learning_rate, batch_size,
+                 n_iter, verbose):
         self.encoder = encoder
         self.decoder = encoder
         self.learning_rate = learning_rate
@@ -39,10 +37,10 @@ class AutoencoderBase(six.with_metaclass(ABCMeta), TransformerMixin):
 
 
     def _encode(self, x):
-        return self.encoder.encode(x)
+        return self.encoder._encode(x)
 
     def _decode(self, x):
-        return self.decoder.decode(x)
+        return self.decoder._decode(x)
 
     def _reconstruct(self, x):
         return self._decode(self._encode(x))
@@ -76,7 +74,7 @@ class AutoencoderBase(six.with_metaclass(ABCMeta), TransformerMixin):
         n_samples, n_features = X.shape
         n_batches = n_samples / self.batch_size
 
-        self.encoder._init_params((n_features, self.encoder.layer_size))
+        self.encoder._init_params(n_features)
 
         score_function = self.compile(X)
 
