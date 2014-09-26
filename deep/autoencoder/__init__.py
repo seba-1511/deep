@@ -1,9 +1,8 @@
-from deep.autoencoder.classes import TiedAutoencoder
-from deep.autoencoder.classes import TiedDenoisingAutoencoder
-from deep.autoencoder.classes import UntiedAutoencoder
-from deep.autoencoder.classes import UntiedDenoisingAutoencoder
+from deep.autoencoder.classes import TiedAE
+from deep.autoencoder.classes import UntiedAE
+from deep.autoencoder.classes import DenoisingAE
 
-__all__ = ['TiedAutoencoder',
-           'TiedDenoisingAutoencoder',
-           'UntiedAutoencoder',
-           'UntiedDenoisingAutoencoder']
+
+__all__ = ['TiedAE',
+           'UntiedAE',
+           'DenoisingAE']

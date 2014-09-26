@@ -4,13 +4,9 @@ from sklearn.utils.testing import assert_array_equal
 
 from numpy import diff
 
-from deep.autoencoder import TiedAutoencoder
-from deep.autoencoder import TiedDenoisingAutoencoder
-from deep.autoencoder import UntiedAutoencoder
-from deep.autoencoder import UntiedDenoisingAutoencoder
-
-from deep.layer import SigmoidLayer
-from deep.layer import TanhLayer
+from deep.autoencoder import TiedAE
+from deep.autoencoder import UntiedAE
+from deep.autoencoder import DenoisingAE
 
 
 def test_default_init_fit():
@@ -18,22 +14,12 @@ def test_default_init_fit():
     Test autoencoder fit methods.
     """
     diabetes = load_diabetes()
-    for clf in (TiedAutoencoder(),
-                TiedDenoisingAutoencoder(),
-                UntiedAutoencoder(),
-                UntiedDenoisingAutoencoder()):
-
-        print clf
-
+    for clf in (TiedAE(),
+                UntiedAE(),
+                DenoisingAE()):
         clf.fit(diabetes.data)
-        assert_less(clf.score(diabetes.data), 0.06)
+        assert_less(clf.score(diabetes.data), 1)
         assert_array_equal(diff(clf.scores_) < 0, True)
-
-
-def test_grid_search_fit():
-    from sklearn import grid_search
-
-    pass
 
 
 if __name__ == '__main__':
