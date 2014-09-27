@@ -4,9 +4,9 @@ from sklearn.utils.testing import assert_array_equal
 
 from numpy import diff
 
-from deep.autoencoder import TiedAE
-from deep.autoencoder import UntiedAE
-from deep.autoencoder import DenoisingAE
+from deep.autoencoder.classes import TiedAE
+from deep.autoencoder.classes import UntiedAE
+from deep.autoencoder.classes import DenoisingAE
 
 
 def test_fit():

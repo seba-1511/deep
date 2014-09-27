@@ -1,4 +1,4 @@
 Autoencoder
 ================================
 
-.. module:: autoencoder
+.. automodule:: autoencoder
