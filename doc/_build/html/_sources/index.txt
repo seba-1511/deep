@@ -5,4 +5,4 @@ Contents:
 
 .. toctree::
 
-   api
+   autoencoder
