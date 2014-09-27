@@ -1,4 +1,5 @@
-Deep .. image:: https://travis-ci.org/GabrielPereyra/deep.svg?branch=master
+Deep 
+.. image:: https://travis-ci.org/GabrielPereyra/deep.svg?branch=master
     :target: https://travis-ci.org/GabrielPereyra/deep
 ==================
 
@@ -16,17 +17,16 @@ Supported Architectures
 Init and Fit
 ------------
 
-Here is a simple "Hello, world" example web app for Tornado::
+Here is a simple example of fitting an autoencoder on MNIST::
 
-    import deep.autoencoder.class.TiedAE
-    import deep.datasets.base.load_mnist
+    from deep.autoencoder import TiedAE
+    from deep.datasets import MNIST
 
     X = load_mnist()[0][0]
     ae = TiedAE(100)
     ae.fit(X)
 
-
-This example initializes a tied wieght autoencoder with 100 hidden 
+This example initializes a tied weight autoencoder with 100 hidden 
 sigmoid units.
 
 Installation
@@ -36,5 +36,5 @@ Installation
 
     pip install deep
 
-Tornado is listed in `PyPI <http://pypi.python.org/pypi/tornado/>`_ and
+Deep is listed in `PyPI <http://pypi.python.org/pypi/tornado/>`_ and
 can be installed with ``pip`` or ``easy_install``.
