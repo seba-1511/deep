@@ -1,7 +1,7 @@
 Deep 
-.. image:: https://travis-ci.org/GabrielPereyra/deep.svg?branch=master
-    :target: https://travis-ci.org/GabrielPereyra/deep
 ==================
+.. image:: https://travis-ci.org/GabrielPereyra/deep.svg?branch=master :target: https://travis-ci.org/GabrielPereyra/deep
+.. image:: https://coveralls.io/repos/GabrielPereyra/deep/badge.png :target: https://coveralls.io/r/GabrielPereyra/deep
 
 `Deep <http://deep.readthedocs.org>`_ provides a scikit-learn interface to
 deep learning algorithms.
