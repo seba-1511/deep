@@ -20,7 +20,7 @@ Init and Fit
 Here is a simple example of fitting an autoencoder on MNIST::
 
     from deep.autoencoder import TiedAE
-    from deep.datasets import MNIST
+    from deep.datasets import load_mnist
 
     X = load_mnist()[0][0]
     ae = TiedAE(100)
@@ -36,5 +36,5 @@ Installation
 
     pip install deep
 
-Deep is listed in `PyPI <http://pypi.python.org/pypi/tornado/>`_ and
+Deep is listed in `PyPI <http://pypi.python.org/pypi/deep/>`_ and
 can be installed with ``pip`` or ``easy_install``.
