@@ -1,0 +1,1 @@
+Search.setIndex({envversion:42,terms:{content:0,index:[],modul:[],search:[],page:[]},objtypes:{},objnames:{},filenames:["index"],titles:["Welcome to deep&#8217;s documentation!"],objects:{},titleterms:{indic:[],document:0,welcom:0,deep:0,tabl:[]}})
