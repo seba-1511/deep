@@ -21,57 +21,6 @@ from sklearn.externals import six
 from sklearn.base import BaseEstimator, TransformerMixin
 
 
-def _salt_pepper(x, p=0.5, rng=None):
-        """
-        Corrupts a single tensor_like object.
-
-        Parameters
-        ----------
-        x : tensor_like
-            Theano symbolic representing a (mini)batch of inputs to be
-            corrupted, with the first dimension indexing training
-            examples and the second indexing data dimensions.
-
-        Returns
-        -------
-        corrupted : tensor_like
-            Theano symbolic representing the corresponding corrupted input.
-
-        """
-        if not rng:
-            rng = RandomStreams(0)
-        a = rng.binomial(size=x.shape, p=1-p, dtype='float32')
-        b = rng.binomial(size=x.shape, p=0.5, dtype='float32')
-        c = T.eq(a, 0) * b
-        return x * a + c
-
-
-def _gaussian(x, std=0.5, rng=None):
-        """
-        Corrupts a single tensor_like object.
-
-        Parameters
-        ----------
-        x : tensor_like
-            Theano symbolic representing a (mini)batch of inputs to be
-            corrupted, with the first dimension indexing training
-            examples and the second indexing data dimensions.
-
-        Returns
-        -------
-        corrupted : tensor_like
-            Theano symbolic representing the corresponding corrupted input.
-
-        """
-        if not rng:
-            rng = RandomStreams(0)
-        return x + rng.normal(size=x.shape, std=std, dtype=theano.config.floatX)
-
-
-_corruptions = {'salt_pepper': _salt_pepper, 'gaussian': _gaussian, }
-_activations = {'sigmoid': sigmoid, 'tanh': tanh}
-
-
 class BaseAE(six.with_metaclass(ABCMeta, BaseEstimator, TransformerMixin)):
     """Tied Weight Autoencoder (AE).
 
@@ -280,5 +229,52 @@ class BaseAE(six.with_metaclass(ABCMeta, BaseEstimator, TransformerMixin)):
         return T.mean(T.nnet.binary_crossentropy(decoded, X)).eval()
 
 
+def _salt_pepper(x, p=0.5, rng=None):
+        """
+        Corrupts a single tensor_like object.
+
+        Parameters
+        ----------
+        x : tensor_like
+            Theano symbolic representing a (mini)batch of inputs to be
+            corrupted, with the first dimension indexing training
+            examples and the second indexing data dimensions.
+
+        Returns
+        -------
+        corrupted : tensor_like
+            Theano symbolic representing the corresponding corrupted input.
+
+        """
+        if not rng:
+            rng = RandomStreams(0)
+        a = rng.binomial(size=x.shape, p=1-p, dtype='float32')
+        b = rng.binomial(size=x.shape, p=0.5, dtype='float32')
+        c = T.eq(a, 0) * b
+        return x * a + c
 
 
+def _gaussian(x, std=0.5, rng=None):
+        """
+        Corrupts a single tensor_like object.
+
+        Parameters
+        ----------
+        x : tensor_like
+            Theano symbolic representing a (mini)batch of inputs to be
+            corrupted, with the first dimension indexing training
+            examples and the second indexing data dimensions.
+
+        Returns
+        -------
+        corrupted : tensor_like
+            Theano symbolic representing the corresponding corrupted input.
+
+        """
+        if not rng:
+            rng = RandomStreams(0)
+        return x + rng.normal(size=x.shape, std=std, dtype=theano.config.floatX)
+
+
+_corruptions = {'salt_pepper': _salt_pepper, 'gaussian': _gaussian, }
+_activations = {'sigmoid': sigmoid, 'tanh': tanh}
