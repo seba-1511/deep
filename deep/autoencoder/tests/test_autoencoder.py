@@ -9,7 +9,7 @@ from deep.autoencoder import UntiedAE
 from deep.autoencoder import DenoisingAE
 
 
-def test_default_init_fit():
+def test_fit():
     """
     Test autoencoder fit methods.
     """

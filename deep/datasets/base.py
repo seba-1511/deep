@@ -27,5 +27,4 @@ def load_mnist():
     module_path = dirname(__file__)
 
     with gzip.open(join(module_path, 'data', 'mnist.pkl.gz')) as data_file:
-        data_file = cPickle.load(data_file)
-    return data_file
+        return cPickle.load(data_file)

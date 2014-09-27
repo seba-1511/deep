@@ -6,8 +6,8 @@
 # License: BSD 3 clause
 
 import time
-import numpy as np
 import theano.tensor as T
+import numpy as np
 
 from abc import ABCMeta, abstractmethod
 

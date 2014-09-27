@@ -2,17 +2,17 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="bca719b8-d8ca-4a75-ad96-b61a6b7efe32" name="Default" comment="">
-      <change type="DELETED" beforePath="$PROJECT_DIR$/deep/corruption/__init__.py" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/deep/corruption/base.py" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/deep/datasets/benchmark.py" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/deep/layer/__init__.py" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/deep/layer/base.py" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/deep/layer/classes.py" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/deep/layer/tests/test_layer.py" afterPath="" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/deep/corruption/tests/test_corruption.py" afterPath="$PROJECT_DIR$/deep/autoencoder/classes.py" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/deep/setup.py" afterPath="$PROJECT_DIR$/setup.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/deep/autoencoder/__init__.py" afterPath="$PROJECT_DIR$/deep/autoencoder/__init__.py" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/doc/api.rst" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/_build/doctrees/environment.pickle" afterPath="$PROJECT_DIR$/doc/_build/doctrees/environment.pickle" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/_build/doctrees/index.doctree" afterPath="$PROJECT_DIR$/doc/_build/doctrees/index.doctree" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/deep/autoencoder/README.rst" afterPath="$PROJECT_DIR$/deep/autoencoder/README.rst" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/deep/autoencoder/base.py" afterPath="$PROJECT_DIR$/deep/autoencoder/base.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/deep/datasets/base.py" afterPath="$PROJECT_DIR$/deep/datasets/base.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/_build/html/index.html" afterPath="$PROJECT_DIR$/doc/_build/html/index.html" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/index.rst" afterPath="$PROJECT_DIR$/doc/index.rst" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/_build/html/_sources/index.txt" afterPath="$PROJECT_DIR$/doc/_build/html/_sources/index.txt" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/_build/html/searchindex.js" afterPath="$PROJECT_DIR$/doc/_build/html/searchindex.js" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/setup.py" afterPath="$PROJECT_DIR$/setup.py" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/deep/autoencoder/tests/test_autoencoder.py" afterPath="$PROJECT_DIR$/deep/autoencoder/tests/test_autoencoder.py" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
     </list>
@@ -37,109 +37,40 @@
     <favorites_list name="deep" />
   </component>
   <component name="FileEditorManager">
-    <splitter split-orientation="horizontal" split-proportion="0.5">
-      <split-first>
-        <leaf>
-          <file leaf-file-name="classes.py" pinned="false" current-in-tab="true">
-            <entry file="file://$PROJECT_DIR$/deep/autoencoder/classes.py">
-              <provider selected="true" editor-type-id="text-editor">
-                <state vertical-scroll-proportion="0.71292776" vertical-offset="0" max-vertical-offset="570">
-                  <caret line="25" column="67" selection-start-line="25" selection-start-column="63" selection-end-line="25" selection-end-column="67" />
-                  <folding>
-                    <element signature="e#259#452#0" expanded="true" />
-                    <element signature="e#674#871#0" expanded="true" />
-                    <element signature="e#1104#1310#0" expanded="true" />
-                  </folding>
-                </state>
-              </provider>
-            </entry>
-          </file>
-        </leaf>
-      </split-first>
-      <split-second>
-        <leaf>
-          <file leaf-file-name="gmm.py" pinned="false" current-in-tab="false">
-            <entry file="file://$PROJECT_DIR$/../reference_repos/scikit-learn/sklearn/mixture/gmm.py">
-              <provider selected="true" editor-type-id="text-editor">
-                <state vertical-scroll-proportion="0.0" vertical-offset="195" max-vertical-offset="3870">
-                  <caret line="118" column="0" selection-start-line="118" selection-start-column="0" selection-end-line="118" selection-end-column="0" />
-                  <folding>
-                    <element signature="e#7997#8809#0" expanded="true" />
-                    <element signature="e#8846#9604#0" expanded="true" />
-                    <element signature="e#26289#26541#0" expanded="true" />
-                  </folding>
-                </state>
-              </provider>
-            </entry>
-          </file>
-          <file leaf-file-name="base.py" pinned="false" current-in-tab="false">
-            <entry file="file://$PROJECT_DIR$/../reference_repos/scikit-learn/sklearn/svm/base.py">
-              <provider selected="true" editor-type-id="text-editor">
-                <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="2475">
-                  <caret line="53" column="43" selection-start-line="53" selection-start-column="36" selection-end-line="53" selection-end-column="43" />
-                  <folding>
-                    <element signature="e#1893#2099#1" expanded="true" />
-                    <element signature="e#2557#3204#0" expanded="true" />
-                    <element signature="e#22140#24146#0" expanded="true" />
-                  </folding>
-                </state>
-              </provider>
-            </entry>
-          </file>
-          <file leaf-file-name="classes.py" pinned="false" current-in-tab="false">
-            <entry file="file://$PROJECT_DIR$/../reference_repos/scikit-learn/sklearn/svm/classes.py">
-              <provider selected="true" editor-type-id="text-editor">
-                <state vertical-scroll-proportion="0.0" vertical-offset="2980" max-vertical-offset="3540">
-                  <caret line="10" column="29" selection-start-line="10" selection-start-column="29" selection-end-line="10" selection-end-column="29" />
-                  <folding>
-                    <element signature="e#417#6082#1" expanded="true" />
-                    <element signature="e#6755#8125#0" expanded="true" />
-                    <element signature="e#13166#13366#0" expanded="true" />
-                    <element signature="e#17575#17759#0" expanded="true" />
-                  </folding>
-                </state>
-              </provider>
-            </entry>
-          </file>
-          <file leaf-file-name="base.py" pinned="false" current-in-tab="true">
-            <entry file="file://$PROJECT_DIR$/deep/autoencoder/base.py">
-              <provider selected="true" editor-type-id="text-editor">
-                <state vertical-scroll-proportion="0.14258555" vertical-offset="45" max-vertical-offset="2250">
-                  <caret line="8" column="0" selection-start-line="8" selection-start-column="0" selection-end-line="8" selection-end-column="0" />
-                  <folding>
-                    <element signature="e#535#1233#0" expanded="true" />
-                    <element signature="e#535#1000#1" expanded="false" />
-                    <element signature="e#1281#1882#0" expanded="true" />
-                    <element signature="e#1281#1746#1" expanded="false" />
-                    <element signature="e#3871#4608#0" expanded="true" />
-                    <element signature="e#4648#7368#0" expanded="true" />
-                    <element signature="e#4648#4995#1" expanded="false" />
-                    <element signature="e#7406#7841#1" expanded="false" />
-                    <element signature="e#7961#8397#1" expanded="false" />
-                    <element signature="e#8507#9114#0" expanded="true" />
-                    <element signature="e#8507#8883#1" expanded="false" />
-                    <marker date="1411743014000" expanded="false" signature="3016:3078" placeholder="import ..." />
-                  </folding>
-                </state>
-              </provider>
-            </entry>
-          </file>
-          <file leaf-file-name="test_autoencoder.py" pinned="false" current-in-tab="false">
-            <entry file="file://$PROJECT_DIR$/deep/autoencoder/tests/test_autoencoder.py">
-              <provider selected="true" editor-type-id="text-editor">
-                <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="495">
-                  <caret line="22" column="0" selection-start-line="22" selection-start-column="0" selection-end-line="22" selection-end-column="0" />
-                  <folding>
-                    <element signature="e#0#42#0" expanded="true" />
-                    <element signature="e#317#615#0" expanded="true" />
-                  </folding>
-                </state>
-              </provider>
-            </entry>
-          </file>
-        </leaf>
-      </split-second>
-    </splitter>
+    <leaf>
+      <file leaf-file-name="conf.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/doc/conf.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state vertical-scroll-proportion="0.0" vertical-offset="139" max-vertical-offset="3960">
+              <caret line="27" column="26" selection-start-line="27" selection-start-column="17" selection-end-line="27" selection-end-column="26" />
+              <folding>
+                <element signature="e#417#427#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="index.rst" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/doc/index.rst">
+          <provider selected="true" editor-type-id="text-editor">
+            <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="210">
+              <caret line="2" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="2" selection-end-column="0" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="api.rst" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/doc/api.rst">
+          <provider selected="true" editor-type-id="text-editor">
+            <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="824">
+              <caret line="0" column="21" selection-start-line="0" selection-start-column="21" selection-end-line="0" selection-end-column="21" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+    </leaf>
   </component>
   <component name="FindManager">
     <FindUsagesManager>
@@ -150,8 +81,9 @@
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
   <component name="ProjectFrameBounds">
+    <option name="x" value="720" />
     <option name="y" value="22" />
-    <option name="width" value="1440" />
+    <option name="width" value="720" />
     <option name="height" value="874" />
   </component>
   <component name="ProjectInspectionProfilesVisibleTreeState">
@@ -202,6 +134,7 @@
       <sortByType />
     </navigator>
     <panes>
+      <pane id="Scope" />
       <pane id="ProjectPane">
         <subPane>
           <PATH>
@@ -230,7 +163,7 @@
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
             <PATH_ELEMENT>
-              <option name="myItemId" value="deep" />
+              <option name="myItemId" value="doc" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
           </PATH>
@@ -245,38 +178,11 @@
             </PATH_ELEMENT>
             <PATH_ELEMENT>
               <option name="myItemId" value="deep" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="autoencoder" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="deep" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="deep" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="deep" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="autoencoder" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="tests" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
           </PATH>
         </subPane>
       </pane>
-      <pane id="Scope" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -295,6 +201,7 @@
   </component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/doc" />
       <recent name="$PROJECT_DIR$/deep/neural_network/tests" />
       <recent name="$PROJECT_DIR$/deep/autoencoder/tests" />
       <recent name="$PROJECT_DIR$/deep/autoencoder/datasets/data" />
@@ -307,64 +214,7 @@
       <recent name="$PROJECT_DIR$/deep" />
     </key>
   </component>
-  <component name="RunManager" selected="Python.test_autoencoder">
-    <configuration default="false" name="classes" type="PythonConfigurationType" factoryName="Python" temporary="true">
-      <option name="INTERPRETER_OPTIONS" value="" />
-      <option name="PARENT_ENVS" value="true" />
-      <envs>
-        <env name="PYTHONUNBUFFERED" value="1" />
-      </envs>
-      <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/deep/autoencoder" />
-      <option name="IS_MODULE_SDK" value="true" />
-      <option name="ADD_CONTENT_ROOTS" value="true" />
-      <option name="ADD_SOURCE_ROOTS" value="true" />
-      <module name="deep" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/deep/autoencoder/classes.py" />
-      <option name="PARAMETERS" value="" />
-      <option name="SHOW_COMMAND_LINE" value="false" />
-      <RunnerSettings RunnerId="PythonRunner" />
-      <ConfigurationWrapper RunnerId="PythonRunner" />
-      <method />
-    </configuration>
-    <configuration default="false" name="model" type="PythonConfigurationType" factoryName="Python" temporary="true">
-      <option name="INTERPRETER_OPTIONS" value="" />
-      <option name="PARENT_ENVS" value="true" />
-      <envs>
-        <env name="PYTHONUNBUFFERED" value="1" />
-      </envs>
-      <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/../lisa/GSN-master" />
-      <option name="IS_MODULE_SDK" value="false" />
-      <option name="ADD_CONTENT_ROOTS" value="true" />
-      <option name="ADD_SOURCE_ROOTS" value="true" />
-      <module name="deep" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/../lisa/GSN-master/model.py" />
-      <option name="PARAMETERS" value="" />
-      <option name="SHOW_COMMAND_LINE" value="false" />
-      <RunnerSettings RunnerId="PythonRunner" />
-      <ConfigurationWrapper RunnerId="PythonRunner" />
-      <method />
-    </configuration>
-    <configuration default="false" name="run_dae_no_walkback" type="PythonConfigurationType" factoryName="Python" temporary="true">
-      <option name="INTERPRETER_OPTIONS" value="" />
-      <option name="PARENT_ENVS" value="true" />
-      <envs>
-        <env name="PYTHONUNBUFFERED" value="1" />
-      </envs>
-      <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/../lisa/GSN-master" />
-      <option name="IS_MODULE_SDK" value="false" />
-      <option name="ADD_CONTENT_ROOTS" value="true" />
-      <option name="ADD_SOURCE_ROOTS" value="true" />
-      <module name="deep" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/../lisa/GSN-master/run_dae_no_walkback.py" />
-      <option name="PARAMETERS" value="" />
-      <option name="SHOW_COMMAND_LINE" value="false" />
-      <RunnerSettings RunnerId="PythonRunner" />
-      <ConfigurationWrapper RunnerId="PythonRunner" />
-      <method />
-    </configuration>
+  <component name="RunManager" selected="Python.autoencoder">
     <configuration default="false" name="base (1)" type="PythonConfigurationType" factoryName="Python" temporary="true">
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
@@ -397,6 +247,63 @@
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <module name="deep" />
       <option name="SCRIPT_NAME" value="$PROJECT_DIR$/deep/autoencoder/tests/test_autoencoder.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <RunnerSettings RunnerId="PythonRunner" />
+      <ConfigurationWrapper RunnerId="PythonRunner" />
+      <method />
+    </configuration>
+    <configuration default="false" name="read_ppm" type="PythonConfigurationType" factoryName="Python" temporary="true">
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$USER_HOME$/Downloads/GTSRB" />
+      <option name="IS_MODULE_SDK" value="false" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <module name="deep" />
+      <option name="SCRIPT_NAME" value="$USER_HOME$/Downloads/GTSRB/read_ppm.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <RunnerSettings RunnerId="PythonRunner" />
+      <ConfigurationWrapper RunnerId="PythonRunner" />
+      <method />
+    </configuration>
+    <configuration default="false" name="readTrafficSigns" type="PythonConfigurationType" factoryName="Python" temporary="true">
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$USER_HOME$/Downloads/GTSRB" />
+      <option name="IS_MODULE_SDK" value="false" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <module name="deep" />
+      <option name="SCRIPT_NAME" value="$USER_HOME$/Downloads/GTSRB/readTrafficSigns.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <RunnerSettings RunnerId="PythonRunner" />
+      <ConfigurationWrapper RunnerId="PythonRunner" />
+      <method />
+    </configuration>
+    <configuration default="false" name="autoencoder" type="PythonConfigurationType" factoryName="Python" temporary="true">
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/../lisa" />
+      <option name="IS_MODULE_SDK" value="false" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <module name="deep" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/../lisa/autoencoder.py" />
       <option name="PARAMETERS" value="" />
       <option name="SHOW_COMMAND_LINE" value="false" />
       <RunnerSettings RunnerId="PythonRunner" />
@@ -543,19 +450,19 @@
       <method />
     </configuration>
     <list size="5">
-      <item index="0" class="java.lang.String" itemvalue="Python.classes" />
-      <item index="1" class="java.lang.String" itemvalue="Python.model" />
-      <item index="2" class="java.lang.String" itemvalue="Python.run_dae_no_walkback" />
-      <item index="3" class="java.lang.String" itemvalue="Python.base (1)" />
-      <item index="4" class="java.lang.String" itemvalue="Python.test_autoencoder" />
+      <item index="0" class="java.lang.String" itemvalue="Python.base (1)" />
+      <item index="1" class="java.lang.String" itemvalue="Python.test_autoencoder" />
+      <item index="2" class="java.lang.String" itemvalue="Python.read_ppm" />
+      <item index="3" class="java.lang.String" itemvalue="Python.readTrafficSigns" />
+      <item index="4" class="java.lang.String" itemvalue="Python.autoencoder" />
     </list>
     <recent_temporary>
       <list size="5">
-        <item index="0" class="java.lang.String" itemvalue="Python.test_autoencoder" />
-        <item index="1" class="java.lang.String" itemvalue="Python.base (1)" />
-        <item index="2" class="java.lang.String" itemvalue="Python.run_dae_no_walkback" />
-        <item index="3" class="java.lang.String" itemvalue="Python.classes" />
-        <item index="4" class="java.lang.String" itemvalue="Python.model" />
+        <item index="0" class="java.lang.String" itemvalue="Python.autoencoder" />
+        <item index="1" class="java.lang.String" itemvalue="Python.test_autoencoder" />
+        <item index="2" class="java.lang.String" itemvalue="Python.readTrafficSigns" />
+        <item index="3" class="java.lang.String" itemvalue="Python.read_ppm" />
+        <item index="4" class="java.lang.String" itemvalue="Python.base (1)" />
       </list>
     </recent_temporary>
   </component>
@@ -573,22 +480,22 @@
     <servers />
   </component>
   <component name="ToolWindowManager">
-    <frame x="0" y="22" width="1440" height="874" extended-state="6" />
+    <frame x="720" y="22" width="720" height="874" extended-state="6" />
     <editor active="true" />
     <layout>
       <window_info id="Changes" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
-      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.3298122" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
-      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32945737" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
-      <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="0" side_tool="true" content_ui="tabs" />
-      <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="0" side_tool="true" content_ui="tabs" />
-      <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="0" side_tool="true" content_ui="tabs" />
       <window_info id="Application Servers" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.16666667" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.33333334" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32945737" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Python Console" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
-      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.34976527" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.34976527" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
+      <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="0" side_tool="true" content_ui="tabs" />
+      <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="0" side_tool="true" content_ui="tabs" />
+      <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
+      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.3298122" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
     </layout>
     <layout-to-restore>
       <window_info id="Changes" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
@@ -635,63 +542,6 @@
     <watches-manager />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/../lisa/GSN-master copy/run_dae_no_walkback.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="90" max-vertical-offset="180">
-          <caret line="40" column="10" selection-start-line="40" selection-start-column="10" selection-end-line="40" selection-end-column="10" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/../reference_repos/scikit-learn/sklearn/neighbors/unsupervised.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="0">
-          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/../reference_repos/scikit-learn/sklearn/__init__.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="0">
-          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/../reference_repos/scikit-learn/sklearn/base.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="0">
-          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/../reference_repos/scikit-learn/sklearn/linear_model/tests/test_logistic.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="0">
-          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/../reference_repos/scikit-learn/sklearn/linear_model/tests/test_ridge.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="0">
-          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/../reference_repos/scikit-learn/sklearn/decomposition/tests/test_pca.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="0">
-          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/../reference_repos/scikit-learn/sklearn/linear_model/tests/test_base.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="0">
-          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/deep/datasets/__init__.py">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="0">
@@ -762,27 +612,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/deep/autoencoder/README.rst">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="0">
-          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/../lisa/dae.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="568">
-          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/../lisa/nnae.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.6302817" vertical-offset="122" max-vertical-offset="945">
-          <caret line="71" column="8" selection-start-line="71" selection-start-column="8" selection-end-line="71" selection-end-column="8" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/../reference_repos/Theano/theano/compile/function_module.py">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="-0.7693662" vertical-offset="8672" max-vertical-offset="9660">
@@ -804,13 +633,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/../lisa/GSN-master/model.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.7320717" vertical-offset="0" max-vertical-offset="8550">
-          <caret line="86" column="30" selection-start-line="86" selection-start-column="30" selection-end-line="86" selection-end-column="30" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/../lisa/GSN-master/run_dae_no_walkback.py">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0149402395" vertical-offset="0" max-vertical-offset="1004">
@@ -822,7 +644,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="180">
           <caret line="40" column="10" selection-start-line="40" selection-start-column="10" selection-end-line="40" selection-end-column="10" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -830,22 +651,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="1.2101594" vertical-offset="255" max-vertical-offset="2445">
           <caret line="1609" column="24" selection-start-line="1609" selection-start-column="24" selection-end-line="1609" selection-end-column="24" />
-          <folding>
-            <element signature="e#1081#2296#1" expanded="false" />
-            <element signature="e#3923#9450#1" expanded="false" />
-            <element signature="e#10085#14560#1" expanded="false" />
-            <element signature="e#25695#26317#1" expanded="false" />
-            <element signature="e#29098#29386#1" expanded="false" />
-            <element signature="e#34643#35958#1" expanded="false" />
-            <element signature="e#39200#39706#1" expanded="false" />
-            <element signature="e#46085#50307#0" expanded="false" />
-            <element signature="e#50365#55928#0" expanded="false" />
-            <element signature="e#60319#62831#0" expanded="false" />
-            <element signature="e#60319#60921#1" expanded="false" />
-            <element signature="e#62881#66509#0" expanded="false" />
-            <element signature="e#66576#72010#0" expanded="false" />
-            <element signature="e#72072#76202#0" expanded="false" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -853,20 +658,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.16262136" vertical-offset="676" max-vertical-offset="1635">
           <caret line="167" column="74" selection-start-line="167" selection-start-column="74" selection-end-line="167" selection-end-column="74" />
-          <folding>
-            <element signature="e#6124#7919#0" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/../lisa/autoencoder.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.87257284" vertical-offset="1" max-vertical-offset="825">
-          <caret line="80" column="0" selection-start-line="66" selection-start-column="0" selection-end-line="80" selection-end-column="0" />
-          <folding>
-            <element signature="e#1466#1539#0" expanded="false" />
-            <element signature="e#1976#2655#0" expanded="false" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -874,10 +665,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.526699" vertical-offset="361" max-vertical-offset="2130">
           <caret line="100" column="56" selection-start-line="100" selection-start-column="56" selection-end-line="100" selection-end-column="56" />
-          <folding>
-            <element signature="e#3307#3311#0" expanded="false" />
-            <element signature="e#3509#5559#0" expanded="false" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -885,25 +672,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="1.1816514" vertical-offset="346" max-vertical-offset="1170">
           <caret line="455" column="29" selection-start-line="455" selection-start-column="0" selection-end-line="456" selection-end-column="0" />
-          <folding>
-            <element signature="e#719#1325#1" expanded="false" />
-            <element signature="e#2405#2540#1" expanded="false" />
-            <element signature="e#7057#7403#1" expanded="false" />
-            <element signature="e#7494#7883#1" expanded="false" />
-            <element signature="e#8242#8638#1" expanded="false" />
-            <element signature="e#10808#11135#1" expanded="false" />
-            <element signature="e#11585#11903#1" expanded="false" />
-            <element signature="e#12832#13297#1" expanded="false" />
-            <element signature="e#13608#14043#1" expanded="false" />
-            <element signature="e#14348#15167#0" expanded="false" />
-            <element signature="e#14348#14800#1" expanded="false" />
-            <element signature="e#15764#22687#0" expanded="false" />
-            <element signature="e#18925#19316#1" expanded="false" />
-            <element signature="e#19403#19820#1" expanded="false" />
-            <element signature="e#20744#21205#1" expanded="false" />
-            <element signature="e#21410#21794#1" expanded="false" />
-            <element signature="e#21947#22526#1" expanded="false" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -911,12 +679,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="1.9266055" vertical-offset="0" max-vertical-offset="1770">
           <caret line="153" column="16" selection-start-line="153" selection-start-column="4" selection-end-line="153" selection-end-column="16" />
-          <folding>
-            <element signature="e#4077#4093#0" expanded="false" />
-            <element signature="e#4139#4616#0" expanded="false" />
-            <element signature="e#4652#4982#0" expanded="false" />
-            <element signature="e#5091#5317#0" expanded="false" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -924,18 +686,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="5.53211" vertical-offset="0" max-vertical-offset="6495">
           <caret line="336" column="26" selection-start-line="336" selection-start-column="26" selection-end-line="336" selection-end-column="26" />
-          <folding>
-            <element signature="e#779#998#0" expanded="true" />
-            <element signature="e#1046#1162#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/setup.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="545">
-          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -943,17 +693,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="210">
           <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/deep/datasets/base.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.13761468" vertical-offset="0" max-vertical-offset="545">
-          <caret line="11" column="17" selection-start-line="11" selection-start-column="17" selection-end-line="11" selection-end-column="17" />
-          <folding>
-            <element signature="e#144#715#0" expanded="false" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -961,7 +700,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.5504587" vertical-offset="615" max-vertical-offset="1575">
           <caret line="268" column="0" selection-start-line="231" selection-start-column="0" selection-end-line="268" selection-end-column="0" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -969,7 +707,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="90">
           <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -977,21 +714,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.19266056" vertical-offset="0" max-vertical-offset="545">
           <caret line="7" column="8" selection-start-line="7" selection-start-column="8" selection-end-line="7" selection-end-column="8" />
-          <folding>
-            <element signature="e#0#43#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/../reference_repos/scikit-learn/sklearn/mixture/gmm.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="195" max-vertical-offset="3870">
-          <caret line="118" column="0" selection-start-line="118" selection-start-column="0" selection-end-line="118" selection-end-column="0" />
-          <folding>
-            <element signature="e#7997#8809#0" expanded="true" />
-            <element signature="e#8846#9604#0" expanded="true" />
-            <element signature="e#26289#26541#0" expanded="true" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -999,11 +721,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="-0.7155963" vertical-offset="1875" max-vertical-offset="2580">
           <caret line="248" column="31" selection-start-line="248" selection-start-column="31" selection-end-line="248" selection-end-column="31" />
-          <folding>
-            <element signature="e#707#3160#1" expanded="false" />
-            <element signature="e#8027#9152#0" expanded="false" />
-            <element signature="e#9194#10416#0" expanded="false" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -1011,35 +728,27 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="5.5596333" vertical-offset="0" max-vertical-offset="5700">
           <caret line="211" column="19" selection-start-line="211" selection-start-column="19" selection-end-line="211" selection-end-column="19" />
-          <folding>
-            <element signature="e#604#1659#0" expanded="true" />
-            <element signature="e#1720#7921#1" expanded="true" />
-            <element signature="e#8780#9188#0" expanded="true" />
-            <element signature="e#9223#14075#0" expanded="true" />
-          </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/deep/autoencoder/classes.py">
+    <entry file="file://$USER_HOME$/Downloads/Python code for GTSRB/readTrafficSigns.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.71292776" vertical-offset="0" max-vertical-offset="570">
-          <caret line="25" column="67" selection-start-line="25" selection-start-column="63" selection-end-line="25" selection-end-column="67" />
-          <folding>
-            <element signature="e#259#452#0" expanded="true" />
-            <element signature="e#674#871#0" expanded="true" />
-            <element signature="e#1104#1310#0" expanded="true" />
-          </folding>
+        <state vertical-scroll-proportion="0.28707224" vertical-offset="134" max-vertical-offset="660">
+          <caret line="20" column="31" selection-start-line="20" selection-start-column="31" selection-end-line="20" selection-end-column="31" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/deep/autoencoder/tests/test_autoencoder.py">
+    <entry file="file://$PROJECT_DIR$/../reference_repos/scikit-learn/setup.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="495">
-          <caret line="22" column="0" selection-start-line="22" selection-start-column="0" selection-end-line="22" selection-end-column="0" />
-          <folding>
-            <element signature="e#0#42#0" expanded="true" />
-            <element signature="e#317#615#0" expanded="true" />
-          </folding>
+        <state vertical-scroll-proportion="0.6254753" vertical-offset="1336" max-vertical-offset="2160">
+          <caret line="127" column="35" selection-start-line="127" selection-start-column="35" selection-end-line="127" selection-end-column="35" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/../reference_repos/scikit-learn/sklearn/mixture/gmm.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.5703422" vertical-offset="195" max-vertical-offset="3870">
+          <caret line="123" column="0" selection-start-line="123" selection-start-column="0" selection-end-line="123" selection-end-column="0" />
         </state>
       </provider>
     </entry>
@@ -1047,30 +756,98 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="2475">
           <caret line="53" column="43" selection-start-line="53" selection-start-column="36" selection-end-line="53" selection-end-column="43" />
-          <folding>
-            <element signature="e#1893#2099#1" expanded="true" />
-            <element signature="e#2557#3204#0" expanded="true" />
-            <element signature="e#22140#24146#0" expanded="true" />
-          </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/../reference_repos/scikit-learn/sklearn/svm/classes.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="2980" max-vertical-offset="3540">
+        <state vertical-scroll-proportion="-5.5513306" vertical-offset="2980" max-vertical-offset="3540">
           <caret line="10" column="29" selection-start-line="10" selection-start-column="29" selection-end-line="10" selection-end-column="29" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/setup.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.68441063" vertical-offset="0" max-vertical-offset="735">
+          <caret line="24" column="64" selection-start-line="24" selection-start-column="64" selection-end-line="24" selection-end-column="64" />
           <folding>
-            <element signature="e#417#6082#1" expanded="true" />
-            <element signature="e#6755#8125#0" expanded="true" />
-            <element signature="e#13166#13366#0" expanded="true" />
-            <element signature="e#17575#17759#0" expanded="true" />
+            <element signature="e#0#9#0" expanded="false" />
+            <element signature="e#63#129#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$USER_HOME$/Downloads/GTSRB/readTrafficSigns.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.6553398" vertical-offset="0" max-vertical-offset="824">
+          <caret line="36" column="0" selection-start-line="36" selection-start-column="0" selection-end-line="36" selection-end-column="0" />
+          <folding>
+            <element signature="e#333#364#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/../reference_repos/coveragepy/doc/conf.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="-3.0048544" vertical-offset="2476" max-vertical-offset="3300">
+          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/deep/autoencoder/README.rst">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="526">
+          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/deep/autoencoder/tests/test_autoencoder.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.62737644" vertical-offset="0" max-vertical-offset="526">
+          <caret line="22" column="0" selection-start-line="22" selection-start-column="0" selection-end-line="22" selection-end-column="0" />
+          <folding>
+            <element signature="e#0#42#0" expanded="true" />
+            <element signature="e#304#602#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/README.rst">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.02851711" vertical-offset="0" max-vertical-offset="526">
+          <caret line="1" column="51" selection-start-line="1" selection-start-column="51" selection-end-line="1" selection-end-column="51" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/deep/autoencoder/classes.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.82889736" vertical-offset="44" max-vertical-offset="570">
+          <caret line="32" column="0" selection-start-line="32" selection-start-column="0" selection-end-line="32" selection-end-column="0" />
+          <folding>
+            <element signature="e#259#452#0" expanded="false" />
+            <element signature="e#674#871#0" expanded="false" />
+            <element signature="e#1104#1310#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/deep/datasets/base.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.7984791" vertical-offset="0" max-vertical-offset="526">
+          <caret line="30" column="0" selection-start-line="30" selection-start-column="0" selection-end-line="30" selection-end-column="0" />
+          <folding>
+            <element signature="e#39#66#0" expanded="true" />
+            <element signature="e#144#689#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/deep/autoencoder/base.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.14258555" vertical-offset="45" max-vertical-offset="2250">
+        <state vertical-scroll-proportion="0.22813688" vertical-offset="0" max-vertical-offset="2250">
           <caret line="8" column="0" selection-start-line="8" selection-start-column="0" selection-end-line="8" selection-end-column="0" />
           <folding>
             <element signature="e#535#1233#0" expanded="true" />
@@ -1084,8 +861,109 @@
             <element signature="e#7961#8397#1" expanded="false" />
             <element signature="e#8507#9114#0" expanded="true" />
             <element signature="e#8507#8883#1" expanded="false" />
-            <marker date="1411743014000" expanded="false" signature="3016:3078" placeholder="import ..." />
+            <marker date="1411758799000" expanded="true" signature="-1:-1" placeholder="import ..." />
           </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/../reference_repos/Theano/doc/conf.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.3725728" vertical-offset="173" max-vertical-offset="2985">
+          <caret line="32" column="19" selection-start-line="32" selection-start-column="19" selection-end-line="32" selection-end-column="19" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/conf.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="1.0558252" vertical-offset="15" max-vertical-offset="3945">
+          <caret line="60" column="0" selection-start-line="60" selection-start-column="0" selection-end-line="60" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/../reference_repos/scikit-learn/sklearn/cluster/k_means_.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="1.6019417" vertical-offset="0" max-vertical-offset="1935">
+          <caret line="865" column="17" selection-start-line="865" selection-start-column="0" selection-end-line="866" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/../lisa/autoencoder.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.7815534" vertical-offset="2926" max-vertical-offset="3750">
+          <caret line="343" column="20" selection-start-line="343" selection-start-column="9" selection-end-line="343" selection-end-column="20" />
+          <folding>
+            <element signature="e#331#974#0" expanded="true" />
+            <element signature="e#331#796#1" expanded="false" />
+            <element signature="e#1022#1487#1" expanded="false" />
+            <element signature="e#1770#2162#1" expanded="false" />
+            <element signature="e#2550#3285#0" expanded="true" />
+            <element signature="e#3325#5787#0" expanded="true" />
+            <element signature="e#5831#6270#0" expanded="true" />
+            <element signature="e#7284#9926#0" expanded="true" />
+            <element signature="e#7284#7631#1" expanded="false" />
+            <element signature="e#10445#10872#0" expanded="true" />
+            <element signature="e#10901#11359#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/../lisa/GSN-master/model.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.12742719" vertical-offset="1905" max-vertical-offset="6855">
+          <caret line="181" column="37" selection-start-line="181" selection-start-column="37" selection-end-line="181" selection-end-column="37" />
+          <folding>
+            <element signature="e#575#785#0" expanded="true" />
+            <element signature="e#6767#7153#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/doc/conf.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="139" max-vertical-offset="3960">
+          <caret line="27" column="26" selection-start-line="27" selection-start-column="17" selection-end-line="27" selection-end-column="26" />
+          <folding>
+            <element signature="e#417#427#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/../reference_repos/nose/doc/conf.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="3435">
+          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/../reference_repos/nose/doc/docstring.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="824">
+          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding>
+            <element signature="e#0#26#0" expanded="true" />
+            <element signature="e#256#810#0" expanded="true" />
+            <element signature="e#833#898#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/doc/index.rst">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="210">
+          <caret line="2" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="2" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/doc/api.rst">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="824">
+          <caret line="0" column="21" selection-start-line="0" selection-start-column="21" selection-end-line="0" selection-end-column="21" />
+          <folding />
         </state>
       </provider>
     </entry>
