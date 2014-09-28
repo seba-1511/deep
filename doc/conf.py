@@ -15,11 +15,18 @@
 import sys
 import os
 
-import mock
+# Read the docs cannot compile c libraries so need to mock them
+# http://read-the-docs.readthedocs.org/en/latest/faq.html
+from mock import MagicMock
 
-MOCK_MODULES = ['numpy', 'scipy', 'matplotlib', 'matplotlib.pyplot', 'theano']
-for mod_name in MOCK_MODULES:
-    sys.modules[mod_name] = mock.Mock()
+class Mock(MagicMock):
+    @classmethod
+    def __getattr__(cls, name):
+            return Mock()
+
+MOCK_MODULES = ['numpy', 'sklearn', 'scipy', 'matplotlib', 'theano']
+sys.modules.update((mod_name, Mock()) for mod_name in MOCK_MODULES)
+
 
 # If extensions (or modules to document with autodoc) are in another directory,
 # add these directories to sys.path here. If the directory is relative to the

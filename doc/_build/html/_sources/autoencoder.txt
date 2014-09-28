@@ -1,5 +1,5 @@
 Autoencoder
 ================================
 
-.. automodule:: autoencoder.classes
+.. automodule:: autoencoder
    :members:
