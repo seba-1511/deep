@@ -1,5 +1,6 @@
 Autoencoder
 ================================
 
-.. automodule:: autoencoder
-   :members:
+.. toctree::
+
+    
