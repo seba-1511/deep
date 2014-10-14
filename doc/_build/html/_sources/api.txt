@@ -1,4 +1,0 @@
-Welcome to deep's API!
-================================
-
-.. automodule:: datasets

@@ -1,5 +1,0 @@
-Autoencoder
-================================
-
-.. automodule:: autoencoder
-   :members:
