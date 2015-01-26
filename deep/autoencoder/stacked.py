@@ -22,7 +22,7 @@ class StackedAE(object):
 
     def transform(self, X):
         for autoencoder in self.layers:
-            X = autoencoder.transform(X)
+            X = autoencoder.trans(X)
         return X
 
     def inverse_transform(self, X):

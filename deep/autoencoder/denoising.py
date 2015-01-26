@@ -1,4 +1,4 @@
-from deep.autoencoder.tied import TiedAE
+from deep.autoencoder.base import TiedAE
 from deep.layers.denoising import DenoisingLayer
 from deep.corruptions.base import SaltAndPepper
 

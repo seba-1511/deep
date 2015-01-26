@@ -34,7 +34,7 @@ class MultilayerAE(object):
         i = T.lscalar()
         x = T.fmatrix()
 
-        encode = lambda input, layer: layer.transform(input)
+        encode = lambda input, layer: layer.__call__(input)
         decode = lambda input, layer: layer.inverse_transform(input)
         transform = reduce(encode, self.layers, x)
         inverse_transform = reduce(decode, self.layers[::-1], x)
