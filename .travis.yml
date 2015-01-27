@@ -1,0 +1,12 @@
+language: python
+python:
+  - "2.7"
+virtualenv:
+  system_site_packages: true
+install: 
+  - sudo apt-get install -qq python-numpy python-scipy
+  - pip install scikit-learn
+  - pip install theano
+
+script:
+  - python -m unittest discover
