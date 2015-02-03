@@ -1,41 +1,79 @@
+# -*- coding: utf-8 -*-
 """
-Stacked Autoencoder
+    deep.autoencoder.stacked
+    ------------------------
+
+    Implements a stacked autoencoder.
+
+    :references: pylearn2 (mlp module)
+
+    :copyright: (c) 2014 by Gabriel Pereyra.
+    :license: BSD, see LICENSE for more details.
 """
 
-# Author: Gabriel Pereyra <gbrl.pereyra@gmail.com>
-#
-# License: BSD 3 clause
+from sklearn.base import TransformerMixin
+from deep.base import LayeredModel
 
-from deep.layers.base import SigmoidLayer
-from deep.hyperparams import layer_sizes
+from deep.autoencoder.base import TiedAE
+from deep.fit.base import Fit
+from deep.costs.base import BinaryCrossEntropy
+from deep.utils.base import theano_compatible
+from deep.updates.base import GradientDescent
+from deep.activations.base import Sigmoid
 
 
-class StackedAE(object):
+class StackedAE(LayeredModel, TransformerMixin):
 
-    def __init__(self, layer_sizes=layer_sizes):
-        self.layer_sizes = layer_sizes
+    def __init__(self, layers=(100, 100), activation=Sigmoid(),
+                 learning_rate=1, n_iter=10, batch_size=100,
+                 _cost=BinaryCrossEntropy(), update=GradientDescent(),
+                 _fit=Fit()):
+
+        self.layer_sizes = list(layers)
         self.layers = []
+
+        self.n_iter = n_iter
+        self.batch_size = batch_size
+        self.learning_rate = learning_rate
+
+        self._fit = _fit
+        self._cost = _cost
+        self.update= update
+        self.activation = activation
+
+        self._fit_function = None
+        self.data = None
 
     @property
     def params(self):
         return [param for layer in self.layers for param in layer.params]
 
+    @theano_compatible
     def transform(self, X):
-        for autoencoder in self.layers:
-            X = autoencoder.trans(X)
+        for autoencoder in self:
+            X = autoencoder.transform(X)
         return X
 
+    @theano_compatible
     def inverse_transform(self, X):
-        for autoencoder in self.layers[::-1]:
+        for autoencoder in self[::-1]:
             X = autoencoder.inverse_transfom
         return X
 
     def fit(self, X):
-        n_features = X.shape[1]
-
-        for shape in zip([n_features] + self.layer_sizes, self.layer_sizes):
-            self.layers.append(SigmoidLayer(shape))
-
-        for autoencoder in self.layers:
-            X = autoencoder.fit_transform(X)
+        for size in self.layer_sizes:
+            self.layers.append(TiedAE(self.activation, self.learning_rate, size,
+                                      self.n_iter, self.batch_size, self._fit, self._cost,
+                                      self.update))
+        for autoencoder in self:
+            X = autoencoder.fit(X).transform(X)
         return self
+
+
+if __name__ == '__main__':
+    from deep.datasets import load_mnist
+    X = load_mnist()[0][0]
+
+    stacked_ae = StackedAE().fit(X)
+
+    print stacked_ae.transform(X).shape
