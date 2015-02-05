@@ -39,13 +39,15 @@ class TiedDenoisingAE(TiedAE, DenoisingLayer):
 
     #: can we push this down into the denoising layer? (mro is currently wrong)
     @theano_compatible
-    def transform(self, X, noisy=True):
-        if noisy:
-            X = self.corrupt(X)
-        return self.activation(T.dot(X, self.W) + self.b)
+    def score(self, X):
+        return self._cost(self.denoise(X), X)
 
     @theano_compatible
-    def reconstruct(self, X, noisy=True):
+    def denoise(self, X):
+        return self.reconstruct(self.corrupt(X))
+
+    @theano_compatible
+    def reconstruct(self, X):
         return self.inverse_transform(self.transform(X))
 
 
@@ -59,7 +61,11 @@ class StackedDenoisingAE(StackedAE):
         super(StackedDenoisingAE, self).__init__(layers, activation,
                                                  learning_rate, n_iter, batch_size,
                                                  _cost, update, _fit)
-        self.corruption = corruption
+        self.corrupt = corruption
+
+    @theano_compatible
+    def denoise(self, X):
+        return self.reconstruct(self.corrupt(X))
 
     def fit(self, X):
         for size in self.layer_sizes:
@@ -81,7 +87,11 @@ class MultilayerDenoisingAE(MultilayerAE):
         super(MultilayerDenoisingAE, self).__init__(layers, activation,
                                                  learning_rate, n_iter, batch_size,
                                                  _cost, update, _fit)
-        self.corruption = corruption
+        self.corrupt = corruption
+
+    @theano_compatible
+    def denoise(self, X):
+        return self.reconstruct(self.corrupt(X))
 
     def fit(self, X):
         if not self.data:
@@ -90,7 +100,7 @@ class MultilayerDenoisingAE(MultilayerAE):
             #: fit with zero iters just to init layer shapes (sketch)
             self.layers.append(TiedDenoisingAE(self.activation, self.learning_rate, size,
                                       0, self.batch_size, self._fit, self._cost,
-                                      self.update, self.corruption))
+                                      self.update, self.corrupt))
         #: transform X through ae's to set each layer size (even sketchier)
         for autoencoder in self:
             X = autoencoder.fit(X).transform(X)
