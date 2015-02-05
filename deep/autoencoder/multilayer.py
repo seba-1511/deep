@@ -29,7 +29,7 @@ from deep.activations.base import Sigmoid
 
 class MultilayerAE(LayeredModel, TransformerMixin):
 
-    def __init__(self, layers=(1000, 1000, 2), activation=Sigmoid(),
+    def __init__(self, layers=(100, 100), activation=Sigmoid(),
                  learning_rate=10, n_iter=10, batch_size=100,
                  _cost=BinaryCrossEntropy(), update=GradientDescent(),
                  _fit=Fit()):
@@ -91,7 +91,6 @@ class MultilayerAE(LayeredModel, TransformerMixin):
                                           givens=self.givens)
         return self._fit_function
 
-
     @theano_compatible
     def score(self, X, y):
         return self._cost(self.reconstruct(X), X)
@@ -109,11 +108,3 @@ class MultilayerAE(LayeredModel, TransformerMixin):
             X = autoencoder.fit(X).transform(X)
 
         return self._fit(self)
-
-if __name__ == '__main__':
-    from deep.datasets import load_mnist
-    X = load_mnist()[0][0]
-
-    ae = MultilayerAE().fit(X)
-
-    print ae.transform(X).shape

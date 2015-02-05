@@ -13,6 +13,7 @@
 
 import theano.tensor as T
 
+from deep.autoencoder.multilayer import MultilayerAE
 from deep.autoencoder.stacked import StackedAE
 from deep.autoencoder.base import TiedAE
 from deep.layers import DenoisingLayer
@@ -22,6 +23,7 @@ from deep.activations.base import Sigmoid
 from deep.fit.base import Fit
 from deep.costs.base import BinaryCrossEntropy
 from deep.updates.base import GradientDescent
+from deep.datasets.base import Data
 
 
 class TiedDenoisingAE(TiedAE, DenoisingLayer):
@@ -67,3 +69,30 @@ class StackedDenoisingAE(StackedAE):
         for autoencoder in self:
             X = autoencoder.fit(X).transform(X)
         return self
+
+
+class MultilayerDenoisingAE(MultilayerAE):
+
+    def __init__(self, layers=(100, 100), activation=Sigmoid(),
+                 learning_rate=10, n_iter=10, batch_size=100,
+                 _cost=BinaryCrossEntropy(), update=GradientDescent(),
+                 _fit=Fit(), corruption=SaltAndPepper()):
+
+        super(MultilayerDenoisingAE, self).__init__(layers, activation,
+                                                 learning_rate, n_iter, batch_size,
+                                                 _cost, update, _fit)
+        self.corruption = corruption
+
+    def fit(self, X):
+        if not self.data:
+            self.data = Data(X)
+        for size in self.layer_sizes:
+            #: fit with zero iters just to init layer shapes (sketch)
+            self.layers.append(TiedDenoisingAE(self.activation, self.learning_rate, size,
+                                      0, self.batch_size, self._fit, self._cost,
+                                      self.update, self.corruption))
+        #: transform X through ae's to set each layer size (even sketchier)
+        for autoencoder in self:
+            X = autoencoder.fit(X).transform(X)
+
+        return self._fit(self)
