@@ -29,8 +29,8 @@ from deep.activations.base import Sigmoid
 
 class MultilayerAE(LayeredModel, TransformerMixin):
 
-    def __init__(self, layers=(100,), activation=Sigmoid(),
-                 learning_rate=1, n_iter=10, batch_size=100,
+    def __init__(self, layers=(1000, 1000, 2), activation=Sigmoid(),
+                 learning_rate=10, n_iter=10, batch_size=100,
                  _cost=BinaryCrossEntropy(), update=GradientDescent(),
                  _fit=Fit()):
 
@@ -43,7 +43,7 @@ class MultilayerAE(LayeredModel, TransformerMixin):
 
         self._fit = _fit
         self._cost = _cost
-        self.update= update
+        self.update = update
         self.activation = activation
 
         self.x = T.dmatrix()
@@ -70,7 +70,7 @@ class MultilayerAE(LayeredModel, TransformerMixin):
     @theano_compatible
     def inverse_transform(self, X):
         for autoencoder in self[::-1]:
-            X = autoencoder.inverse_transform
+            X = autoencoder.inverse_transform(X)
         return X
 
     @theano_compatible
@@ -79,14 +79,14 @@ class MultilayerAE(LayeredModel, TransformerMixin):
 
     @theano_compatible
     def cost(self, X, y):
-        return self._cost(self.reconstruct(X), X)
+        return self._cost(self.reconstruct(X), y)
 
     @property
     def fit_function(self):
         """The compiled Theano function used to train the network."""
         if not self._fit_function:
             self._fit_function = function(inputs=[self.i],
-                                          outputs=self._cost(self.x, self.x),
+                                          outputs=self._cost(self.reconstruct(self.x), self.x),
                                           updates=self.updates,
                                           givens=self.givens)
         return self._fit_function
@@ -104,6 +104,7 @@ class MultilayerAE(LayeredModel, TransformerMixin):
             self.layers.append(TiedAE(self.activation, self.learning_rate, size,
                                       0, self.batch_size, self._fit, self._cost,
                                       self.update))
+        #: transform X through ae's to set each layer size (even sketchier)
         for autoencoder in self:
             X = autoencoder.fit(X).transform(X)
 
@@ -113,6 +114,6 @@ if __name__ == '__main__':
     from deep.datasets import load_mnist
     X = load_mnist()[0][0]
 
-    stacked_ae = MultilayerAE().fit(X)
+    ae = MultilayerAE().fit(X)
 
-    print stacked_ae.transform(X).shape
+    print ae.transform(X).shape
