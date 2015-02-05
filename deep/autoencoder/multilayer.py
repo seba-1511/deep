@@ -13,7 +13,7 @@
 
 import numpy as np
 import theano.tensor as T
-from theano import shared, function
+from theano import shared, function, config
 
 from sklearn.base import TransformerMixin
 from deep.base import LayeredModel
@@ -46,7 +46,7 @@ class MultilayerAE(LayeredModel, TransformerMixin):
         self.update = update
         self.activation = activation
 
-        self.x = T.dmatrix()
+        self.x = T.matrix()
         self.y = self.x
         self.i = T.lscalar()
 
@@ -56,7 +56,7 @@ class MultilayerAE(LayeredModel, TransformerMixin):
     @property
     def givens(self):
         """A dictionary mapping Theano var to data."""
-        X = shared(np.asarray(self.data.X, dtype='float64'))
+        X = shared(np.asarray(self.data.X, dtype=config.floatX))
         batch_start = self.i * self.batch_size
         batch_end = (self.i+1) * self.batch_size
         return {self.x: X[batch_start:batch_end]}
@@ -86,7 +86,7 @@ class MultilayerAE(LayeredModel, TransformerMixin):
         """The compiled Theano function used to train the network."""
         if not self._fit_function:
             self._fit_function = function(inputs=[self.i],
-                                          outputs=self._cost(self.reconstruct(self.x), self.x),
+                                          outputs=self.cost(self.x, self.y),
                                           updates=self.updates,
                                           givens=self.givens)
         return self._fit_function

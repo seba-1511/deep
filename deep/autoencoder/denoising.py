@@ -91,7 +91,13 @@ class MultilayerDenoisingAE(MultilayerAE):
 
     @theano_compatible
     def denoise(self, X):
-        return self.reconstruct(self.corrupt(X))
+        for autoencoder in self:
+            X = autoencoder.transform(autoencoder.corrupt(X))
+        return self.inverse_transform(X)
+
+    @theano_compatible
+    def cost(self, X, y):
+        return self._cost(self.denoise(X), y)
 
     def fit(self, X):
         if not self.data:
