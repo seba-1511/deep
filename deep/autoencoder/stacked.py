@@ -15,13 +15,11 @@ from sklearn.base import TransformerMixin
 from deep.base import LayeredModel
 
 from deep.autoencoder.base import TiedAE
-from deep.autoencoder.denoising import TiedDenoisingAE
 from deep.fit.base import Fit
 from deep.costs.base import BinaryCrossEntropy
 from deep.utils.base import theano_compatible
 from deep.updates.base import GradientDescent
 from deep.activations.base import Sigmoid
-from deep.corruptions.base import SaltAndPepper
 
 
 class StackedAE(LayeredModel, TransformerMixin):
@@ -29,7 +27,7 @@ class StackedAE(LayeredModel, TransformerMixin):
     def __init__(self, layers=(100, 100), activation=Sigmoid(),
                  learning_rate=1, n_iter=10, batch_size=100,
                  _cost=BinaryCrossEntropy(), update=GradientDescent(),
-                 _fit=Fit(), corruption=SaltAndPepper()):
+                 _fit=Fit()):
 
         self.layer_sizes = list(layers)
         self.layers = []
@@ -42,7 +40,6 @@ class StackedAE(LayeredModel, TransformerMixin):
         self._cost = _cost
         self.update= update
         self.activation = activation
-        self.corruption = corruption
 
         self._fit_function = None
         self.data = None
@@ -65,23 +62,9 @@ class StackedAE(LayeredModel, TransformerMixin):
 
     def fit(self, X):
         for size in self.layer_sizes:
-            if self.corruption is not None:
-                self.layers.append(TiedDenoisingAE(self.activation, self.learning_rate, size,
-                                          self.n_iter, self.batch_size, self._fit, self._cost,
-                                          self.update))
-            else:
-                self.layers.append(TiedAE(self.activation, self.learning_rate, size,
-                                          self.n_iter, self.batch_size, self._fit, self._cost,
-                                          self.update))
+            self.layers.append(TiedAE(self.activation, self.learning_rate, size,
+                                      self.n_iter, self.batch_size, self._fit, self._cost,
+                                      self.update))
         for autoencoder in self:
             X = autoencoder.fit(X).transform(X)
         return self
-
-
-if __name__ == '__main__':
-    from deep.datasets import load_mnist
-    X = load_mnist()[0][0]
-
-    stacked_ae = StackedAE(layers=[2000], ).fit(X)
-
-    print stacked_ae.transform(X).shape
