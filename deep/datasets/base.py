@@ -134,10 +134,5 @@ def load_plankton():
     =================   ==============
 
     """
-    module_path = dirname(__file__)
-    with gzip.open(join(module_path, 'plankton', 'plankton.pkl.gz')) as data_file:
+    with gzip.open('/home/gabrielpereyra/Desktop/plankton.pkl.gz') as data_file:
         return cPickle.load(data_file)
-
-
-X, y = load_plankton()
-print X.shape, y.shape
