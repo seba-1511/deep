@@ -14,7 +14,7 @@
 import numpy as np
 import theano.tensor as T
 
-from theano import shared
+from theano import shared, config
 from theano.tensor.nnet import conv2d
 
 from deep.activations.base import Sigmoid
@@ -34,8 +34,8 @@ class Layer(object):
         np.random.seed(1)
         val = np.sqrt(24. / sum(size))
         self.activation = activation
-        self.b = shared(np.zeros(size[1]))
-        self.W = shared(np.random.uniform(low=-val, high=val, size=size))
+        self.b = shared(np.zeros(size[1], dtype=config.floatX))
+        self.W = shared(np.asarray(np.random.uniform(low=-val, high=val, size=size), dtype=config.floatX))
 
     @property
     def params(self):

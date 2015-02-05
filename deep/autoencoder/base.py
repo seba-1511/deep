@@ -1,20 +1,24 @@
+# -*- coding: utf-8 -*-
 """
-Tied Autoencoder
-"""
+    deep.autoencoder.base
+    ---------------------
 
-# Author: Gabriel Pereyra <gbrl.pereyra@gmail.com>
-#
-# License: BSD 3 clause
+    Implements a tied autoencoder.
+
+    :references: deep learning tutorial
+
+    :copyright: (c) 2014 by Gabriel Pereyra.
+    :license: BSD, see LICENSE for more details.
+"""
 
 import numpy as np
 import theano.tensor as T
 
 from sklearn.base import BaseEstimator, ClassifierMixin
 
-from theano import function
-from theano import shared
-from theano.tensor import TensorVariable
+from theano import function, config, shared
 
+from deep.utils.base import theano_compatible
 from deep.layers.base import Layer
 from deep.activations.base import Sigmoid
 from deep.fit.base import Fit
@@ -22,37 +26,6 @@ from deep.datasets.base import Data
 from deep.costs.base import BinaryCrossEntropy
 from deep.updates.base import GradientDescent
 
-
-def handle_dims(predict):
-    """  """
-    def wrapper(self, X):
-        if X.ndim == 1:
-            return predict(self, X.reshape(1, -1))[0]
-        elif X.ndim == 2:
-            return predict(self, X)
-        else:
-            raise ValueError
-    return wrapper
-
-
-
-def theano_compatible(func):
-
-    def wrapper(self, X):
-        if isinstance(X, TensorVariable):
-            return func(self, X)
-        else:
-            x = T.dmatrix()
-
-            if X.ndim == 1:
-                X = X.reshape(1, -1)
-                return func(self, x).eval({x: X})[0]
-            elif X.ndim == 2:
-                return func(self, x).eval({x: X})
-            else:
-                raise ValueError
-
-    return wrapper
 
 class TiedAE(Layer, BaseEstimator, ClassifierMixin):
     """ """
@@ -73,8 +46,8 @@ class TiedAE(Layer, BaseEstimator, ClassifierMixin):
         self.update = update
 
         #: symbolic vars
-        self.x = T.dmatrix()
-        self.i = T.lscalar()
+        self.x = T.matrix()
+        self.i = T.iscalar()
 
         #: place holders
         self.data = None
@@ -101,7 +74,8 @@ class TiedAE(Layer, BaseEstimator, ClassifierMixin):
 
         #: is there a way to move this to a multilayermodel class?
 
-        X = shared(np.asarray(self.data.X, dtype='float64'))
+        X = shared(np.asarray(self.data.X, dtype=config.floatX))
+
         batch_start = self.i * self.batch_size
         batch_end = (self.i+1) * self.batch_size
         return {self.x: X[batch_start:batch_end]}
@@ -137,13 +111,6 @@ class TiedAE(Layer, BaseEstimator, ClassifierMixin):
 
         size = self.data.features, self.n_hidden
         super(TiedAE, self).__init__(size, self.activation)
-        self.b_decode = shared(np.zeros(self.data.features))
+        self.b_decode = shared(np.zeros(self.data.features, dtype=config.floatX))
 
         return self._fit(self)
-
-
-if __name__ == '__main__':
-    from deep.datasets.base import load_mnist
-    X = load_mnist()[0][0]
-    ae = TiedAE(n_iter=1).fit(X)
-    print ae.reconstruct(np.random.random((10, 784))).shape
