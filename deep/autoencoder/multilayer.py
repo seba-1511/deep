@@ -1,63 +1,119 @@
+# -*- coding: utf-8 -*-
 """
-Multilayer Autoencoder
-"""
+    deep.autoencoder.multilayer
+    ---------------------------
 
-# Author: Gabriel Pereyra <gbrl.pereyra@gmail.com>
-#
-# License: BSD 3 clause
+    Implements a multilayer autoencoder.
+
+    :references: pylearn2 (mlp module)
+
+    :copyright: (c) 2014 by Gabriel Pereyra.
+    :license: BSD, see LICENSE for more details.
+"""
 
 import numpy as np
 import theano.tensor as T
+from theano import shared, function
 
-from theano import function
-from theano import shared
+from sklearn.base import TransformerMixin
+from deep.base import LayeredModel
 
-from deep.layers.base import SigmoidLayer
-from deep.fit.base import simple_batch_gradient_descent
-from deep.hyperparams import layer_sizes, batch_size, learning_rate
+from deep.autoencoder.base import TiedAE
+from deep.fit.base import Fit
+from deep.costs.base import BinaryCrossEntropy
+from deep.utils.base import theano_compatible
+from deep.updates.base import GradientDescent
+from deep.datasets.base import Data
+from deep.activations.base import Sigmoid
 
 
-class MultilayerAE(object):
-    """ deep autoencoder_old without greedy layer training? """
-    def __init__(self, layer_sizes=layer_sizes, batch_size=batch_size,
-                 learning_rate=learning_rate):
-        self.layer_sizes = layer_sizes
+class MultilayerAE(LayeredModel, TransformerMixin):
+
+    def __init__(self, layers=(1000, 1000, 2), activation=Sigmoid(),
+                 learning_rate=10, n_iter=10, batch_size=100,
+                 _cost=BinaryCrossEntropy(), update=GradientDescent(),
+                 _fit=Fit()):
+
+        self.layer_sizes = list(layers)
         self.layers = []
+
+        self.n_iter = n_iter
         self.batch_size = batch_size
         self.learning_rate = learning_rate
 
+        self._fit = _fit
+        self._cost = _cost
+        self.update = update
+        self.activation = activation
+
+        self.x = T.dmatrix()
+        self.y = self.x
+        self.i = T.lscalar()
+
+        self._fit_function = None
+        self.data = None
+
     @property
-    def params(self):
-        return [param for layer in self.layers for param in layer.params]
+    def givens(self):
+        """A dictionary mapping Theano var to data."""
+        X = shared(np.asarray(self.data.X, dtype='float64'))
+        batch_start = self.i * self.batch_size
+        batch_end = (self.i+1) * self.batch_size
+        return {self.x: X[batch_start:batch_end]}
 
-    def _fit(self, X):
-        i = T.lscalar()
-        x = T.fmatrix()
+    @theano_compatible
+    def transform(self, X):
+        for autoencoder in self:
+            X = autoencoder.transform(X)
+        return X
 
-        encode = lambda input, layer: layer.__call__(input)
-        decode = lambda input, layer: layer.inverse_transform(input)
-        transform = reduce(encode, self.layers, x)
-        inverse_transform = reduce(decode, self.layers[::-1], x)
-        reconstruct = reduce(decode, self.layers[::-1], transform)
+    @theano_compatible
+    def inverse_transform(self, X):
+        for autoencoder in self[::-1]:
+            X = autoencoder.inverse_transform(X)
+        return X
 
-        cost = T.mean(T.nnet.binary_crossentropy(reconstruct, x))
-        updates = [(param, param - self.learning_rate * T.grad(cost, param))
-                   for param in self.params]
+    @theano_compatible
+    def reconstruct(self, X):
+        return self.inverse_transform(self.transform(X))
 
-        X = shared(np.asarray(X))
-        givens = {x: X[i * batch_size: (i + 1) * batch_size]}
+    @theano_compatible
+    def cost(self, X, y):
+        return self._cost(self.reconstruct(X), y)
 
-        self.transform = function([x], transform)
-        self.inverse_transform = function([x], inverse_transform)
-        self._fit = function([i], cost, None, updates, givens)
+    @property
+    def fit_function(self):
+        """The compiled Theano function used to train the network."""
+        if not self._fit_function:
+            self._fit_function = function(inputs=[self.i],
+                                          outputs=self._cost(self.reconstruct(self.x), self.x),
+                                          updates=self.updates,
+                                          givens=self.givens)
+        return self._fit_function
+
+
+    @theano_compatible
+    def score(self, X, y):
+        return self._cost(self.reconstruct(X), X)
 
     def fit(self, X):
-        n_samples, n_features = X.shape
-        n_batches = n_samples / self.batch_size
+        if not self.data:
+            self.data = Data(X)
+        for size in self.layer_sizes:
+            #: fit with zero iters just to init layer shapes (sketch)
+            self.layers.append(TiedAE(self.activation, self.learning_rate, size,
+                                      0, self.batch_size, self._fit, self._cost,
+                                      self.update))
+        #: transform X through ae's to set each layer size (even sketchier)
+        for autoencoder in self:
+            X = autoencoder.fit(X).transform(X)
 
-        for shape in zip([n_features] + self.layer_sizes, self.layer_sizes):
-            self.layers.append(SigmoidLayer(shape))
+        return self._fit(self)
 
-        self._fit(X)
+if __name__ == '__main__':
+    from deep.datasets import load_mnist
+    X = load_mnist()[0][0]
 
-        return simple_batch_gradient_descent(self, n_batches)
+    ae = MultilayerAE().fit(X)
+
+    print ae.transform(X).shape
