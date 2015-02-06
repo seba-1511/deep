@@ -70,6 +70,8 @@ class FeedForwardNN(LayeredModel, ClassifierMixin):
                  _cost=NegativeLogLikelihood(), update=GradientDescent(),
                  _fit=Fit(), _score=PredictionError()):
 
+        #: fix this
+
         #: if layers arg is a list of Layer classes, use as self.layers
         are_layer_classes = [isinstance(layer, Layer) for layer in layers]
         if all(are_layer_classes):
@@ -143,11 +145,21 @@ class FeedForwardNN(LayeredModel, ClassifierMixin):
             self.data = Data(X, y)
             self._fit_function = None
         if not self.layers:
-            input_sizes = [self.data.features] + self.layer_sizes
-            output_sizes = self.layer_sizes + [self.data.classes]
-            layer_shapes = zip(input_sizes, output_sizes)
-            for activation, shape in zip(self.activations, layer_shapes):
-                self.layers.append(Layer(shape, activation))
+            #: merge this with conv init
+
+            dummy_batch = np.zeros((self.batch_size, self.data.features))
+
+            #: init layers
+            for layer_size in self.layer_sizes:
+                size = (dummy_batch.shape[1], layer_size)
+                layer = Layer(size, self.activation)
+                self.layers.append(layer)
+                dummy_batch = layer(dummy_batch)
+
+            #: init softmax layer
+            size = (dummy_batch.shape[1], self.data.classes)
+            self.layers.append(Layer(size, Softmax()))
+
         return self._fit(self)
 
     def __repr__(self):
