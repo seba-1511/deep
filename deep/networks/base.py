@@ -17,8 +17,7 @@ import theano.tensor as T
 from sklearn.base import ClassifierMixin
 from deep.base import LayeredModel
 
-from theano import function
-from theano import shared
+from theano import shared, config
 
 from deep.fit.base import Fit
 from deep.costs.base import NegativeLogLikelihood, PredictionError
@@ -94,7 +93,7 @@ class FeedForwardNN(LayeredModel, ClassifierMixin):
         self.update = update
         self.activations = [activation] * len(layers) + [Softmax()]
 
-        self.x = T.dmatrix()
+        self.x = T.matrix()
         self.y = T.lvector()
         self.i = T.lscalar()
 
@@ -107,7 +106,7 @@ class FeedForwardNN(LayeredModel, ClassifierMixin):
 
         #: is there a way to move this to the LayeredModel class?
 
-        X = shared(np.asarray(self.data.X, dtype='float64'))
+        X = shared(np.asarray(self.data.X, dtype=config.floatX))
         y = shared(np.asarray(self.data.y, dtype='int64'))
         batch_start = self.i * self.batch_size
         batch_end = (self.i+1) * self.batch_size
