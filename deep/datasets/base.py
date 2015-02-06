@@ -116,3 +116,23 @@ def load_svhn():
 
     """
     raise NotImplementedError
+
+
+def load_plankton():
+    """Load and return the mnist digit dataset (classification).
+
+    :reference:
+
+    Each datapoint is a 28x28 image of a digit.
+
+    =================   ==============
+    Classes                         10
+    Samples per class            ~7000
+    Samples total                70000
+    Dimensionality                 784
+    Features                floats 0-1
+    =================   ==============
+
+    """
+    with gzip.open('/home/gabrielpereyra/Desktop/plankton.pkl.gz') as data_file:
+        return cPickle.load(data_file)
