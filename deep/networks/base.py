@@ -91,7 +91,7 @@ class FeedForwardNN(LayeredModel, ClassifierMixin):
         self._cost = _cost
         self._score = _score
         self.update = update
-        self.activations = [activation] * len(layers) + [Softmax()]
+        self.activation = activation
 
         self.x = T.matrix()
         self.y = T.lvector()
@@ -134,6 +134,9 @@ class FeedForwardNN(LayeredModel, ClassifierMixin):
         return self._score(self.predict(X), y)
 
     def fit(self, X, y):
+
+        #: this sucks (figure out how to remove data)
+
         if not self.data:
             self.data = Data(X, y)
         elif self.data != Data(X, y):

@@ -21,43 +21,41 @@ from deep.updates.base import GradientDescent
 from deep.datasets.base import Data
 from deep.networks.base import FeedForwardNN
 from deep.activations.base import Sigmoid, Softmax
-from deep.utils.base import theano_compatible, reshape_1d
+from deep.utils.base import theano_compatible
 from deep.fit.base import Fit
+from deep.layers import Layer
 
 
 class ConvolutionalNN(FeedForwardNN):
     """ """
-    def __init__(self, n_filters=(2, 50), filter_sizes=(5, 5), pool_sizes=(2, 2), layer_sizes=(100,),
-                 n_iter=100, batch_size=100, learning_rate=.1,
-                 activations=(Sigmoid(), Sigmoid(), Softmax()),
-                 cost=NegativeLogLikelihood(), update=GradientDescent(),
-                 score=PredictionError(), fit=Fit()):
+    def __init__(self, n_filters=(2, 50), filter_size=5, pool_size=2, layer_sizes=(100,),
+                 n_iter=100, batch_size=100, learning_rate=.1, activation=Sigmoid(),
+                 _cost=NegativeLogLikelihood(), update=GradientDescent(),
+                 _score=PredictionError(), _fit=Fit()):
         self.n_filters = n_filters
-        self.pool_sizes = pool_sizes
-        self.filter_sizes = filter_sizes
+        self.pool_size = pool_size
+        self.filter_size = filter_size
         self.conv_layers = []
-        super(ConvolutionalNN, self).__init__(activations, layer_sizes,
+        super(ConvolutionalNN, self).__init__(layer_sizes, activation,
                                               learning_rate, n_iter, batch_size,
-                                              cost, update, fit, score)
-
-    #@theano_compatible
-    #def predict_proba(self, X):
-
+                                              _cost, update, _fit, _score)
 
     @theano_compatible
-    @reshape_1d
     def predict_proba(self, X):
+
+        #: where should this go?
+
         import numpy as np
         n_dims = int(np.sqrt(self.data.features))
 
         x = X.reshape((self.batch_size, 1, n_dims, n_dims))
 
         for layer in self.conv_layers:
-            x = layer.__call__(x)
+            x = layer(x)
         x = x.flatten(2)
 
         for layer in self.layers:
-            x = layer.__call__(x)
+            x = layer(x)
 
         return x
 
@@ -68,28 +66,26 @@ class ConvolutionalNN(FeedForwardNN):
         import numpy as np
         dim = int(np.sqrt(self.data.features))
 
-        self.activations = list(self.activations)
-        prev_filters = 1
-        conv_shape = zip(self.n_filters, self.pool_sizes, self.filter_sizes)
-        for n_filters, pool, filter_size in conv_shape:
-            size = (n_filters, prev_filters, filter_size, filter_size)
-            activation = self.activations.pop(0)
-            self.conv_layers.append(ConvolutionLayer(size, pool, activation))
-            prev_filters = n_filters
-            dim = self.conv_layers[-1].output_dim(dim)
+        dummy_batch = np.zeros((self.batch_size, 1, dim, dim))
 
-        self.data.features = self.conv_layers[-1].output_shape(dim)
+        #: init conv layers
+        for n_filters in self.n_filters:
+            size = (n_filters, dummy_batch.shape[1], self.filter_size, self.filter_size)
+            conv_layer = ConvolutionLayer(size, self.pool_size, self.activation)
+            self.conv_layers.append(conv_layer)
+            dummy_batch = conv_layer(dummy_batch)
 
-        return super(ConvolutionalNN, self).fit(X, y)
+        dummy_batch = dummy_batch.reshape(self.batch_size, -1)
 
-if __name__ == '__main__':
+        #: init layers
+        for layer_size in self.layer_sizes:
+            size = (dummy_batch.shape[1], layer_size)
+            layer = Layer(size, self.activation)
+            self.layers.append(layer)
+            dummy_batch = layer(dummy_batch)
 
-    import numpy as np
+        #: init softmax layer
+        size = (dummy_batch.shape[1], self.data.classes)
+        self.layers.append(Layer(size, Softmax()))
 
-    from deep.datasets import load_mnist
-    X, y = load_mnist()[0]
-    clf = ConvolutionalNN(n_iter=1).fit(X, y)
-
-
-
-    print clf.predict_proba(np.random.random((10, 784)))
+        return self._fit(self)
