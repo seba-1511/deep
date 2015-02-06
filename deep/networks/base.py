@@ -126,6 +126,7 @@ class FeedForwardNN(LayeredModel, ClassifierMixin):
         """A Theano expression representing a class distribution."""
         for layer in self:
             X = layer(X)
+        #: why is this here?
         return X.flatten(X.ndim)
 
     @theano_compatible

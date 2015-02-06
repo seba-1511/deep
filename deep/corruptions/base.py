@@ -14,8 +14,10 @@
 import numpy as np
 import theano.tensor as T
 
+from theano import config
+
 from abc import abstractmethod
-from theano.tensor.shared_randomstreams import RandomStreams
+from theano.sandbox.rng_mrg import MRG_RandomStreams
 from scipy.ndimage.interpolation import rotate, shift, zoom
 from deep.utils.base import theano_compatible
 
@@ -37,7 +39,7 @@ class Corruption(object):
     :param corruption_level: the amount of corruption to add to the input.
     :param rng: a Theano RandomStreams() random number generator.
     """
-    def __init__(self, corruption_level=0.5, rng=RandomStreams(1)):
+    def __init__(self, corruption_level=0.5, rng=MRG_RandomStreams(1)):
         self.corruption_level = corruption_level
         self.rng = rng
 
@@ -83,7 +85,7 @@ class Binomial(Corruption):
     """
     @theano_compatible
     def __call__(self, x):
-        return x * self.rng.binomial(size=x.shape, p=1-self.corruption_level)
+        return x * self.rng.binomial(size=x.shape, p=1-self.corruption_level, dtype=config.floatX)
 
 
 class Dropout(Binomial):
@@ -95,6 +97,8 @@ class Dropout(Binomial):
     @theano_compatible
     def __call__(self, x):
         scaler = 1.0 / (1.0 - self.corruption_level)
+
+        #: why does super()(x) not work?
         return scaler * super(Dropout, self).__call__(x)
 
 
@@ -106,7 +110,7 @@ class Gaussian(Corruption):
     """
     @theano_compatible
     def __call__(self, x):
-        return x * self.rng.normal(size=x.shape, std=self.corruption_level)
+        return x * self.rng.normal(size=x.shape, std=self.corruption_level, dtype=config.floatX)
 
 
 class SaltAndPepper(Corruption):
@@ -117,8 +121,8 @@ class SaltAndPepper(Corruption):
     """
     @theano_compatible
     def __call__(self, X):
-        a = self.rng.binomial(size=X.shape, p=1-self.corruption_level)
-        b = self.rng.binomial(size=X.shape, p=0.5)
+        a = self.rng.binomial(size=X.shape, p=1-self.corruption_level, dtype=config.floatX)
+        b = self.rng.binomial(size=X.shape, p=0.5, dtype=config.floatX)
         return X * a + T.eq(a, 0) * b
 
 
