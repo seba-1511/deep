@@ -11,10 +11,6 @@
     :license: BSD, see LICENSE for more details.
 """
 
-__author__ = 'Gabriel Pereyra <gbrl.pereyra@gmail.com>'
-
-__license__ = 'BSD 3 clause'
-
 import numpy as np
 
 from theano import config

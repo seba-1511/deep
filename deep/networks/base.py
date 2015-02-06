@@ -68,7 +68,7 @@ class FeedForwardNN(LayeredModel, ClassifierMixin):
     def __init__(self, layers=(100,), activation=Sigmoid(),
                  learning_rate=10, n_iter=100, batch_size=100,
                  _cost=NegativeLogLikelihood(), update=GradientDescent(),
-                 _fit=Fit(), _score=PredictionError()):
+                 _fit=Fit(), _score=PredictionError(), corruption=None):
 
         #: fix this
 
@@ -94,6 +94,7 @@ class FeedForwardNN(LayeredModel, ClassifierMixin):
         self._score = _score
         self.update = update
         self.activation = activation
+        self.corruption = corruption
 
         self.x = T.matrix()
         self.y = T.lvector()
@@ -152,7 +153,7 @@ class FeedForwardNN(LayeredModel, ClassifierMixin):
             #: init layers
             for layer_size in self.layer_sizes:
                 size = (dummy_batch.shape[1], layer_size)
-                layer = Layer(size, self.activation)
+                layer = Layer(size, self.activation, self.corruption)
                 self.layers.append(layer)
                 dummy_batch = layer(dummy_batch)
 
@@ -160,7 +161,14 @@ class FeedForwardNN(LayeredModel, ClassifierMixin):
             size = (dummy_batch.shape[1], self.data.classes)
             self.layers.append(Layer(size, Softmax()))
 
-        return self._fit(self)
+        self._fit(self)
+
+        #: hack to get clean predictions after training
+        #: this fails if we retrain the model since it won't
+        #: have the original corruption.
+        for layer in self:
+            layer.corruption = None
+        return self
 
     def __repr__(self):
 

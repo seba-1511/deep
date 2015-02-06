@@ -30,10 +30,11 @@ class Layer(object):
     :param shape: a tuple (input_size, output_size).
     :param activation: the activation function to apply after linear transform.
     """
-    def __init__(self, size=(784, 100), activation=Sigmoid()):
+    def __init__(self, size=(784, 100), activation=Sigmoid(), corruption=None):
         np.random.seed(1)
         val = np.sqrt(24. / sum(size))
         self.activation = activation
+        self.corruption = corruption
         self.b = shared(np.zeros(size[1], dtype=config.floatX))
         self.W = shared(np.asarray(np.random.uniform(low=-val, high=val, size=size), dtype=config.floatX))
 
@@ -50,9 +51,11 @@ class Layer(object):
         return self.W.get_value().shape
 
     @theano_compatible
-    def __call__(self, x):
+    def __call__(self, X):
         """ """
-        return self.activation(T.dot(x, self.W) + self.b)
+        if self.corruption is not None:
+            X = self.corruption(X)
+        return self.activation(T.dot(X, self.W) + self.b)
 
     def __repr__(self):
         layer_name = str(self.activation) + self.__class__.__name__
