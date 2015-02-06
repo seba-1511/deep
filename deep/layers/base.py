@@ -101,7 +101,7 @@ class ConvolutionLayer(Layer):
     """
     def __init__(self, filter_size=(10, 1, 5, 5), pool_size=2, activation=Sigmoid()):
         super(ConvolutionLayer, self).__init__(filter_size, activation)
-        self.b = shared(np.zeros(filter_size[0]))
+        self.b = shared(np.zeros(filter_size[0], dtype=config.floatX))
         self.pool_size = (pool_size, pool_size)
 
     @theano_compatible

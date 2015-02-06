@@ -66,14 +66,17 @@ class ConvolutionalNN(FeedForwardNN):
         import numpy as np
         dim = int(np.sqrt(self.data.features))
 
-        dummy_batch = np.zeros((self.batch_size, 1, dim, dim))
+        dummy_batch = np.zeros((self.batch_size, 1, dim, dim), dtype='float32')
 
         #: init conv layers
         for n_filters in self.n_filters:
             size = (n_filters, dummy_batch.shape[1], self.filter_size, self.filter_size)
-            conv_layer = ConvolutionLayer(size, self.pool_size, self.activation)
-            self.conv_layers.append(conv_layer)
-            dummy_batch = conv_layer(dummy_batch)
+            layer = ConvolutionLayer(size, self.pool_size, self.activation)
+
+            print layer.W
+
+            self.conv_layers.append(layer)
+            dummy_batch = layer(dummy_batch)
 
         dummy_batch = dummy_batch.reshape(self.batch_size, -1)
 
