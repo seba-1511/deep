@@ -15,6 +15,10 @@ __author__ = 'Gabriel Pereyra <gbrl.pereyra@gmail.com>'
 
 __license__ = 'BSD 3 clause'
 
+import numpy as np
+
+from theano import config
+
 from deep.costs.base import NegativeLogLikelihood, PredictionError
 from deep.layers.base import ConvolutionLayer
 from deep.updates.base import GradientDescent
@@ -42,39 +46,33 @@ class ConvolutionalNN(FeedForwardNN):
 
     @theano_compatible
     def predict_proba(self, X):
-
-        #: where should this go?
-
-        import numpy as np
-        n_dims = int(np.sqrt(self.data.features))
-
-        x = X.reshape((self.batch_size, 1, n_dims, n_dims))
-
+        x = X.reshape(self._input_shape)
         for layer in self.conv_layers:
             x = layer(x)
-        x = x.flatten(2)
 
+        x = x.flatten(2)
         for layer in self.layers:
             x = layer(x)
 
         return x
 
+    @property
+    def _input_shape(self):
+        #: Should we make this a network property that specifies input shape
+        #: Also for layers as well? (then this just returns the first layer param)
+        import numpy as np
+        n_dims = int(np.sqrt(self.data.features))
+        return self.batch_size, 1, n_dims, n_dims
+
     def fit(self, X, y):
         """ """
         self.data = Data(X, y)
-
-        import numpy as np
-        dim = int(np.sqrt(self.data.features))
-
-        dummy_batch = np.zeros((self.batch_size, 1, dim, dim), dtype='float32')
+        dummy_batch = np.zeros(self._input_shape, dtype=config.floatX)
 
         #: init conv layers
         for n_filters in self.n_filters:
             size = (n_filters, dummy_batch.shape[1], self.filter_size, self.filter_size)
             layer = ConvolutionLayer(size, self.pool_size, self.activation)
-
-            print layer.W
-
             self.conv_layers.append(layer)
             dummy_batch = layer(dummy_batch)
 
