@@ -136,8 +136,9 @@ class FeedForwardNN(LayeredModel, ClassifierMixin):
         return self._cost(self._symbolic_predict_proba(X), y)
 
     def score(self, X, y):
+        X = np.asarray(X, dtype=config.floatX)
         if not self._score_function:
-            self._score_function = function([self.x, self.y], self._score(self.x))
+            self._score_function = function([self.x, self.y], self._symbolic_score(self.x, self.y))
         return self._score_function(X, y)
 
     def _symbolic_score(self, X, y):
@@ -156,7 +157,7 @@ class FeedForwardNN(LayeredModel, ClassifierMixin):
             #: merge this with conv init
 
             #: better name for dummy batch
-            dummy_batch = np.zeros((self.batch_size, self.data.features))
+            dummy_batch = np.zeros((self.batch_size, self.data.features), dtype=config.floatX)
 
             #: init layers
             for layer_size in self.layer_sizes:
