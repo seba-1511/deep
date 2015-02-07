@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 """
-    deep.autoencoder.multilayer
+    deep.autoencoders.multilayer
     ---------------------------
 
-    Implements a multilayer autoencoder.
+    Implements a multilayer autoencoders.
 
     :references: pylearn2 (mlp module)
 
@@ -18,7 +18,7 @@ from theano import shared, function, config
 from sklearn.base import TransformerMixin
 from deep.base import LayeredModel
 
-from deep.autoencoder.base import TiedAE
+from deep.autoencoders.base import TiedAE
 from deep.fit.base import Fit
 from deep.costs.base import BinaryCrossEntropy
 from deep.utils.base import theano_compatible

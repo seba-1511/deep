@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 """
-    deep.autoencoder.stacked
+    deep.autoencoders.stacked
     ------------------------
 
-    Implements a stacked autoencoder.
+    Implements a stacked autoencoders.
 
     :references: pylearn2 (mlp module)
 
@@ -14,7 +14,7 @@
 from sklearn.base import TransformerMixin
 from deep.base import LayeredModel
 
-from deep.autoencoder.base import TiedAE
+from deep.autoencoders.base import TiedAE
 from deep.fit.base import Fit
 from deep.costs.base import BinaryCrossEntropy
 from deep.utils.base import theano_compatible

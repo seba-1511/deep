@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 """
-    deep.autoencoder.denoising
+    deep.autoencoders.denoising
     --------------------------
 
-    Implements a denoising autoencoder.
+    Implements a denoising autoencoders.
 
     :references: pylearn2 (corruptions module)
 
@@ -13,9 +13,9 @@
 
 import theano.tensor as T
 
-from deep.autoencoder.multilayer import MultilayerAE
-from deep.autoencoder.stacked import StackedAE
-from deep.autoencoder.base import TiedAE
+from deep.autoencoders.multilayer import MultilayerAE
+from deep.autoencoders.stacked import StackedAE
+from deep.autoencoders.base import TiedAE
 from deep.layers import DenoisingLayer
 from deep.corruptions.base import SaltAndPepper
 from deep.utils.base import theano_compatible

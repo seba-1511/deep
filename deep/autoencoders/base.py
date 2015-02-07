@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 """
-    deep.autoencoder.base
+    deep.autoencoders.base
     ---------------------
 
-    Implements a tied autoencoder.
+    Implements a tied autoencoders.
 
     :references: deep learning tutorial
 
@@ -18,7 +18,6 @@ from sklearn.base import BaseEstimator, ClassifierMixin
 
 from theano import function, config, shared
 
-from deep.utils.base import theano_compatible
 from deep.layers.base import Layer
 from deep.activations.base import Sigmoid
 from deep.fit.base import Fit
@@ -52,6 +51,9 @@ class TiedAE(Layer, BaseEstimator, ClassifierMixin):
         #: place holders
         self.data = None
         self._fit_function = None
+        self._score_function = None
+        self._transform_function = None
+        self._inverse_transform_function = None
 
     @property
     def params(self):
@@ -62,7 +64,7 @@ class TiedAE(Layer, BaseEstimator, ClassifierMixin):
         """"""
         rv = list()
         for param in self.params:
-            cost = self.score(self.x)
+            cost = self._symbolic_score(self.x)
             updates = self.update(cost, param, self.learning_rate)
             for update in updates:
                 rv.append(update)
@@ -71,11 +73,8 @@ class TiedAE(Layer, BaseEstimator, ClassifierMixin):
     @property
     def givens(self):
         """"""
-
         #: is there a way to move this to a multilayermodel class?
-
         X = shared(np.asarray(self.data.X, dtype=config.floatX))
-
         batch_start = self.i * self.batch_size
         batch_end = (self.i+1) * self.batch_size
         return {self.x: X[batch_start:batch_end]}
@@ -85,26 +84,32 @@ class TiedAE(Layer, BaseEstimator, ClassifierMixin):
         """"""
         if not self._fit_function:
             self._fit_function = function(inputs=[self.i],
-                                          outputs=self.score(self.x),
+                                          outputs=self._symbolic_score(self.x),
                                           updates=self.updates,
                                           givens=self.givens)
         return self._fit_function
 
-    @theano_compatible
     def score(self, X):
-        return self._cost(self.reconstruct(X), X)
+        if not self._score_function:
+            self._score_function = function([self.x], self._symbolic_score(self.x))
+        return self._score_function(X)
 
-    @theano_compatible
-    def transform(self, X):
-        return self.activation(T.dot(X, self.W) + self.b)
+    def _symbolic_score(self, X):
+        return self._cost(self._symbolic_reconstruct(X), X)
 
-    @theano_compatible
     def inverse_transform(self, X):
+        if not self._inverse_transform_function:
+            self._inverse_transform_function = function([self.x], self._symbolic_inverse_transform(self.x))
+        return self._inverse_transform_function(X)
+
+    def _symbolic_inverse_transform(self, X):
         return self.activation(T.dot(X, self.W.T) + self.b_decode)
 
-    @theano_compatible
     def reconstruct(self, X):
         return self.inverse_transform(self.transform(X))
+
+    def _symbolic_reconstruct(self, X):
+        return self._symbolic_inverse_transform(self._symbolic_transform(X))
 
     def fit(self, X, y=None):
         self.data = Data(X)
