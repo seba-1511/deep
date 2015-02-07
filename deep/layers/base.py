@@ -118,14 +118,6 @@ class ConvolutionLayer(Layer):
         return self._transform_function(X)
 
     def _symbolic_transform(self, x):
-        """
-
-        :param x:
-        :return:
-        """
-
-        print x
-
         x = conv2d(x, self.W, subsample=self.pool_size)
         return self.activation(x + self.b.dimshuffle('x', 0, 'x', 'x'))
 

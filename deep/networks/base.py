@@ -135,6 +135,11 @@ class FeedForwardNN(LayeredModel, ClassifierMixin):
     def _symbolic_cost(self, X, y):
         return self._cost(self._symbolic_predict_proba(X), y)
 
+    def score(self, X, y):
+        if not self._score_function:
+            self._score_function = function([self.x, self.y], self._score(self.x))
+        return self._score_function(X, y)
+
     def _symbolic_score(self, X, y):
         return self._score(self._symbolic_predict(X), y)
 

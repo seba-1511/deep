@@ -13,7 +13,7 @@
 
 import numpy as np
 
-from theano import config
+from theano import config, function
 
 from deep.costs.base import NegativeLogLikelihood, PredictionError
 from deep.layers.base import ConvolutionLayer
@@ -39,8 +39,9 @@ class ConvolutionalNN(FeedForwardNN):
                                               learning_rate, n_iter, batch_size,
                                               _cost, update, _fit, _score, corruption)
 
-    def _symbolic_predict_proba(self, X):
-        x = X.reshape(self._input_shape)
+    def _symbolic_predict_proba(self, x):
+        #: get rid of this
+        x = x.reshape(self._input_shape)
 
         #: combines these layers into self
         for layer in self.conv_layers:
@@ -50,6 +51,17 @@ class ConvolutionalNN(FeedForwardNN):
         for layer in self.layers:
             x = layer._symbolic_transform(x)
         return x
+
+    def score(self, X, y):
+        #: old theano backend doesn't support -1 index reshaping
+        #: so we need to iterate over batches and average the result
+        #: https://github.com/Theano/Theano/issues/1961
+        #:
+        #: eventually need to figure how to swap in the new backend.
+        n_batches = X.shape[0] / self.batch_size
+        if not self._score_function:
+            self._score_function = function([self.i], self._symbolic_score(self.x, self.y), givens=self.givens)
+        return np.mean([self._score_function(batch) for batch in range(n_batches)])
 
     @property
     def _input_shape(self):
