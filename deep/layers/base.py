@@ -18,7 +18,6 @@ from theano import shared, config, function
 from theano.tensor.nnet import conv2d
 
 from deep.activations.base import Sigmoid
-from deep.corruptions.base import SaltAndPepper
 
 
 class Layer(object):

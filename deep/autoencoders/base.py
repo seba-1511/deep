@@ -14,7 +14,7 @@
 import numpy as np
 import theano.tensor as T
 
-from sklearn.base import BaseEstimator, ClassifierMixin
+from sklearn.base import BaseEstimator, TransformerMixin
 
 from theano import function, config, shared
 
@@ -26,7 +26,7 @@ from deep.costs.base import BinaryCrossEntropy
 from deep.updates.base import GradientDescent
 
 
-class TiedAE(Layer, BaseEstimator, ClassifierMixin):
+class TiedAE(Layer, BaseEstimator, TransformerMixin):
     """ """
     def __init__(self, activation=Sigmoid(), learning_rate=10,
                  n_hidden=100, n_iter=10, batch_size=100, _fit=Fit(),

@@ -31,7 +31,7 @@ class MultilayerAE(LayeredModel, TransformerMixin):
     def __init__(self, layers=(100, 100), activation=Sigmoid(),
                  learning_rate=10, n_iter=10, batch_size=100,
                  _cost=BinaryCrossEntropy(), update=GradientDescent(),
-                 _fit=Fit()):
+                 _fit=Fit(), corruption=None):
 
         self.layer_sizes = list(layers)
         self.layers = []
@@ -44,6 +44,7 @@ class MultilayerAE(LayeredModel, TransformerMixin):
         self._cost = _cost
         self.update = update
         self.activation = activation
+        self.corruption = corruption
 
         self.x = T.matrix()
         self.y = self.x
@@ -122,13 +123,11 @@ class MultilayerAE(LayeredModel, TransformerMixin):
             self.data = Data(X)
         for size in self.layer_sizes:
             #: fit with zero iters just to init layer shapes (sketch)
-            self.layers.append(TiedAE(self.activation, self.learning_rate, size,
-                                      0, self.batch_size, self._fit, self._cost,
-                                      self.update))
+            layer = TiedAE(self.activation, self.learning_rate, size, 0, self.batch_size,
+                        self._fit, self._cost, self.update, self.corruption)
+            self.layers.append(layer)
+            X = layer.fit_transform(X)
+            layer.corruption = self.corruption
 
         #: transform X through ae's to set each layer size (even sketchier)
-        for autoencoder in self:
-            print X.shape
-            X = autoencoder.fit(X).transform(X)
-
         return self._fit(self)
