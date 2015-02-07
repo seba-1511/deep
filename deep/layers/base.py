@@ -106,10 +106,11 @@ class ConvolutionLayer(Layer):
     :param pool_size: the size of the subsampling pool.
     :param activation: the non-linearly to apply after pooling.
     """
-    def __init__(self, filter_size=(10, 1, 5, 5), pool_size=2, activation=Sigmoid()):
+    def __init__(self, filter_size=(10, 1, 5, 5), pool_size=2, activation=Sigmoid(), corruption=None):
         super(ConvolutionLayer, self).__init__(filter_size, activation)
         self.b = shared(np.zeros(filter_size[0], dtype=config.floatX))
         self.pool_size = (pool_size, pool_size)
+        self.corruption = corruption
         self.x = T.tensor4()
 
     def transform(self, X):
@@ -118,6 +119,8 @@ class ConvolutionLayer(Layer):
         return self._transform_function(X)
 
     def _symbolic_transform(self, x):
+        if self.corruption is not None:
+            x = self.corruption(x)
         x = conv2d(x, self.W, subsample=self.pool_size)
         return self.activation(x + self.b.dimshuffle('x', 0, 'x', 'x'))
 

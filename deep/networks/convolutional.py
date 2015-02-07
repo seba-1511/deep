@@ -27,7 +27,7 @@ from deep.layers import Layer
 
 class ConvolutionalNN(FeedForwardNN):
     """ """
-    def __init__(self, n_filters=(2, 50), filter_size=5, pool_size=2, layer_sizes=(100,),
+    def __init__(self, n_filters=(20, 50), filter_size=5, pool_size=2, layer_sizes=(100,),
                  n_iter=100, batch_size=100, learning_rate=.1, activation=Sigmoid(),
                  _cost=NegativeLogLikelihood(), update=GradientDescent(),
                  _score=PredictionError(), _fit=Fit(), corruption=None):
@@ -81,7 +81,7 @@ class ConvolutionalNN(FeedForwardNN):
         #: init conv layers
         for n_filters in self.n_filters:
             size = (n_filters, dummy_batch.shape[1], self.filter_size, self.filter_size)
-            layer = ConvolutionLayer(size, self.pool_size, self.activation)
+            layer = ConvolutionLayer(size, self.pool_size, self.activation, self.corruption)
             self.conv_layers.append(layer)
             dummy_batch = layer.transform(dummy_batch)
 
