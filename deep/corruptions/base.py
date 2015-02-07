@@ -106,7 +106,7 @@ class Gaussian(Corruption):
     :param corruption_level: the amount of corruption to add to the input.
     """
     def __call__(self, x):
-        return x * self.rng.normal(size=x.shape, std=self.corruption_level, dtype=config.floatX)
+        return x + self.rng.normal(size=x.shape, std=self.corruption_level, dtype=config.floatX)
 
 
 class SaltAndPepper(Corruption):
