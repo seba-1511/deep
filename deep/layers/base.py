@@ -68,34 +68,6 @@ class Layer(object):
         return layer_name + '(shape=' + layer_shape + ')'
 
 
-class DenoisingLayer(Layer):
-    """An abstract class that represents a neural network layer. Is used
-    implicitly by models and can also be used explicity to create
-    custom architectures.
-
-    :param shape: a tuple (input_size, output_size).
-    :param activation: the activation function to apply after linear transform.
-    """
-    def __init__(self, size=(784, 100), corruption=SaltAndPepper()):
-        super(DenoisingLayer, self).__init__(size)
-        self.corrupt = corruption
-
-    def __call__(self, x):
-        """
-
-        :param x:
-        :return:
-        """
-        return super(DenoisingLayer, self).__call__(self.corrupt(x))
-
-    def __repr__(self):
-        layer_name = str(self.activation) + self.__class__.__name__
-        corruption = str(self.corrupt)
-        layer_shape = str(self.shape)
-        return layer_name + '(corruption=' + corruption + \
-                            ',  shape=' + layer_shape + ')'
-
-
 class ConvolutionLayer(Layer):
     """An abstract class that represents a convolutional layer. This is called
     implicitely by the ConvolutionalNN class and can also be used explicitly
