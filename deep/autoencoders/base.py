@@ -126,3 +126,5 @@ class TiedAE(Layer, BaseEstimator, ClassifierMixin):
 
         #: hack to get clean reconstruction after training.
         self.corruption = None
+
+        return self

@@ -21,7 +21,6 @@ from deep.base import LayeredModel
 from deep.autoencoders.base import TiedAE
 from deep.fit.base import Fit
 from deep.costs.base import BinaryCrossEntropy
-from deep.utils.base import theano_compatible
 from deep.updates.base import GradientDescent
 from deep.datasets.base import Data
 from deep.activations.base import Sigmoid
@@ -51,6 +50,7 @@ class MultilayerAE(LayeredModel, TransformerMixin):
         self.i = T.lscalar()
 
         self._fit_function = None
+        self._score_function = None
         self.data = None
 
     @property
@@ -61,39 +61,61 @@ class MultilayerAE(LayeredModel, TransformerMixin):
         batch_end = (self.i+1) * self.batch_size
         return {self.x: X[batch_start:batch_end]}
 
-    @theano_compatible
+    @property
+    def updates(self):
+        """"""
+        rv = list()
+        for param in self.params:
+            cost = self._symbolic_score(self.x)
+            updates = self.update(cost, param, self.learning_rate)
+            for update in updates:
+                rv.append(update)
+        return rv
+
+
     def transform(self, X):
         for autoencoder in self:
             X = autoencoder.transform(X)
         return X
 
-    @theano_compatible
+    def _symbolic_transform(self, X):
+        for autoencoder in self:
+            X = autoencoder._symbolic_transform(X)
+        return X
+
     def inverse_transform(self, X):
         for autoencoder in self[::-1]:
             X = autoencoder.inverse_transform(X)
         return X
 
-    @theano_compatible
+    def _symbolic_inverse_transform(self, X):
+        for autoencoder in reversed(self):
+            X = autoencoder._symbolic_inverse_transform(X)
+        return X
+
     def reconstruct(self, X):
         return self.inverse_transform(self.transform(X))
 
-    @theano_compatible
-    def cost(self, X, y):
-        return self._cost(self.reconstruct(X), y)
+    def _symbolic_reconstruct(self, X):
+        return self._symbolic_inverse_transform(self._symbolic_transform(X))
 
     @property
     def fit_function(self):
         """The compiled Theano function used to train the network."""
         if not self._fit_function:
             self._fit_function = function(inputs=[self.i],
-                                          outputs=self.cost(self.x, self.y),
+                                          outputs=self._symbolic_score(self.x),
                                           updates=self.updates,
                                           givens=self.givens)
         return self._fit_function
 
-    @theano_compatible
-    def score(self, X, y):
-        return self._cost(self.reconstruct(X), X)
+    def score(self, X):
+        if not self._score_function:
+            self._score_function = function([self.x], self._symbolic_score(self.x))
+        return self._score_function(X)
+
+    def _symbolic_score(self, X):
+        return self._cost(self._symbolic_reconstruct(X), X)
 
     def fit(self, X):
         if not self.data:
@@ -103,8 +125,10 @@ class MultilayerAE(LayeredModel, TransformerMixin):
             self.layers.append(TiedAE(self.activation, self.learning_rate, size,
                                       0, self.batch_size, self._fit, self._cost,
                                       self.update))
+
         #: transform X through ae's to set each layer size (even sketchier)
         for autoencoder in self:
+            print X.shape
             X = autoencoder.fit(X).transform(X)
 
         return self._fit(self)
