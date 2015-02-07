@@ -58,13 +58,12 @@ class FeedForwardNN(LayeredModel, ClassifierMixin):
     :param costs: the costs that is printed during training.
     :param fit: the fit method to use when calling fit().
     """
-    def __init__(self, layers=(100,), activation=Sigmoid(),
+    def __init__(self, n_hiddens=(), activation=Sigmoid(),
                  learning_rate=10, n_iter=10, batch_size=100,
                  _cost=NegativeLogLikelihood(), update=GradientDescent(),
                  _fit=Fit(), _score=PredictionError(), corruption=None, regularization=None):
 
-        self.layer_sizes = list(layers) #: fix this
-        self.layers = []
+        self.n_hiddens = list(n_hiddens) #: fix this
 
         self.n_iter = n_iter
         self.batch_size = batch_size
@@ -91,6 +90,8 @@ class FeedForwardNN(LayeredModel, ClassifierMixin):
         self._predict_function = None
         self._predict_proba_function = None
         self.data = None
+
+    layers = []
 
     @property
     def givens(self):
@@ -163,16 +164,13 @@ class FeedForwardNN(LayeredModel, ClassifierMixin):
         dummy_batch = np.zeros((self.batch_size, self.data.features), dtype=config.floatX)
 
         #: this means append was called before init to create a custom architecture
-        if self.layers:
-            for layer in self:
-                dummy_batch = layer.fit_transform(dummy_batch)
+        for layer in self:
+            dummy_batch = layer.fit_transform(dummy_batch)
         #: otherwise init based on layer sizes
-        else:
-            for layer_size in self.layer_sizes:
-                size = (dummy_batch.shape[1], layer_size)
-                layer = Layer(size, self.activation, self.corruption)
-                self.layers.append(layer)
-                dummy_batch = layer.transform(dummy_batch)
+        for n_hidden in self.n_hiddens:
+            layer = Layer(n_hidden, self.activation, self.corruption)
+            dummy_batch = layer.fit_transform(dummy_batch)
+            self.append(layer)
 
         #: init softmax layer
         softmax = Layer(self.data.classes, Softmax())
