@@ -30,11 +30,13 @@ class TiedAE(Layer, BaseEstimator, ClassifierMixin):
     """ """
     def __init__(self, activation=Sigmoid(), learning_rate=10,
                  n_hidden=100, n_iter=10, batch_size=100, _fit=Fit(),
-                 _cost=BinaryCrossEntropy(), update=GradientDescent()):
+                 _cost=BinaryCrossEntropy(), update=GradientDescent(),
+                 corruption=None):
 
         #: hyperparams (vars)
         self.n_hidden = n_hidden
         self.activation = activation
+        self.corruption = corruption
         self.learning_rate = learning_rate
         self.n_iter = n_iter
         self.batch_size = batch_size
@@ -109,13 +111,18 @@ class TiedAE(Layer, BaseEstimator, ClassifierMixin):
         return self.inverse_transform(self.transform(X))
 
     def _symbolic_reconstruct(self, X):
+        if self.corruption is not None:
+            X = self.corruption(X)
         return self._symbolic_inverse_transform(self._symbolic_transform(X))
 
     def fit(self, X, y=None):
         self.data = Data(X)
 
         size = self.data.features, self.n_hidden
-        super(TiedAE, self).__init__(size, self.activation)
+        super(TiedAE, self).__init__(size, self.activation, self.corruption)
         self.b_decode = shared(np.zeros(self.data.features, dtype=config.floatX))
 
-        return self._fit(self)
+        self._fit(self)
+
+        #: hack to get clean reconstruction after training.
+        self.corruption = None
