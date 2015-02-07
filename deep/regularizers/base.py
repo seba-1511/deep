@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-    deep.regularizations.base
+    deep.regularizers.base
     -------------------------
 
     Implements various types of regularization.

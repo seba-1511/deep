@@ -63,16 +63,8 @@ class FeedForwardNN(LayeredModel, ClassifierMixin):
                  _cost=NegativeLogLikelihood(), update=GradientDescent(),
                  _fit=Fit(), _score=PredictionError(), corruption=None, regularization=None):
 
-        #: fix this
-
-        #: if layers arg is a list of Layer classes, use as self.layers
-        are_layer_classes = [isinstance(layer, Layer) for layer in layers]
-        if all(are_layer_classes):
-            self.layers = layers
-        #: otherwise, we init self.layers in the fit method
-        else:
-            self.layer_sizes = list(layers) #: fix this
-            self.layers = []
+        self.layer_sizes = list(layers) #: fix this
+        self.layers = []
 
         self.n_iter = n_iter
         self.batch_size = batch_size
@@ -113,19 +105,18 @@ class FeedForwardNN(LayeredModel, ClassifierMixin):
         return {self.x: X[batch_start:batch_end],
                 self.y: y[batch_start:batch_end]}
 
+    def append(self, layer):
+        self.layers.append(layer)
+
     @property
     def updates(self):
-        """Collects the updates for each param in each layer."""
-        rv = list()
+        updates = list()
         for param in self.params:
             cost = self._symbolic_cost(self.x, self.y)
             if self.regularization is not None:
                 cost += self.regularization(param)
-            updates = self.update(cost, param, self.learning_rate)
-            for update in updates:
-                rv.append(update)
-        return rv
-
+            updates.extend(self.update(cost, param, self.learning_rate))
+        return updates
 
     def predict(self, X):
         if not self._predict_function:
@@ -168,22 +159,26 @@ class FeedForwardNN(LayeredModel, ClassifierMixin):
         elif self.data != Data(X, y):
             self.data = Data(X, y)
             self._fit_function = None
-        if not self.layers:
-            #: merge this with conv init
 
-            #: better name for dummy batch
-            dummy_batch = np.zeros((self.batch_size, self.data.features), dtype=config.floatX)
+        #: better name for dummy batch
+        dummy_batch = np.zeros((self.batch_size, self.data.features), dtype=config.floatX)
 
-            #: init layers
+        #: this means append was called before init to create a custom architecture
+        if self.layers:
+            for layer in self:
+                dummy_batch = layer.transform(dummy_batch)
+        #: otherwise init based on layer sizes
+        else:
             for layer_size in self.layer_sizes:
                 size = (dummy_batch.shape[1], layer_size)
                 layer = Layer(size, self.activation, self.corruption)
                 self.layers.append(layer)
                 dummy_batch = layer.transform(dummy_batch)
 
-            #: init softmax layer
-            size = (dummy_batch.shape[1], self.data.classes)
-            self.layers.append(Layer(size, Softmax()))
+        #: init softmax layer
+        size = (dummy_batch.shape[1], self.data.classes)
+        self.layers.append(Layer(size, Softmax()))
+
 
         self._fit(self)
 
