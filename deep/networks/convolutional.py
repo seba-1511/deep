@@ -21,7 +21,6 @@ from deep.updates.base import GradientDescent
 from deep.datasets.base import Data
 from deep.networks.base import FeedForwardNN
 from deep.activations.base import Sigmoid, Softmax
-from deep.utils.base import theano_compatible
 from deep.fit.base import Fit
 from deep.layers import Layer
 
@@ -40,31 +39,22 @@ class ConvolutionalNN(FeedForwardNN):
                                               learning_rate, n_iter, batch_size,
                                               _cost, update, _fit, _score, corruption)
 
-    @theano_compatible
-    def predict_proba(self, X):
+    def _symbolic_predict_proba(self, X):
+        x = X.reshape(self._input_shape)
 
-        from theano.tensor import TensorVariable
-
-        if isinstance(X, TensorVariable):
-            x = X.reshape(self._input_shape)
-        else:
-
-            print 'hi'
-
-            x = X.reshape(-1, 1, 28, 28)
+        #: combines these layers into self
         for layer in self.conv_layers:
-            x = layer(x)
+            x = layer._symbolic_transform(x)
 
         x = x.flatten(2)
         for layer in self.layers:
-            x = layer(x)
+            x = layer._symbolic_transform(x)
         return x
 
     @property
     def _input_shape(self):
         #: Should we make this a network property that specifies input shape
         #: Also for layers as well? (then this just returns the first layer param)
-        import numpy as np
         n_dims = int(np.sqrt(self.data.features))
         return self.batch_size, 1, n_dims, n_dims
 
@@ -81,7 +71,7 @@ class ConvolutionalNN(FeedForwardNN):
             size = (n_filters, dummy_batch.shape[1], self.filter_size, self.filter_size)
             layer = ConvolutionLayer(size, self.pool_size, self.activation)
             self.conv_layers.append(layer)
-            dummy_batch = layer(dummy_batch)
+            dummy_batch = layer.transform(dummy_batch)
 
         dummy_batch = dummy_batch.reshape(self.batch_size, -1)
 
@@ -90,7 +80,7 @@ class ConvolutionalNN(FeedForwardNN):
             size = (dummy_batch.shape[1], layer_size)
             layer = Layer(size, self.activation)
             self.layers.append(layer)
-            dummy_batch = layer(dummy_batch)
+            dummy_batch = layer.transform(dummy_batch)
 
         #: init softmax layer
         size = (dummy_batch.shape[1], self.data.classes)

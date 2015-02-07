@@ -110,13 +110,22 @@ class ConvolutionLayer(Layer):
         super(ConvolutionLayer, self).__init__(filter_size, activation)
         self.b = shared(np.zeros(filter_size[0], dtype=config.floatX))
         self.pool_size = (pool_size, pool_size)
+        self.x = T.tensor4()
 
-    def __call__(self, x):
+    def transform(self, X):
+        if not self._transform_function:
+            self._transform_function = function([self.x], self._symbolic_transform(self.x))
+        return self._transform_function(X)
+
+    def _symbolic_transform(self, x):
         """
 
         :param x:
         :return:
         """
+
+        print x
+
         x = conv2d(x, self.W, subsample=self.pool_size)
         return self.activation(x + self.b.dimshuffle('x', 0, 'x', 'x'))
 
