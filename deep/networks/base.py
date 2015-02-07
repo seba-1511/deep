@@ -59,9 +59,9 @@ class FeedForwardNN(LayeredModel, ClassifierMixin):
     :param fit: the fit method to use when calling fit().
     """
     def __init__(self, layers=(100,), activation=Sigmoid(),
-                 learning_rate=10, n_iter=100, batch_size=100,
+                 learning_rate=10, n_iter=10, batch_size=100,
                  _cost=NegativeLogLikelihood(), update=GradientDescent(),
-                 _fit=Fit(), _score=PredictionError(), corruption=None):
+                 _fit=Fit(), _score=PredictionError(), corruption=None, regularization=None):
 
         #: fix this
 
@@ -88,6 +88,7 @@ class FeedForwardNN(LayeredModel, ClassifierMixin):
         self.update = update
         self.activation = activation
         self.corruption = corruption
+        self.regularization = regularization
 
         self.x = T.matrix()
         self.y = T.lvector()
@@ -111,6 +112,20 @@ class FeedForwardNN(LayeredModel, ClassifierMixin):
         batch_end = (self.i+1) * self.batch_size
         return {self.x: X[batch_start:batch_end],
                 self.y: y[batch_start:batch_end]}
+
+    @property
+    def updates(self):
+        """Collects the updates for each param in each layer."""
+        rv = list()
+        for param in self.params:
+            cost = self._symbolic_cost(self.x, self.y)
+            if self.regularization is not None:
+                cost += self.regularization(param)
+            updates = self.update(cost, param, self.learning_rate)
+            for update in updates:
+                rv.append(update)
+        return rv
+
 
     def predict(self, X):
         if not self._predict_function:
