@@ -17,21 +17,14 @@ import theano.tensor as T
 from sklearn.base import ClassifierMixin
 from deep.base import LayeredModel
 
-from theano import shared, config
+from theano import shared, config, function
 
 from deep.fit.base import Fit
 from deep.costs.base import NegativeLogLikelihood, PredictionError
-from deep.utils.base import theano_compatible
 from deep.layers.base import Layer
 from deep.updates.base import GradientDescent
 from deep.datasets.base import Data
 from deep.activations.base import Sigmoid, Softmax
-
-
-#: clf = FeedForwardNN()
-#: print clf.predict
-#:
-#: leads to theano infinite recursion.
 
 
 class FeedForwardNN(LayeredModel, ClassifierMixin):
@@ -101,6 +94,9 @@ class FeedForwardNN(LayeredModel, ClassifierMixin):
         self.i = T.lscalar()
 
         self._fit_function = None
+        self._score_function = None
+        self._predict_function = None
+        self._predict_proba_function = None
         self.data = None
 
     @property
@@ -116,26 +112,31 @@ class FeedForwardNN(LayeredModel, ClassifierMixin):
         return {self.x: X[batch_start:batch_end],
                 self.y: y[batch_start:batch_end]}
 
-    @theano_compatible
     def predict(self, X):
-        """A Theano expression representing a class prediction."""
-        return T.argmax(self.predict_proba(X), axis=1)
+        if not self._predict_function:
+            self._predict_function = function([self.x], self._symbolic_predict(self.x))
+        return self._predict_function(X)
 
-    @theano_compatible
+    def _symbolic_predict(self, X):
+        """A Theano expression representing a class prediction."""
+        return T.argmax(self._symbolic_predict_proba(X), axis=1)
+
     def predict_proba(self, X):
+        if not self._predict_proba_function:
+            self._predict_proba_function = function([self.x], self._symbolic_predict_proba(self.x))
+        return self._predict_proba_function(X)
+
+    def _symbolic_predict_proba(self, X):
         """A Theano expression representing a class distribution."""
         for layer in self:
-            X = layer(X)
-        #: why is this here?
-        return X.flatten(X.ndim)
+            X = layer._symbolic_transform(X)
+        return X
 
-    @theano_compatible
-    def cost(self, X, y):
-        return self._cost(self.predict_proba(X), y)
+    def _symbolic_cost(self, X, y):
+        return self._cost(self._symbolic_predict_proba(X), y)
 
-    @theano_compatible
-    def score(self, X, y):
-        return self._score(self.predict(X), y)
+    def _symbolic_score(self, X, y):
+        return self._score(self._symbolic_predict(X), y)
 
     def fit(self, X, y):
 
@@ -149,6 +150,7 @@ class FeedForwardNN(LayeredModel, ClassifierMixin):
         if not self.layers:
             #: merge this with conv init
 
+            #: better name for dummy batch
             dummy_batch = np.zeros((self.batch_size, self.data.features))
 
             #: init layers
@@ -156,7 +158,7 @@ class FeedForwardNN(LayeredModel, ClassifierMixin):
                 size = (dummy_batch.shape[1], layer_size)
                 layer = Layer(size, self.activation, self.corruption)
                 self.layers.append(layer)
-                dummy_batch = layer(dummy_batch)
+                dummy_batch = layer.transform(dummy_batch)
 
             #: init softmax layer
             size = (dummy_batch.shape[1], self.data.classes)
@@ -170,28 +172,3 @@ class FeedForwardNN(LayeredModel, ClassifierMixin):
         for layer in self:
             layer.corruption = None
         return self
-
-    def __repr__(self):
-
-        #: move this to utils
-
-        if self.layers:
-            repr = ''
-            repr += 'Hyperparameters\n'
-            repr += '---------------\n'
-            repr += 'Architecture\n'
-            repr += '------------\n'
-
-            prev_size = str(self.data.features)
-            repr += prev_size + ' - Input Size\n'
-            for layer in self:
-                current_size = str(layer.shape[1])
-
-                for _ in range(len(current_size)):
-                    repr += '|'
-                repr += '\n'
-
-                repr += current_size + ' - ' + str(layer) + '\n'
-            return repr
-        else:
-            return super(FeedForwardNN, self).__repr__()

@@ -14,12 +14,11 @@
 import numpy as np
 import theano.tensor as T
 
-from theano import shared, config
+from theano import shared, config, function
 from theano.tensor.nnet import conv2d
 
 from deep.activations.base import Sigmoid
 from deep.corruptions.base import SaltAndPepper
-from deep.utils.base import theano_compatible
 
 
 class Layer(object):
@@ -37,6 +36,8 @@ class Layer(object):
         self.corruption = corruption
         self.b = shared(np.zeros(size[1], dtype=config.floatX))
         self.W = shared(np.asarray(np.random.uniform(low=-val, high=val, size=size), dtype=config.floatX))
+        self.x = T.matrix()
+        self._transform_function = None
 
     @property
     def params(self):
@@ -50,9 +51,13 @@ class Layer(object):
     def shape(self):
         return self.W.get_value().shape
 
-    @theano_compatible
-    def __call__(self, X):
+    def transform(self, X):
         """ """
+        if not self._transform_function:
+            self._transform_function = function([self.x], self._symbolic_transform(self.x))
+        return self._transform_function(X)
+
+    def _symbolic_transform(self, X):
         if self.corruption is not None:
             X = self.corruption(X)
         return self.activation(T.dot(X, self.W) + self.b)
@@ -75,7 +80,6 @@ class DenoisingLayer(Layer):
         super(DenoisingLayer, self).__init__(size)
         self.corrupt = corruption
 
-    @theano_compatible
     def __call__(self, x):
         """
 
@@ -107,7 +111,6 @@ class ConvolutionLayer(Layer):
         self.b = shared(np.zeros(filter_size[0], dtype=config.floatX))
         self.pool_size = (pool_size, pool_size)
 
-    @theano_compatible
     def __call__(self, x):
         """
 

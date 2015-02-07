@@ -19,22 +19,21 @@ class LayeredModel(BaseEstimator):
         """
         return [param for layer in self.layers for param in layer.params]
 
-    @property
-    def fit_function(self):
+    def fit_function(self, batch_index):
         """The compiled Theano function used to train the network."""
         if not self._fit_function:
             self._fit_function = function(inputs=[self.i],
-                                          outputs=self.score(self.x, self.y),
+                                          outputs=self._symbolic_score(self.x, self.y),
                                           updates=self.updates,
                                           givens=self.givens)
-        return self._fit_function
+        return self._fit_function(batch_index)
 
     @property
     def updates(self):
         """Collects the updates for each param in each layer."""
         rv = list()
         for param in self.params:
-            cost = self.cost(self.x, self.y)
+            cost = self._symbolic_cost(self.x, self.y)
             updates = self.update(cost, param, self.learning_rate)
             for update in updates:
                 rv.append(update)

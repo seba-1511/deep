@@ -13,7 +13,6 @@
 
 import theano.tensor as T
 from abc import abstractmethod
-from deep.utils.base import theano_compatible
 
 
 #: this need documentation that explains the @theano_compatible decorator.
@@ -38,7 +37,6 @@ class Activation(object):
 
         :param X:
         """
-
     def __repr__(self):
         return str(self.__class__.__name__) + 'Activation'
 
@@ -50,7 +48,6 @@ class Linear(Activation):
     :param x: a tensor_like Theano symbolic representing the input.
     :return: a transformed Theano symbolic of same dims as the input.
     """
-    @theano_compatible
     def __call__(self, X):
         return X
 
@@ -64,7 +61,6 @@ class RectifiedLinear(Activation):
     :param x: a tensor_like Theano symbolic representing the input.
     :return: a transformed Theano symbolic of same dims as the input.
     """
-    @theano_compatible
     def __call__(self, X):
         return T.switch(X > 0.0, X, 0.0)
 
@@ -76,7 +72,6 @@ class Sigmoid(Activation):
     :param x: a tensor_like Theano symbolic representing the input.
     :return: a transformed Theano symbolic of same dims as the input.
     """
-    @theano_compatible
     def __call__(self, X):
         return T.nnet.sigmoid(X)
 
@@ -90,7 +85,6 @@ class Softmax(Activation):
     :param x: a tensor_like Theano symbolic representing the input.
     :return: a transformed Theano symbolic of same dims as the input.
     """
-    @theano_compatible
     def __call__(self, X):
         return T.nnet.softmax(X)
 
@@ -102,6 +96,5 @@ class Tanh(Activation):
     :param x: a tensor_like Theano symbolic representing the input.
     :return: a transformed Theano symbolic of same dims as the input.
     """
-    @theano_compatible
     def __call__(self, X):
         return T.tanh(X)

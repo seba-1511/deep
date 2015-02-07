@@ -13,8 +13,6 @@
 
 import theano.tensor as T
 from abc import abstractmethod
-from deep.utils.base import theano_compatible
-
 
 #: should we separate supervised and unsupervised objectives?
 #:
@@ -54,7 +52,6 @@ class SquaredError(Cost):
     #:
     #: how do handle single value y's? Same as NLL?
 
-    @theano_compatible
     def __call__(self, x, y):
         return T.mean(T.sum((x - y) ** 2, axis=-1))
 
@@ -68,7 +65,6 @@ class BinaryCrossEntropy(Cost):
     :param y: a tensor_like Theano symbolic representing the target.
     :return: a Theano expression representing the cost function.
     """
-    @theano_compatible
     def __call__(self, x, y):
         return T.mean(T.nnet.binary_crossentropy(x, y))
 
@@ -82,7 +78,6 @@ class NegativeLogLikelihood(Cost):
     :param y: a tensor_like Theano symbolic representing the target.
     :return: a Theano expression representing the cost function.
     """
-    @theano_compatible
     def __call__(self, x, y):
         return -T.mean(T.log(x)[T.arange(y.shape[0]), y])
 
@@ -97,6 +92,5 @@ class PredictionError(Cost):
     :param y: a tensor_like Theano symbolic representing the target.
     :return: a Theano expression representing the cost function.
     """
-    @theano_compatible
     def __call__(self, x, y):
         return T.mean(T.eq(x, y))

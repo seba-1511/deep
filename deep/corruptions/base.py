@@ -19,7 +19,6 @@ from theano import config
 from abc import abstractmethod
 from theano.sandbox.rng_mrg import MRG_RandomStreams
 from scipy.ndimage.interpolation import rotate, shift, zoom
-from deep.utils.base import theano_compatible
 
 
 #: this need documentation that explains the @theano_compatible decorator.
@@ -83,7 +82,6 @@ class Binomial(Corruption):
 
     :param corruption_level: the amount of corruption to add to the input.
     """
-    @theano_compatible
     def __call__(self, x):
         return x * self.rng.binomial(size=x.shape, p=1-self.corruption_level, dtype=config.floatX)
 
@@ -94,7 +92,6 @@ class Dropout(Binomial):
 
     :param corruption_level: the amount of corruption to add to the input.
     """
-    @theano_compatible
     def __call__(self, x):
         scaler = 1.0 / (1.0 - self.corruption_level)
 
@@ -108,7 +105,6 @@ class Gaussian(Corruption):
 
     :param corruption_level: the amount of corruption to add to the input.
     """
-    @theano_compatible
     def __call__(self, x):
         return x * self.rng.normal(size=x.shape, std=self.corruption_level, dtype=config.floatX)
 
@@ -119,7 +115,6 @@ class SaltAndPepper(Corruption):
 
     :param corruption_level: the amount of corruption to add to the input.
     """
-    @theano_compatible
     def __call__(self, X):
         a = self.rng.binomial(size=X.shape, p=1-self.corruption_level, dtype=config.floatX)
         b = self.rng.binomial(size=X.shape, p=0.5, dtype=config.floatX)

@@ -31,25 +31,33 @@ class ConvolutionalNN(FeedForwardNN):
     def __init__(self, n_filters=(2, 50), filter_size=5, pool_size=2, layer_sizes=(100,),
                  n_iter=100, batch_size=100, learning_rate=.1, activation=Sigmoid(),
                  _cost=NegativeLogLikelihood(), update=GradientDescent(),
-                 _score=PredictionError(), _fit=Fit()):
+                 _score=PredictionError(), _fit=Fit(), corruption=None):
         self.n_filters = n_filters
         self.pool_size = pool_size
         self.filter_size = filter_size
         self.conv_layers = []
         super(ConvolutionalNN, self).__init__(layer_sizes, activation,
                                               learning_rate, n_iter, batch_size,
-                                              _cost, update, _fit, _score)
+                                              _cost, update, _fit, _score, corruption)
 
     @theano_compatible
     def predict_proba(self, X):
-        x = X.reshape(self._input_shape)
+
+        from theano.tensor import TensorVariable
+
+        if isinstance(X, TensorVariable):
+            x = X.reshape(self._input_shape)
+        else:
+
+            print 'hi'
+
+            x = X.reshape(-1, 1, 28, 28)
         for layer in self.conv_layers:
             x = layer(x)
 
         x = x.flatten(2)
         for layer in self.layers:
             x = layer(x)
-
         return x
 
     @property
@@ -62,7 +70,10 @@ class ConvolutionalNN(FeedForwardNN):
 
     def fit(self, X, y):
         """ """
+        #: remove data (just store x, y directly?)
         self.data = Data(X, y)
+
+        #: better name for dummy batch
         dummy_batch = np.zeros(self._input_shape, dtype=config.floatX)
 
         #: init conv layers
@@ -85,4 +96,11 @@ class ConvolutionalNN(FeedForwardNN):
         size = (dummy_batch.shape[1], self.data.classes)
         self.layers.append(Layer(size, Softmax()))
 
-        return self._fit(self)
+        self._fit(self)
+
+        #: hack to get clean predictions after training
+        #: this fails if we retrain the model since it won't
+        #: have the original corruption.
+        for layer in self:
+            layer.corruption = None
+        return self
