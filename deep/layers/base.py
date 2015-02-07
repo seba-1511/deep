@@ -28,15 +28,13 @@ class Layer(object):
     :param shape: a tuple (input_size, output_size).
     :param activation: the activation function to apply after linear transform.
     """
-    def __init__(self, size=(784, 100), activation=Sigmoid(), corruption=None):
-        np.random.seed(1)
-        val = np.sqrt(24. / sum(size))
+    def __init__(self, n_hidden=100, activation=Sigmoid(), corruption=None):
+        self.b = shared(np.zeros(n_hidden, dtype=config.floatX))
+        self._transform_function = None
         self.activation = activation
         self.corruption = corruption
-        self.b = shared(np.zeros(size[1], dtype=config.floatX))
-        self.W = shared(np.asarray(np.random.uniform(low=-val, high=val, size=size), dtype=config.floatX))
+        self.n_hidden = n_hidden
         self.x = T.matrix()
-        self._transform_function = None
 
     @property
     def params(self):
@@ -60,6 +58,20 @@ class Layer(object):
         if self.corruption is not None:
             X = self.corruption(X)
         return self.activation(T.dot(X, self.W) + self.b)
+
+    def fit_transform(self, X):
+        return self.fit(X).transform(X)
+
+    def fit(self, X):
+        #: where should the seed go?
+        np.random.seed(1)
+        size = X.shape[1], self.n_hidden
+
+        #: change init to 0-1 uniform?
+        val = np.sqrt(24. / sum(size))
+        self.W = np.random.uniform(low=-val, high=val, size=size)
+        self.W = shared(np.asarray(self.W, dtype=config.floatX))
+        return self
 
     def __repr__(self):
         layer_name = str(self.activation) + self.__class__.__name__

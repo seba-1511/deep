@@ -153,7 +153,6 @@ class FeedForwardNN(LayeredModel, ClassifierMixin):
     def fit(self, X, y):
 
         #: this sucks (figure out how to remove data)
-
         if not self.data:
             self.data = Data(X, y)
         elif self.data != Data(X, y):
@@ -166,7 +165,7 @@ class FeedForwardNN(LayeredModel, ClassifierMixin):
         #: this means append was called before init to create a custom architecture
         if self.layers:
             for layer in self:
-                dummy_batch = layer.transform(dummy_batch)
+                dummy_batch = layer.fit_transform(dummy_batch)
         #: otherwise init based on layer sizes
         else:
             for layer_size in self.layer_sizes:
@@ -176,9 +175,9 @@ class FeedForwardNN(LayeredModel, ClassifierMixin):
                 dummy_batch = layer.transform(dummy_batch)
 
         #: init softmax layer
-        size = (dummy_batch.shape[1], self.data.classes)
-        self.layers.append(Layer(size, Softmax()))
-
+        softmax = Layer(self.data.classes, Softmax())
+        softmax.fit(dummy_batch)
+        self.append(softmax)
 
         self._fit(self)
 
