@@ -1,6 +1,6 @@
 import unittest
 
-from deep.autoencoders.base import TiedAE
+from deep.autoencoders.tied import TiedAE
 
 from sklearn.datasets import load_iris
 from sklearn.utils.testing import assert_equal

@@ -39,10 +39,6 @@ class Layer(object):
 
     @property
     def params(self):
-        """The weight and bias of the convolutional layer.
-
-        :rtype : tuple of Theano symbolic variables
-        """
         return self.W, self.b
 
     @property
@@ -78,6 +74,31 @@ class Layer(object):
         layer_name = str(self.activation) + self.__class__.__name__
         layer_shape = str(self.shape)
         return layer_name + '(shape=' + layer_shape + ')'
+
+
+class InvertibleLayer(Layer):
+
+    def __init__(self, n_hidden=100, activation=Sigmoid(), corruption=None, regularization=None):
+        self._inverse_transform_function = None
+        super(InvertibleLayer, self).__init__(n_hidden, activation, corruption, regularization)
+
+    @property
+    def params(self):
+        return self.W, self.b, self.b_inverse
+
+    def inverse_transform(self, X):
+        """ """
+        if not self._inverse_transform_function:
+            self._inverse_transform_function = function([self.x], self._symbolic_transform(self.x))
+        return self._inverse_transform_function(X)
+
+    def _symbolic_inverse_transform(self, X):
+        return self.activation(T.dot(X, self.W.T) + self.b_inverse)
+
+    def fit(self, X):
+        n_features = X.shape[1]
+        self.b_inverse = shared(np.zeros(n_features, dtype=config.floatX))
+        return super(InvertibleLayer, self).fit(X)
 
 
 class ConvolutionLayer(Layer):

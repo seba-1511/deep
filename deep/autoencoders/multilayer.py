@@ -18,7 +18,8 @@ from theano import shared, function, config
 from sklearn.base import TransformerMixin
 from deep.base import LayeredModel
 
-from deep.autoencoders.base import TiedAE
+from deep.layers import Layer
+from deep.autoencoders.tied import TiedAE
 from deep.fit.base import Fit
 from deep.costs.base import BinaryCrossEntropy
 from deep.updates.base import GradientDescent
@@ -33,8 +34,13 @@ class MultilayerAE(LayeredModel, TransformerMixin):
                  _cost=BinaryCrossEntropy(), update=GradientDescent(),
                  _fit=Fit(), corruption=None):
 
-        self.layer_sizes = list(layers)
         self.layers = []
+        for layer in layers:
+            #: how make arg a layer instead of a TiedAE?
+            if isinstance(layer, TiedAE):
+                self.layers.append(layer)
+            elif isinstance(layer, int):
+                self.layers.append(TiedAE(activation, n_hidden=layer, corruption=corruption))
 
         self.n_iter = n_iter
         self.batch_size = batch_size
@@ -73,7 +79,6 @@ class MultilayerAE(LayeredModel, TransformerMixin):
                 rv.append(update)
         return rv
 
-
     def transform(self, X):
         for autoencoder in self:
             X = autoencoder.transform(X)
@@ -102,7 +107,6 @@ class MultilayerAE(LayeredModel, TransformerMixin):
 
     @property
     def fit_function(self):
-        """The compiled Theano function used to train the network."""
         if not self._fit_function:
             self._fit_function = function(inputs=[self.i],
                                           outputs=self._symbolic_score(self.x),
@@ -121,13 +125,8 @@ class MultilayerAE(LayeredModel, TransformerMixin):
     def fit(self, X):
         if not self.data:
             self.data = Data(X)
-        for size in self.layer_sizes:
-            #: fit with zero iters just to init layer shapes (sketch)
-            autoencoder = TiedAE(self.activation, self.learning_rate, size, 0, self.batch_size,
-                        self._fit, self._cost, self.update, self.corruption)
-            self.layers.append(autoencoder)
-            X = autoencoder.fit_transform(X)
-            autoencoder.corruption = self.corruption
 
-        #: transform X through ae's to set each layer size (even sketchier)
+        for layer in self:
+            X = layer.fit_transform(X)
+
         return self._fit(self)

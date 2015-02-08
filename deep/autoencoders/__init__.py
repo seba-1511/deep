@@ -1,4 +1,4 @@
-from base import TiedAE
+from tied import TiedAE
 from multilayer import MultilayerAE
 from stacked import StackedAE
 

@@ -14,7 +14,7 @@
 from sklearn.base import TransformerMixin
 from deep.base import LayeredModel
 
-from deep.autoencoders.base import TiedAE
+from deep.autoencoders.tied import TiedAE
 from deep.fit.base import Fit
 from deep.costs.base import BinaryCrossEntropy
 from deep.updates.base import GradientDescent
