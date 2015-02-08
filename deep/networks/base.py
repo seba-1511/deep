@@ -85,13 +85,13 @@ class FeedForwardNN(LayeredModel, ClassifierMixin):
         self.y = T.lvector()
         self.i = T.lscalar()
 
-        self._fit_function = None
-        self._score_function = None
-        self._predict_function = None
-        self._predict_proba_function = None
         self.data = None
 
     layers = []
+    _fit_function = None
+    _score_function = None
+    _predict_function = None
+    _predict_proba_function = None
 
     @property
     def givens(self):
@@ -111,11 +111,9 @@ class FeedForwardNN(LayeredModel, ClassifierMixin):
 
     @property
     def updates(self):
+        cost = self._symbolic_cost(self.x, self.y)
         updates = list()
         for param in self.params:
-            cost = self._symbolic_cost(self.x, self.y)
-            if self.regularization is not None:
-                cost += self.regularization(param)
             updates.extend(self.update(cost, param, self.learning_rate))
         return updates
 
@@ -140,7 +138,14 @@ class FeedForwardNN(LayeredModel, ClassifierMixin):
         return X
 
     def _symbolic_cost(self, X, y):
-        return self._cost(self._symbolic_predict_proba(X), y)
+        cost = self._cost(self._symbolic_predict_proba(X), y)
+        for layer in self:
+            if layer.regularization is not None:
+                cost += layer.regularization(layer)
+        for param in self.params:
+            if self.regularization is not None:
+                cost += self.regularization(param)
+        return cost
 
     def score(self, X, y):
         X = np.asarray(X, dtype=config.floatX)

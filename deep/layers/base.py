@@ -28,11 +28,12 @@ class Layer(object):
     :param shape: a tuple (input_size, output_size).
     :param activation: the activation function to apply after linear transform.
     """
-    def __init__(self, n_hidden=100, activation=Sigmoid(), corruption=None):
+    def __init__(self, n_hidden=100, activation=Sigmoid(), corruption=None, regularization=None):
         self.b = shared(np.zeros(n_hidden, dtype=config.floatX))
         self._transform_function = None
         self.activation = activation
         self.corruption = corruption
+        self.regularization = regularization
         self.n_hidden = n_hidden
         self.x = T.matrix()
 
