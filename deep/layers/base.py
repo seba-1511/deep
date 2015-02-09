@@ -129,10 +129,13 @@ class ConvolutionLayer(Layer):
         return self._transform_function(X)
 
     def _symbolic_transform(self, x):
-        if x.ndim == 2:
-            size = x.shape[1]
-            dim = T.cast(T.sqrt(size), dtype='int64')
-            x = x.reshape((-1, 1, dim, dim))
+
+        #: does this get removed by theano optimization in the
+        #: case of multiple layers?
+        n_samples, n_features = x.shape
+        dim = T.cast(T.sqrt(n_features), dtype='int64')
+        x = x.reshape((n_samples, 1, dim, dim))
+
         if self.corruption is not None:
             x = self.corruption(x)
         x = conv2d(x, self.W, subsample=self.pool_size)
