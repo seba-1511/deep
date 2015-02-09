@@ -58,11 +58,11 @@ class FeedForwardNN(LayeredModel, ClassifierMixin):
     :param costs: the costs that is printed during training.
     :param fit: the fit method to use when calling fit().
     """
-    def __init__(self, layers=Layer(), learning_rate=10, n_iter=10, batch_size=100,
+    def __init__(self, layers=None, learning_rate=10, n_iter=10, batch_size=100,
                  _cost=NegativeLogLikelihood(), update=GradientDescent(),
                  _fit=Fit(), _score=PredictionError()):
 
-        self.layers = list(layers)
+        self.layers = layers or []
         self.n_iter = n_iter
         self.batch_size = batch_size
         self.learning_rate = learning_rate
