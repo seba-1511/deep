@@ -32,7 +32,7 @@ class TiedAE(LayeredModel, TransformerMixin):
     def __init__(self, layers=(100,), activation=Sigmoid(), learning_rate=10,
                  n_iter=10, batch_size=100, _fit=Fit(),
                  cost=BinaryCrossEntropy(), update=GradientDescent(),
-                 corruption=None):
+                 corruption=None, regularization=None):
 
         self.layers = []
         for layer in layers:
@@ -40,10 +40,10 @@ class TiedAE(LayeredModel, TransformerMixin):
                 layer = InvertibleLayer(layer, activation, corruption)
             self.layers.append(layer)
 
-
         #: hyperparams (vars)
         self.activation = activation
         self.corruption = corruption
+        self.regularization = regularization
         self.learning_rate = learning_rate
         self.n_iter = n_iter
         self.batch_size = batch_size
@@ -98,7 +98,14 @@ class TiedAE(LayeredModel, TransformerMixin):
         return self._score_function(X)
 
     def _symbolic_score(self, X):
-        return self.cost(self._symbolic_reconstruct(X), X)
+        cost = self.cost(self._symbolic_reconstruct(X), X)
+        for layer in self:
+            if layer.regularization is not None:
+                cost += layer.regularization(layer)
+        for param in self.params:
+            if self.regularization is not None:
+                cost += self.regularization(param)
+        return cost
 
     def transform(self, X):
         for layer in self:
