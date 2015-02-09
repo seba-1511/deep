@@ -58,13 +58,11 @@ class FeedForwardNN(LayeredModel, ClassifierMixin):
     :param costs: the costs that is printed during training.
     :param fit: the fit method to use when calling fit().
     """
-    def __init__(self, n_hiddens=(), activation=Sigmoid(),
-                 learning_rate=10, n_iter=10, batch_size=100,
+    def __init__(self, layers=Layer(), learning_rate=10, n_iter=10, batch_size=100,
                  _cost=NegativeLogLikelihood(), update=GradientDescent(),
-                 _fit=Fit(), _score=PredictionError(), corruption=None, regularization=None):
+                 _fit=Fit(), _score=PredictionError()):
 
-        self.n_hiddens = list(n_hiddens) #: fix this
-
+        self.layers = list(layers)
         self.n_iter = n_iter
         self.batch_size = batch_size
         self.learning_rate = learning_rate
@@ -77,9 +75,6 @@ class FeedForwardNN(LayeredModel, ClassifierMixin):
         self._cost = _cost
         self._score = _score
         self.update = update
-        self.activation = activation
-        self.corruption = corruption
-        self.regularization = regularization
 
         self.x = T.matrix()
         self.y = T.lvector()
@@ -87,7 +82,6 @@ class FeedForwardNN(LayeredModel, ClassifierMixin):
 
         self.data = None
 
-    layers = []
     _fit_function = None
     _score_function = None
     _predict_function = None
@@ -105,9 +99,6 @@ class FeedForwardNN(LayeredModel, ClassifierMixin):
         batch_end = (self.i+1) * self.batch_size
         return {self.x: X[batch_start:batch_end],
                 self.y: y[batch_start:batch_end]}
-
-    def append(self, layer):
-        self.layers.append(layer)
 
     @property
     def updates(self):
@@ -142,9 +133,6 @@ class FeedForwardNN(LayeredModel, ClassifierMixin):
         for layer in self:
             if layer.regularization is not None:
                 cost += layer.regularization(layer)
-        for param in self.params:
-            if self.regularization is not None:
-                cost += self.regularization(param)
         return cost
 
     def score(self, X, y):
@@ -158,6 +146,8 @@ class FeedForwardNN(LayeredModel, ClassifierMixin):
 
     def fit(self, X, y):
 
+        X = np.asarray(X, dtype=config.floatX)
+
         #: this sucks (figure out how to remove data)
         if not self.data:
             self.data = Data(X, y)
@@ -165,22 +155,12 @@ class FeedForwardNN(LayeredModel, ClassifierMixin):
             self.data = Data(X, y)
             self._fit_function = None
 
-        #: better name for dummy batch
-        dummy_batch = np.zeros((self.batch_size, self.data.features), dtype=config.floatX)
-
-        #: this means append was called before init to create a custom architecture
         for layer in self:
-            dummy_batch = layer.fit_transform(dummy_batch)
-        #: otherwise init based on layer sizes
-        for n_hidden in self.n_hiddens:
-            layer = Layer(n_hidden, self.activation, self.corruption)
-            dummy_batch = layer.fit_transform(dummy_batch)
-            self.append(layer)
+            X = layer.fit_transform(X)
 
-        #: init softmax layer
         softmax = Layer(self.data.classes, Softmax())
-        softmax.fit(dummy_batch)
-        self.append(softmax)
+        softmax.fit(X)
+        self.layers.append(softmax)
 
         self._fit(self)
 
