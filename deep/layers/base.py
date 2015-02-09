@@ -76,6 +76,7 @@ class Layer(object):
         return layer_name + '(shape=' + layer_shape + ')'
 
 
+#: I hate this. Kill it with fire.
 class InvertibleLayer(Layer):
 
     def __init__(self, n_hidden=100, activation=Sigmoid(), corruption=None, regularization=None):
@@ -111,12 +112,16 @@ class ConvolutionLayer(Layer):
     :param pool_size: the size of the subsampling pool.
     :param activation: the non-linearly to apply after pooling.
     """
-    def __init__(self, filter_size=(10, 1, 5, 5), pool_size=2, activation=Sigmoid(), corruption=None):
-        super(ConvolutionLayer, self).__init__(filter_size, activation)
-        self.b = shared(np.zeros(filter_size[0], dtype=config.floatX))
+    def __init__(self, n_filters=10, filter_size=5, pool_size=2, activation=Sigmoid(), corruption=None, regularization=None):
+        self.b = shared(np.zeros(n_filters, dtype=config.floatX))
+        self.n_filters = n_filters
+        self.filter_size = filter_size
         self.pool_size = (pool_size, pool_size)
         self.corruption = corruption
-        self.x = T.tensor4()
+        self.x = T.matrix()
+        self.activation = activation
+        self.regularization = regularization
+        self._transform_function = None
 
     def transform(self, X):
         if not self._transform_function:
@@ -124,10 +129,26 @@ class ConvolutionLayer(Layer):
         return self._transform_function(X)
 
     def _symbolic_transform(self, x):
+        if x.ndim == 2:
+            size = x.shape[1]
+            dim = T.cast(T.sqrt(size), dtype='int64')
+            x = x.reshape((-1, 1, dim, dim))
         if self.corruption is not None:
             x = self.corruption(x)
         x = conv2d(x, self.W, subsample=self.pool_size)
-        return self.activation(x + self.b.dimshuffle('x', 0, 'x', 'x'))
+        return self.activation(x + self.b.dimshuffle('x', 0, 'x', 'x')).flatten(2)
+
+    def fit(self, X):
+
+        #: where should the seed go?
+        np.random.seed(1)
+        size = self.n_filters, 1, self.filter_size, self.filter_size
+
+        #: change init to 0-1 uniform?
+        val = np.sqrt(24. / sum(size))
+        self.W = np.random.uniform(low=-val, high=val, size=size)
+        self.W = shared(np.asarray(self.W, dtype=config.floatX))
+        return self
 
     def __repr__(self):
         return self.__class__.__name__
