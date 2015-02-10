@@ -11,8 +11,45 @@
     :license: BSD, see LICENSE for more details.
 """
 
+from abc import abstractmethod
+
 import numpy as np
 from scipy.misc import imresize
+
+
+class Augmentation(object):
+
+    @abstractmethod
+    def __call__(self, dataset):
+        """"""
+
+
+class AugmentationSequence(Augmentation):
+
+    def __init__(self, augmentations):
+        self.augmentations = augmentations
+
+    def __call__(self, dataset):
+        for augmentation in self.augmentations:
+            dataset = augmentation(dataset)
+        return dataset
+
+
+class RandomPatches(Augmentation):
+
+    def __init__(self, patch_size):
+        self.patch_size = patch_size
+
+    def __call__(self, dataset):
+        X = []
+        for x in dataset:
+            height, width = x.shape
+            height_offset = np.random.randint(height - self.patch_size + 1)
+            width_offset = np.random.randint(width - self.patch_size + 1)
+
+            X.append(x[height_offset:height_offset+self.patch_size,
+                     width_offset:width_offset+self.patch_size])
+        return np.asarray(X)
 
 
 def resize_shorter_side(examples, new_size_low, new_size_high):
@@ -39,6 +76,7 @@ def resize_shorter_side(examples, new_size_low, new_size_high):
         X.append(imresize(x, size))
     return X
 
+
 def crop_random_patch(examples, patch_size):
     """
 
@@ -54,4 +92,17 @@ def crop_random_patch(examples, patch_size):
 
         X.append(x[height_offset:height_offset+patch_size,
                  width_offset:width_offset+patch_size])
+    return np.asarray(X)
+
+
+def rotate_images_90(examples):
+    """
+
+    :param examples: list of 2d numpy arrays
+    """
+
+    X = []
+    for x in examples:
+        rotations = np.random.randint(4)
+        X.append(np.rot90(x, rotations))
     return np.asarray(X)

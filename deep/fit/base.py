@@ -13,42 +13,48 @@
 
 import time
 import numpy as np
-
-#: this should be moved the model's __init__ method.
-verbose = True
+from abc import abstractmethod
 
 
 class Fit(object):
-    """An abstract class that represents a fit function. Once initialized, a
-    fit class returns a fitted model through its __call__ method.
 
-    :param model:
-    :return:
-    """
+    @abstractmethod
+    def __call__(self, model):
+        """"""
 
-    #: this class needs a better name
 
-    def __init__(self):
-        pass
+class Iterative(Fit):
+
+    def __init__(self, n_iterations=10, batch_size=100):
+        self.n_iterations = n_iterations
+        self.batch_size = batch_size
+
+    #: it might be cleaner to pass the data into fit as well and construct
+    #: the fit function directly in fit instead of in the model
 
     def __call__(self, model):
+
+        #: remove this (probably by removing data from model)
         n_batches = model.data.batches(model.batch_size)
+
         begin = time.time()
-        model._scores = []
+        for iteration in range(1, self.n_iterations):
+            batch_costs = [model.fit_function(batch) for batch in range(n_batches)]
 
-        for iter in range(1, model.n_iter+1):
-            batch_costs = []
-            for batch in range(n_batches):
-                batch_costs.append(model.fit_function(batch))
-            model._scores.append(np.mean(batch_costs))
-
-            if verbose:
-                end = time.time()
-                print("[%s] Iteration %d, costs = %.2f, time = %.2fs"
-                      % (type(model).__name__, iter, model._scores[-1], end - begin))
-                begin = end
+        print("[%s] Iteration %d, costs = %.2f, time = %.2fs"
+              % (type(model).__name__, iteration, np.mean(batch_costs), time.time() - begin))
 
         return model
 
-    def __repr__(self):
-        return str(self.__class__.__name__)
+
+class EarlyStopping(Fit):
+
+    def __init__(self, X_valid=None, y_valid=None, n_iterations=10, batch_size=100):
+        self.X_valid = X_valid
+        self.y_valid = y_valid
+        self.n_iterations = n_iterations
+        self.batch_size = batch_size
+
+    def __call__(self, model):
+
+        raise NotImplementedError
