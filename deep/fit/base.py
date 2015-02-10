@@ -13,36 +13,51 @@
 
 import time
 import numpy as np
+import theano.tensor as T
 from abc import abstractmethod
-
+from theano import shared, config, function
 
 class Fit(object):
 
     @abstractmethod
-    def __call__(self, model):
+    def __call__(self, model, X, y):
         """"""
 
 
 class Iterative(Fit):
 
-    def __init__(self, n_iterations=10, batch_size=100):
+    def __init__(self, n_iterations=10, batch_size=100, augmentation=None):
         self.n_iterations = n_iterations
         self.batch_size = batch_size
+        self.augmentation = augmentation
 
     #: it might be cleaner to pass the data into fit as well and construct
     #: the fit function directly in fit instead of in the model
 
-    def __call__(self, model):
+    def __call__(self, model, X, y):
+        n_batches = len(X) / self.batch_size
+        i = T.lscalar()
 
-        #: remove this (probably by removing data from model)
-        n_batches = model.data.batches(model.batch_size)
+        X_shared = shared(np.asarray(X, dtype=config.floatX))
+        y_shared = shared(np.asarray(y, dtype='int64'))
+
+        batch_start = i * self.batch_size
+        batch_end = (i+1) * self.batch_size
+        givens = {model.x: X_shared[batch_start:batch_end],
+                  model.y: y_shared[batch_start:batch_end]}
+
+        fit_function = function(inputs=[i],
+                                outputs=model._symbolic_score(model.x, model.y),
+                                updates=model.updates,
+                                givens=givens)
+
 
         begin = time.time()
-        for iteration in range(1, self.n_iterations):
-            batch_costs = [model.fit_function(batch) for batch in range(n_batches)]
+        for iteration in range(1, self.n_iterations+1):
+            batch_costs = [fit_function(batch) for batch in range(n_batches)]
 
-        print("[%s] Iteration %d, costs = %.2f, time = %.2fs"
-              % (type(model).__name__, iteration, np.mean(batch_costs), time.time() - begin))
+            print("[%s] Iteration %d, costs = %.2f, time = %.2fs"
+                  % (type(model).__name__, iteration, np.mean(batch_costs), time.time() - begin))
 
         return model
 

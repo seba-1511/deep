@@ -19,7 +19,7 @@ from deep.base import LayeredModel
 
 from theano import shared, config, function
 
-from deep.fit.base import Fit
+from deep.fit.base import Iterative
 from deep.costs.base import NegativeLogLikelihood, PredictionError
 from deep.layers.base import Layer
 from deep.updates.base import GradientDescent
@@ -58,12 +58,11 @@ class FeedForwardNN(LayeredModel, ClassifierMixin):
     :param costs: the costs that is printed during training.
     :param fit: the fit method to use when calling fit().
     """
-    def __init__(self, layers=None, learning_rate=10, n_iter=10, batch_size=100,
+    def __init__(self, layers=None, learning_rate=10, batch_size=100,
                  _cost=NegativeLogLikelihood(), update=GradientDescent(),
-                 _fit=Fit(), _score=PredictionError()):
+                 fit=Iterative(), _score=PredictionError()):
 
         self.layers = layers or []
-        self.n_iter = n_iter
         self.batch_size = batch_size
         self.learning_rate = learning_rate
 
@@ -71,34 +70,19 @@ class FeedForwardNN(LayeredModel, ClassifierMixin):
         #:
         #: changed (fit, cost, score) to (_fit, _cost, _score) otherwise
         #: getattr grabs the method by the same name and leads to recursion
-        self._fit = _fit
+        self.fit_method = fit
         self._cost = _cost
         self._score = _score
         self.update = update
 
         self.x = T.matrix()
         self.y = T.lvector()
-        self.i = T.lscalar()
 
         self.data = None
 
-    _fit_function = None
     _score_function = None
     _predict_function = None
     _predict_proba_function = None
-
-    @property
-    def givens(self):
-        """A dictionary mapping Theano var to data."""
-
-        #: is there a way to move this to the LayeredModel class?
-
-        X = shared(np.asarray(self.data.X, dtype=config.floatX))
-        y = shared(np.asarray(self.data.y, dtype='int64'))
-        batch_start = self.i * self.batch_size
-        batch_end = (self.i+1) * self.batch_size
-        return {self.x: X[batch_start:batch_end],
-                self.y: y[batch_start:batch_end]}
 
     @property
     def updates(self):
@@ -145,24 +129,26 @@ class FeedForwardNN(LayeredModel, ClassifierMixin):
         return self._score(self._symbolic_predict(X), y)
 
     def fit(self, X, y):
-
         X = np.asarray(X, dtype=config.floatX)
 
-        #: this sucks (figure out how to remove data)
-        if not self.data:
-            self.data = Data(X, y)
-        elif self.data != Data(X, y):
-            self.data = Data(X, y)
-            self._fit_function = None
+        x = X[:1]
+
+        print x.shape
 
         for layer in self:
-            X = layer.fit_transform(X)
+            x = layer.fit_transform(x)
 
-        softmax = Layer(self.data.classes, Softmax())
-        softmax.fit(X)
+        #: want to fit last layer to classes
+        #: should we let user to this or keep as is?
+        n_classes = len(np.unique(y))
+
+        print n_classes
+
+        softmax = Layer(n_classes, Softmax())
+        softmax.fit(x)
         self.layers.append(softmax)
 
-        self._fit(self)
+        self.fit_method(self, X, y)
 
         #: hack to get clean predictions after training
         #: this fails if we retrain the model since it won't
