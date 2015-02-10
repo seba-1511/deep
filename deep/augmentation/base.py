@@ -17,12 +17,15 @@ import numpy as np
 from scipy.misc import imresize
 
 
+#: unit test to check that augmentations return
+#: a 2d numpy array
+
+
 class Augmentation(object):
 
     @abstractmethod
     def __call__(self, dataset):
         """"""
-
 
 class AugmentationSequence(Augmentation):
 
@@ -40,7 +43,17 @@ class RandomPatches(Augmentation):
     def __init__(self, patch_size):
         self.patch_size = patch_size
 
+    @property
+    def output_size(self):
+        return self.patch_size ** 2
+
     def __call__(self, dataset):
+        n_samples = len(dataset)
+
+        if dataset.ndim == 2:
+            dim = int(np.sqrt(dataset.shape[1]))
+            dataset = dataset.reshape(-1, dim, dim)
+
         X = []
         for x in dataset:
             height, width = x.shape
@@ -49,7 +62,7 @@ class RandomPatches(Augmentation):
 
             X.append(x[height_offset:height_offset+self.patch_size,
                      width_offset:width_offset+self.patch_size])
-        return np.asarray(X)
+        return np.asarray(X).reshape(n_samples, -1)
 
 
 def resize_shorter_side(examples, new_size_low, new_size_high):

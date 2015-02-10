@@ -128,13 +128,9 @@ class FeedForwardNN(LayeredModel, ClassifierMixin):
     def _symbolic_score(self, X, y):
         return self._score(self._symbolic_predict(X), y)
 
-    def fit(self, X, y):
-        X = np.asarray(X, dtype=config.floatX)
+    def _fit(self, X, y):
 
         x = X[:1]
-
-        print x.shape
-
         for layer in self:
             x = layer.fit_transform(x)
 
@@ -142,12 +138,17 @@ class FeedForwardNN(LayeredModel, ClassifierMixin):
         #: should we let user to this or keep as is?
         n_classes = len(np.unique(y))
 
-        print n_classes
-
         softmax = Layer(n_classes, Softmax())
         softmax.fit(x)
         self.layers.append(softmax)
+        return self
 
+    def fit(self, X, y):
+        X = np.asarray(X, dtype=config.floatX)
+
+        #: fit_method call _fit to get around
+        #: data resizing during augmentation
+        #: (check fit method for output size)
         self.fit_method(self, X, y)
 
         #: hack to get clean predictions after training

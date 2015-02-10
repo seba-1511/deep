@@ -1,8 +1,6 @@
 from abc import ABCMeta
 from sklearn.base import BaseEstimator
 
-from theano import function
-
 
 class LayeredModel(BaseEstimator):
     """A model parametrized by a list of layers"""

@@ -30,34 +30,46 @@ class Iterative(Fit):
         self.n_iterations = n_iterations
         self.batch_size = batch_size
         self.augmentation = augmentation
+        self.i = T.lscalar()
 
     #: it might be cleaner to pass the data into fit as well and construct
     #: the fit function directly in fit instead of in the model
 
     def __call__(self, model, X, y):
         n_batches = len(X) / self.batch_size
-        i = T.lscalar()
 
-        X_shared = shared(np.asarray(X, dtype=config.floatX))
+        if self.augmentation is not None:
+            X_train = self.augmentation(X)
+        else:
+            X_train = X
+
+        model._fit(X_train, y)
+
+        X_shared = shared(np.asarray(X_train, dtype=config.floatX))
         y_shared = shared(np.asarray(y, dtype='int64'))
 
-        batch_start = i * self.batch_size
-        batch_end = (i+1) * self.batch_size
+        batch_start = self.i * self.batch_size
+        batch_end = (self.i+1) * self.batch_size
         givens = {model.x: X_shared[batch_start:batch_end],
                   model.y: y_shared[batch_start:batch_end]}
 
-        fit_function = function(inputs=[i],
+        fit_function = function(inputs=[self.i],
                                 outputs=model._symbolic_score(model.x, model.y),
                                 updates=model.updates,
                                 givens=givens)
 
-
         begin = time.time()
         for iteration in range(1, self.n_iterations+1):
+
             batch_costs = [fit_function(batch) for batch in range(n_batches)]
 
             print("[%s] Iteration %d, costs = %.2f, time = %.2fs"
                   % (type(model).__name__, iteration, np.mean(batch_costs), time.time() - begin))
+
+            if self.augmentation is not None:
+                X_train = self.augmentation(X)
+                X_shared.set_value(X_train)
+
 
         return model
 
