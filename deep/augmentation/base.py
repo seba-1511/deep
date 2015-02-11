@@ -100,8 +100,12 @@ class RandomResize(Augmentation):
         #: make new_dim a tuple
         #: put this in a separate function
 
-        A = []
+        resized = []
         for x in X:
+
+            if x.ndim == 1:
+                size = int(np.sqrt(len(x)))
+                x = x.reshape((size, size))
 
             new_size = np.random.randint(self.low, self.high)
             height, width = x.shape
@@ -110,5 +114,5 @@ class RandomResize(Augmentation):
             #: to slightly smaller dimension than desired
             #: is scipy dropping figs on the multiplication?
             size = float(new_size) / min(height, width) + .0001
-            A.append(imresize(x, size))
-        return A
+            resized.append(imresize(x, size))
+        return resized
