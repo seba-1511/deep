@@ -23,46 +23,67 @@ from scipy.misc import imresize
 
 class Augmentation(object):
 
-    @abstractmethod
-    def __call__(self, dataset):
-        """"""
+    def __init__(self, X):
+        self.X = X
+
+    def __iter__(self):
+        return self
+
+    def next(self):
+        return self.X
+
+    @property
+    def shape(self):
+        return self.X.shape
+
+    def __len__(self):
+        return len(self.X)
+
 
 class AugmentationSequence(Augmentation):
 
-    def __init__(self, augmentations):
+    def __init__(self, X, augmentations):
+        super(AugmentationSequence, self).__init__(X)
         self.augmentations = augmentations
 
-    def __call__(self, dataset):
+    def next(self):
+        X = self.X
         for augmentation in self.augmentations:
-            dataset = augmentation(dataset)
-        return dataset
+            X = augmentation(X)
+        return X
+
+    def shape(self):
+        raise NotImplementedError
 
 
 class RandomPatches(Augmentation):
 
-    def __init__(self, patch_size):
+    def __init__(self, X, patch_size):
+        super(RandomPatches, self).__init__(X)
         self.patch_size = patch_size
 
-    @property
-    def output_size(self):
-        return self.patch_size ** 2
-
-    def __call__(self, dataset):
-        n_samples = len(dataset)
-
-        if dataset.ndim == 2:
-            dim = int(np.sqrt(dataset.shape[1]))
-            dataset = dataset.reshape(-1, dim, dim)
+    def next(self):
+        n_samples = len(self.X)
 
         X = []
-        for x in dataset:
+        for x in self.X:
+
+            if x.ndim == 1:
+                size = int(np.sqrt(len(x)))
+                x = x.reshape((size, size))
+
             height, width = x.shape
             height_offset = np.random.randint(height - self.patch_size + 1)
             width_offset = np.random.randint(width - self.patch_size + 1)
 
             X.append(x[height_offset:height_offset+self.patch_size,
                      width_offset:width_offset+self.patch_size])
+
         return np.asarray(X).reshape(n_samples, -1)
+
+    @property
+    def shape(self):
+        return self.X.shape[0], self.patch_size ** 2
 
 
 def resize_shorter_side(examples, new_size_low, new_size_high):
@@ -88,24 +109,6 @@ def resize_shorter_side(examples, new_size_low, new_size_high):
         size = float(new_size) / min(height, width) + .0001
         X.append(imresize(x, size))
     return X
-
-
-def crop_random_patch(examples, patch_size):
-    """
-
-    :param examples: list of 2d numpy arrays
-    :param patch_size: dimension of the patches
-    """
-
-    X = []
-    for x in examples:
-        height, width = x.shape
-        height_offset = np.random.randint(height - patch_size + 1)
-        width_offset = np.random.randint(width - patch_size + 1)
-
-        X.append(x[height_offset:height_offset+patch_size,
-                 width_offset:width_offset+patch_size])
-    return np.asarray(X)
 
 
 def rotate_images_90(examples):

@@ -23,7 +23,6 @@ from deep.fit.base import Iterative
 from deep.costs.base import NegativeLogLikelihood, PredictionError
 from deep.layers.base import Layer
 from deep.updates.base import GradientDescent
-from deep.datasets.base import Data
 from deep.activations.base import Sigmoid, Softmax
 
 
@@ -128,23 +127,19 @@ class FeedForwardNN(LayeredModel, ClassifierMixin):
     def _symbolic_score(self, X, y):
         return self._score(self._symbolic_predict(X), y)
 
-    def _fit(self, X, y):
+    def fit(self, X, y):
 
-        x = X[:1]
+        x = np.zeros((1, X.shape[1]))
         for layer in self:
             x = layer.fit_transform(x)
 
         #: want to fit last layer to classes
-        #: should we let user to this or keep as is?
+        #: should we let user do this or keep as is?
         n_classes = len(np.unique(y))
 
         softmax = Layer(n_classes, Softmax())
         softmax.fit(x)
         self.layers.append(softmax)
-        return self
-
-    def fit(self, X, y):
-        X = np.asarray(X, dtype=config.floatX)
 
         #: fit_method call _fit to get around
         #: data resizing during augmentation

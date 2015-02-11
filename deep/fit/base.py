@@ -26,10 +26,9 @@ class Fit(object):
 
 class Iterative(Fit):
 
-    def __init__(self, n_iterations=10, batch_size=100, augmentation=None):
+    def __init__(self, n_iterations=10, batch_size=100):
         self.n_iterations = n_iterations
         self.batch_size = batch_size
-        self.augmentation = augmentation
         self.i = T.lscalar()
 
     #: it might be cleaner to pass the data into fit as well and construct
@@ -38,14 +37,7 @@ class Iterative(Fit):
     def __call__(self, model, X, y):
         n_batches = len(X) / self.batch_size
 
-        if self.augmentation is not None:
-            X_train = self.augmentation(X)
-        else:
-            X_train = X
-
-        model._fit(X_train, y)
-
-        X_shared = shared(np.asarray(X_train, dtype=config.floatX))
+        X_shared = shared(np.asarray(X.next(), dtype=config.floatX))
         y_shared = shared(np.asarray(y, dtype='int64'))
 
         batch_start = self.i * self.batch_size
@@ -59,17 +51,16 @@ class Iterative(Fit):
                                 givens=givens)
 
         begin = time.time()
-        for iteration in range(1, self.n_iterations+1):
+
+        for iteration in range(1, self.n_iterations + 1):
 
             batch_costs = [fit_function(batch) for batch in range(n_batches)]
 
             print("[%s] Iteration %d, costs = %.2f, time = %.2fs"
                   % (type(model).__name__, iteration, np.mean(batch_costs), time.time() - begin))
 
-            if self.augmentation is not None:
-                X_train = self.augmentation(X)
-                X_shared.set_value(X_train)
-
+            #: cleaner way to use iterator?
+            X_shared.set_value(X.next())
 
         return model
 

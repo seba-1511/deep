@@ -5,45 +5,11 @@
 #
 # License: BSD 3 clause
 
-import numpy as np
-
-from os.path import dirname
-from os.path import join
-
 import gzip
 import cPickle
 
-
-class Dataset(object):
-    """"""
-    def __init__(self, train, valid=None, test=None):
-        self.train = train
-        self.valid = valid
-        self.test = test
-
-
-class Data(object):
-    """"""
-    def __init__(self, X, y=None):
-        self.samples, self.features = X.shape
-        self.X = X
-
-        if y is not None:
-            self.classes = len(np.unique(y))
-            self.y = y
-
-    def __eq__(self, other):
-        return np.all(self.X == other.X)
-
-    def __ne__(self, other):
-        return not self == other
-
-    @property
-    def is_supervised(self):
-        return self.y
-
-    def batches(self, batch_size):
-        return self.samples / batch_size
+from os.path import join
+from os.path import dirname
 
 
 def load_mnist():
