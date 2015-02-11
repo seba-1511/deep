@@ -37,7 +37,33 @@ class AugmentationSequence(Augmentation):
         return X
 
 
-class RandomPatches(Augmentation):
+class CenterPatch(Augmentation):
+
+    def __init__(self, patch_size):
+        self.patch_size = patch_size
+
+    def __call__(self, X):
+        n_samples = len(X)
+
+        patches = []
+        for x in X:
+
+            #: how to remove this?
+            if x.ndim == 1:
+                size = int(np.sqrt(len(x)))
+                x = x.reshape((size, size))
+
+            height, width = x.shape
+            height_offset = (height - self.patch_size) / 2
+            width_offset = (width - self.patch_size) / 2
+
+            patches.append(x[height_offset:height_offset+self.patch_size,
+                     width_offset:width_offset+self.patch_size])
+
+        return np.asarray(patches).reshape(n_samples, -1)
+
+
+class RandomPatch(Augmentation):
 
     def __init__(self, patch_size):
         self.patch_size = patch_size
@@ -91,7 +117,7 @@ class RandomResize(Augmentation):
     :param new_dim: dimension of new images
     """
 
-    def __init__(self, low, high):
+    def __init__(self, low, high=None):
         self.low = low
         self.high = high
 
@@ -107,7 +133,10 @@ class RandomResize(Augmentation):
                 size = int(np.sqrt(len(x)))
                 x = x.reshape((size, size))
 
-            new_size = np.random.randint(self.low, self.high)
+            if self.high is not None:
+                new_size = np.random.randint(self.low, self.high)
+            else:
+                new_size = self.low
             height, width = x.shape
 
             #: added .0001 because certain images get resized
