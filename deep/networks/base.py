@@ -128,17 +128,17 @@ class FeedForwardNN(LayeredModel, ClassifierMixin):
         return self._score(self._symbolic_predict(X), y)
 
     def _fit(self, X, y):
-        x = np.zeros((1, X.shape[1]))
+        X = np.asarray(X, dtype=config.floatX)
+
+        n_samples, n_features = X.shape
+        n_classes = len(np.unique(y))
+        self[-1].n_hidden = n_classes
+
+        x = np.zeros((1, n_features), dtype=config.floatX)
         for layer in self:
             x = layer.fit_transform(x)
 
-        #: want to fit last layer to classes
-        #: should we let user do this or keep as is?
-        n_classes = len(np.unique(y))
-
-        softmax = Layer(n_classes, Softmax())
-        softmax.fit(x)
-        self.layers.append(softmax)
+        print x.shape
 
     def fit(self, X, y):
         #: fit_method call _fit to get around
