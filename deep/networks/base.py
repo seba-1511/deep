@@ -127,8 +127,7 @@ class FeedForwardNN(LayeredModel, ClassifierMixin):
     def _symbolic_score(self, X, y):
         return self._score(self._symbolic_predict(X), y)
 
-    def fit(self, X, y):
-
+    def _fit(self, X, y):
         x = np.zeros((1, X.shape[1]))
         for layer in self:
             x = layer.fit_transform(x)
@@ -141,6 +140,7 @@ class FeedForwardNN(LayeredModel, ClassifierMixin):
         softmax.fit(x)
         self.layers.append(softmax)
 
+    def fit(self, X, y):
         #: fit_method call _fit to get around
         #: data resizing during augmentation
         #: (check fit method for output size)

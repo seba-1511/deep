@@ -22,50 +22,31 @@ from scipy.misc import imresize
 
 class Augmentation(object):
 
-    def __init__(self, X):
-        self.X = X
-
-    def __iter__(self):
-        return self
-
-    def next(self):
+    def __call__(self, X):
         return self.X
-
-    @property
-    def shape(self):
-        return self.X.shape
-
-    def __len__(self):
-        return len(self.X)
 
 
 class AugmentationSequence(Augmentation):
 
-    def __init__(self, X, augmentations):
-        super(AugmentationSequence, self).__init__(X)
+    def __init__(self, augmentations):
         self.augmentations = augmentations
 
-    def next(self):
-        X = self.X
+    def __call__(self, X):
         for augmentation in self.augmentations:
             X = augmentation(X)
         return X
 
-    def shape(self):
-        raise NotImplementedError
-
 
 class RandomPatches(Augmentation):
 
-    def __init__(self, X, patch_size):
-        super(RandomPatches, self).__init__(X)
+    def __init__(self, patch_size):
         self.patch_size = patch_size
 
-    def next(self):
-        n_samples = len(self.X)
+    def __call__(self, X):
+        n_samples = len(X)
 
-        X = []
-        for x in self.X:
+        patches = []
+        for x in X:
 
             if x.ndim == 1:
                 size = int(np.sqrt(len(x)))
@@ -75,14 +56,10 @@ class RandomPatches(Augmentation):
             height_offset = np.random.randint(height - self.patch_size + 1)
             width_offset = np.random.randint(width - self.patch_size + 1)
 
-            X.append(x[height_offset:height_offset+self.patch_size,
+            patches.append(x[height_offset:height_offset+self.patch_size,
                      width_offset:width_offset+self.patch_size])
 
-        return np.asarray(X).reshape(n_samples, -1)
-
-    @property
-    def shape(self):
-        return self.X.shape[0], self.patch_size ** 2
+        return np.asarray(patches).reshape(n_samples, -1)
 
 
 class RandomRotation90(Augmentation):
@@ -91,43 +68,47 @@ class RandomRotation90(Augmentation):
     :param examples: list of 2d numpy arrays
     """
 
-    def next(self):
-        n_samples = len(self.X)
+    def __call__(self, X):
+        n_samples = len(X)
 
-        X = []
-        for x in self.X:
+        rotated = []
+        for x in X:
 
             if x.ndim == 1:
                 size = int(np.sqrt(len(x)))
                 x = x.reshape((size, size))
 
             rotations = np.random.randint(4)
-            X.append(np.rot90(x, rotations))
-        return np.asarray(X).reshape(n_samples, -1)
+            rotated.append(np.rot90(x, rotations))
+        return np.asarray(rotated).reshape(n_samples, -1)
 
 
-def resize_shorter_side(examples, new_size_low, new_size_high):
+#: this needs to be followed by RandomPatches
+class RandomResize(Augmentation):
     """
 
     :param examples: list of 2d numpy arrays
     :param new_dim: dimension of new images
     """
 
-    #: how to include random new size
-    #: make new_dim a tuple
-    #: put this in a separate function
+    def __init__(self, low, high):
+        self.low = low
+        self.high = high
 
-    X = []
-    for x in examples:
+    def __call__(self, X):
+        #: how to include random new size
+        #: make new_dim a tuple
+        #: put this in a separate function
 
-        new_size = np.random.randint(new_size_low, new_size_high)
-        height, width = x.shape
+        A = []
+        for x in X:
 
-        #: added .0001 because certain images get resized
-        #: to slightly smaller dimension than desired
-        #: is scipy dropping figs on the multiplication?
-        size = float(new_size) / min(height, width) + .0001
-        X.append(imresize(x, size))
-    return X
+            new_size = np.random.randint(self.low, self.high)
+            height, width = x.shape
 
-
+            #: added .0001 because certain images get resized
+            #: to slightly smaller dimension than desired
+            #: is scipy dropping figs on the multiplication?
+            size = float(new_size) / min(height, width) + .0001
+            A.append(imresize(x, size))
+        return A

@@ -26,8 +26,9 @@ class Fit(object):
 
 class Iterative(Fit):
 
-    def __init__(self, n_iterations=10, batch_size=100):
+    def __init__(self, n_iterations=10, batch_size=100, augmentation=None):
         self.n_iterations = n_iterations
+        self.augmentation = augmentation
         self.batch_size = batch_size
         self.i = T.lscalar()
 
@@ -36,12 +37,18 @@ class Iterative(Fit):
 
     def __call__(self, model, X, y):
         n_batches = len(X) / self.batch_size
-
-        X_shared = shared(np.asarray(X.next(), dtype=config.floatX))
-        y_shared = shared(np.asarray(y, dtype='int64'))
-
         batch_start = self.i * self.batch_size
         batch_end = (self.i+1) * self.batch_size
+
+        if self.augmentation is not None:
+            X_augmented = self.augmentation(X)
+            model._fit(X_augmented, y)
+            X_shared = shared(np.asarray(X_augmented, dtype=config.floatX))
+        else:
+            model._fit(X, y)
+            X_shared = shared(np.asarray(X, dtype=config.floatX))
+
+        y_shared = shared(np.asarray(y, dtype='int64'))
         givens = {model.x: X_shared[batch_start:batch_end],
                   model.y: y_shared[batch_start:batch_end]}
 
@@ -59,8 +66,8 @@ class Iterative(Fit):
             print("[%s] Iteration %d, costs = %.2f, time = %.2fs"
                   % (type(model).__name__, iteration, np.mean(batch_costs), time.time() - begin))
 
-            #: cleaner way to use iterator?
-            X_shared.set_value(X.next())
+            if self.augmentation is not None:
+                X_shared.set_value(self.augmentation(X))
 
         return model
 
