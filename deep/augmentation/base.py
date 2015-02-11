@@ -11,9 +11,8 @@
     :license: BSD, see LICENSE for more details.
 """
 
-from abc import abstractmethod
-
 import numpy as np
+
 from scipy.misc import imresize
 
 
@@ -86,6 +85,27 @@ class RandomPatches(Augmentation):
         return self.X.shape[0], self.patch_size ** 2
 
 
+class RandomRotation90(Augmentation):
+    """
+
+    :param examples: list of 2d numpy arrays
+    """
+
+    def next(self):
+        n_samples = len(self.X)
+
+        X = []
+        for x in self.X:
+
+            if x.ndim == 1:
+                size = int(np.sqrt(len(x)))
+                x = x.reshape((size, size))
+
+            rotations = np.random.randint(4)
+            X.append(np.rot90(x, rotations))
+        return np.asarray(X).reshape(n_samples, -1)
+
+
 def resize_shorter_side(examples, new_size_low, new_size_high):
     """
 
@@ -111,14 +131,3 @@ def resize_shorter_side(examples, new_size_low, new_size_high):
     return X
 
 
-def rotate_images_90(examples):
-    """
-
-    :param examples: list of 2d numpy arrays
-    """
-
-    X = []
-    for x in examples:
-        rotations = np.random.randint(4)
-        X.append(np.rot90(x, rotations))
-    return np.asarray(X)
