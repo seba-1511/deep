@@ -11,9 +11,11 @@
     :license: BSD, see LICENSE for more details.
 """
 
+import numpy as np
 import theano.tensor as T
-from abc import abstractmethod
 
+from abc import abstractmethod
+from theano import config, shared
 
 #: this need documentation that explains the @theano_compatible decorator.
 
@@ -40,6 +42,10 @@ class Activation(object):
     def __repr__(self):
         return str(self.__class__.__name__) + 'Activation'
 
+    @property
+    def params(self):
+        return None
+
 
 class Linear(Activation):
     """A linear activation does not transform inputs. It simply passes through
@@ -63,6 +69,29 @@ class RectifiedLinear(Activation):
     """
     def __call__(self, X):
         return T.switch(X > 0.0, X, 0.0)
+
+
+class ParametrizedRectifiedLinear(Activation):
+    """A rectified linear activation transforms the input by taking the maximum
+    of the input or 0 for each value.
+
+    :reference: "Delving Deep into Rectifiers: Surpassing Human-Level Performance
+                 on ImageNet Classification"
+                 Kaiming He Xiangyu Zhang Shaoqing Ren Jian Sun
+                 arxiv: http://arxiv.org/pdf/1502.01852v1.pdf
+
+    :param x: a tensor_like Theano symbolic representing the input.
+    :return: a transformed Theano symbolic of same dims as the input.
+    """
+    def __init__(self, n_hidden):
+        self.slope = shared(np.zeros(n_hidden, dtype=config.floatX))
+
+    def __call__(self, X):
+        return T.switch(X > 0.0, X, X * self.slope)
+
+    @property
+    def params(self):
+        return self.slope
 
 
 class Sigmoid(Activation):

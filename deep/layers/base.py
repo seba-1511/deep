@@ -39,6 +39,8 @@ class Layer(object):
 
     @property
     def params(self):
+        if self.activation.params is not None:
+            return self.W, self.b, self.activation.params
         return self.W, self.b
 
     @property
