@@ -67,6 +67,8 @@ class Iterative(Fit):
                 print("[%s] Iteration %d, train = %.2f, time = %.2fs"
                       % (type(model).__name__, iteration, train_cost, elapsed))
 
+            dataset.update()
+
         return model
 
 
