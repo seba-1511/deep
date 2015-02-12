@@ -78,10 +78,3 @@ class NN(Supervised):
         for layer in self.layers:
             X = layer._symbolic_transform(X)
         return X
-
-    def _fit(self, X, y):
-        n_classes = len(np.unique(y))
-        self.layers.append(Layer(n_classes, Softmax()))
-
-        for layer in self.layers:
-            X = layer.fit_transform(X)

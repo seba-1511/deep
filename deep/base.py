@@ -1,11 +1,11 @@
 import numpy as np
 import theano.tensor as T
 
-from abc import ABCMeta
 from abc import abstractmethod
 from theano import function, config
 
 from deep.costs import PredictionError
+from deep.datasets.base import SupervisedDataset
 
 
 class Transformer(object):
@@ -58,7 +58,8 @@ class Unsupervised(Transformer):
     def _symbolic_score(self, X, y):
         """"""
 
-
+#: this base class is basically all the nn code
+#: should probably just move this to the network class
 class Supervised(object):
 
     x = T.matrix()
@@ -98,9 +99,13 @@ class Supervised(object):
         return cost(self._symbolic_predict(x), y)
 
     def fit(self, X, y):
-        X = np.asarray(X, dtype=config.floatX)
+        dataset = SupervisedDataset(X, y)
 
-        self.fit_method(self, X, y)
+        #: fit this on a batch from dataset
+        for layer in self.layers:
+            X = layer.fit_transform(X)
+
+        self.fit_method(self, dataset)
 
         for layer in self.layers:
             layer.corruption = None

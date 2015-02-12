@@ -22,7 +22,7 @@ from deep.layers.base import InvertibleLayer, Layer
 from deep.base import LayeredModel
 from deep.activations.base import Sigmoid
 from deep.fit.base import Fit
-from deep.datasets.base import Data
+from deep.datasets.load import Data
 from deep.costs.base import BinaryCrossEntropy
 from deep.updates.base import GradientDescent
 

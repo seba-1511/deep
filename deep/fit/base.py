@@ -37,21 +37,21 @@ class Iterative(Fit):
         self.batch_size = batch_size
         self.i = T.lscalar()
 
-    def __call__(self, model, X, y):
+    def __call__(self, model, dataset):
 
-        model._fit(X, y)
+        #: pull these out of the model
+        #: this means we have to compile score function
+        #: and whatnot in here directly
+        x = model.x
+        y = model.y
 
-        n_batches = len(X) / self.batch_size
-        batch_start = self.i * self.batch_size
-        batch_end = (self.i+1) * self.batch_size
+        index = [dataset.batch_index]
+        score = model._symbolic_score(x, y)
+        updates = model.updates #: this needs to get x, y
+        givens = dataset.givens(x, y, self.batch_size)
+        fit_function = function(index, score, None, updates, givens)
 
-        X_shared = shared(np.asarray(X, dtype=config.floatX))
-        y_shared = shared(np.asarray(y, dtype='int64'))
-        givens = {model.x: X_shared[batch_start:batch_end],
-                  model.y: y_shared[batch_start:batch_end]}
-
-        fit_function = function([self.i], model._symbolic_score(model.x, model.y),
-                                updates=model.updates, givens=givens)
+        n_batches = len(dataset) / self.batch_size
 
         for iteration in range(1, self.n_iterations + 1):
             begin = time.time()

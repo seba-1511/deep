@@ -1,104 +1,43 @@
-""" Load datasets
+# -*- coding: utf-8 -*-
+"""
+    deep.datasets.base
+    ---------------------
+
+    Implements dataset base classes
+
+    :references: pylearn2 (mlp module)
+
+    :copyright: (c) 2014 by Gabriel Pereyra.
+    :license: BSD, see LICENSE for more details.
 """
 
-# Author: Gabriel Pereyra <gbrl.pereyra@gmail.com>
-#
-# License: BSD 3 clause
+import numpy as np
+import theano.tensor as T
 
-import gzip
-import cPickle
-
-from os.path import join
-from os.path import dirname
+from theano import config, shared
+from abc import abstractmethod
 
 
-def load_mnist():
-    """Load and return the mnist digit dataset (classification).
-
-    :reference:
-
-    Each datapoint is a 28x28 image of a digit.
-
-    =================   ==============
-    Classes                         10
-    Samples per class            ~7000
-    Samples total                70000
-    Dimensionality                 784
-    Features                floats 0-1
-    =================   ==============
-
-    """
-    module_path = dirname(__file__)
-    with gzip.open(join(module_path, 'mnist', 'mnist.pkl.gz')) as data_file:
-        return cPickle.load(data_file)
 
 
-def load_cifar_10():
-    """Load and return the mnist digit dataset (classification).
-
-    Each datapoint is a 28x28 image of a digit.
-
-    =================   ==============
-    Classes                         10
-    Samples per class            ~7000
-    Samples total                70000
-    Dimensionality                 784
-    Features                floats 0-1
-    =================   ==============
-
-    """
-    raise NotImplementedError
+class Dataset(object):
+    """"""
 
 
-def load_cifar_100():
-    """Load and return the mnist digit dataset (classification).
+#: calling this Supervised conflicts with supervised(model)
+class SupervisedDataset(Dataset):
 
-    Each datapoint is a 28x28 image of a digit.
+    batch_index = T.lscalar()
 
-    =================   ==============
-    Classes                         10
-    Samples per class            ~7000
-    Samples total                70000
-    Dimensionality                 784
-    Features                floats 0-1
-    =================   ==============
+    def __init__(self, X, y):
+        self.X = shared(np.asarray(X, dtype=config.floatX))
+        self.y = shared(np.asarray(y, dtype='int64'))
 
-    """
-    raise NotImplementedError
+    def givens(self, x, y,  batch_size=128):
+        batch_start = self.batch_index * batch_size
+        batch_end = batch_start + batch_size
+        return {x: self.X[batch_start:batch_end],
+                y: self.y[batch_start:batch_end]}
 
-
-def load_svhn():
-    """Load and return the mnist digit dataset (classification).
-
-    Each datapoint is a 28x28 image of a digit.
-
-    =================   ==============
-    Classes                         10
-    Samples per class            ~7000
-    Samples total                70000
-    Dimensionality                 784
-    Features                floats 0-1
-    =================   ==============
-
-    """
-    raise NotImplementedError
-
-
-def load_plankton():
-    """Load and return the mnist digit dataset (classification).
-
-    :reference:
-
-    Each datapoint is a 28x28 image of a digit.
-
-    =================   ==============
-    Classes                         10
-    Samples per class            ~7000
-    Samples total                70000
-    Dimensionality                 784
-    Features                floats 0-1
-    =================   ==============
-
-    """
-    with gzip.open('/home/gabrielpereyra/Desktop/plankton.pkl.gz') as data_file:
-        return cPickle.load(data_file)
+    def __len__(self):
+        return len(self.X.get_value())
