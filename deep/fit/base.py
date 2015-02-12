@@ -83,6 +83,48 @@ class EarlyStopping(Fit):
         raise NotImplementedError
 
 
+class ContinuousAugmentation(Fit):
+
+    def __init__(self, fit=Iterative(), augmentation=None):
+        self.n_iterations = fit.n_iterations
+        fit.n_iterations = 1
+        self.fit = fit
+        self.augmentation = augmentation
+
+    def __call__(self, model, X, y):
+
+        A = self.augmentation(X)
+
+        model._fit(A, y)
+
+        n_batches = len(X) / self.fit.batch_size
+        batch_start = self.fit.i * self.fit.batch_size
+        batch_end = (self.fit.i+1) * self.fit.batch_size
+
+        #: need this in continuous augmentation fit (how to remove?)
+        A_shared = shared(np.asarray(A, dtype=config.floatX))
+        y_shared = shared(np.asarray(y, dtype='int64'))
+        givens = {model.x: A_shared[batch_start:batch_end],
+                  model.y: y_shared[batch_start:batch_end]}
+
+        fit_function = function([self.fit.i], model._symbolic_score(model.x, model.y),
+                                updates=model.updates, givens=givens)
+
+        for iteration in range(1, self.n_iterations + 1):
+            begin = time.time()
+            batch_costs = [fit_function(batch) for batch in range(n_batches)]
+            elapsed = time.time() - begin
+
+            train_cost = np.mean(batch_costs)
+            print("[%s] Iteration %d, train = %.2f, time = %.2fs"
+                  % (type(model).__name__, iteration, train_cost, elapsed))
+
+            A_shared.set_value(self.augmentation(X))
+
+        return model
+
+
+#: this sucks
 class Joint(Fit):
 
     def __init__(self, X_valid=None, y_valid=None, augmentation=None):

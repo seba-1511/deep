@@ -78,7 +78,7 @@ class Supervised(object):
             self._predict_proba_function = function([self.x], self._symbolic_predict_proba(self.x))
         return self._predict_proba_function(X)
 
-    def score(self, X, y, cost):
+    def score(self, X, y, cost=None):
         X = np.asarray(X, dtype=config.floatX)
         if not self._score_function or cost != self.cost:
             self._score_function = function([self.x, self.y], self._symbolic_score(self.x, self.y))

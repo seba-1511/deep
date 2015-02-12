@@ -109,17 +109,15 @@ class RandomRotation90(Augmentation):
         return np.asarray(rotated).reshape(n_samples, -1)
 
 
-#: this needs to be followed by RandomPatches
-class RandomResize(Augmentation):
+class Resize(Augmentation):
     """
 
     :param examples: list of 2d numpy arrays
     :param new_dim: dimension of new images
     """
 
-    def __init__(self, low, high=None):
-        self.low = low
-        self.high = high
+    def __init__(self, new_size):
+        self.new_size = new_size
 
     def __call__(self, X):
         #: how to include random new size
@@ -128,20 +126,10 @@ class RandomResize(Augmentation):
 
         resized = []
         for x in X:
-
-            if x.ndim == 1:
-                size = int(np.sqrt(len(x)))
-                x = x.reshape((size, size))
-
-            if self.high is not None:
-                new_size = np.random.randint(self.low, self.high)
-            else:
-                new_size = self.low
             height, width = x.shape
-
             #: added .0001 because certain images get resized
             #: to slightly smaller dimension than desired
             #: is scipy dropping figs on the multiplication?
-            size = float(new_size) / min(height, width) + .0001
+            size = float(self.new_size) / min(height, width) + .0001
             resized.append(imresize(x, size))
         return resized
