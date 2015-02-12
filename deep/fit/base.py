@@ -20,7 +20,7 @@ from theano import shared, config, function
 
 class Fit(object):
 
-    def __init__(self, X_valid, y_valid):
+    def __init__(self, X_valid=None, y_valid=None):
         self.X_valid = X_valid
         self.y_valid = y_valid
 
@@ -31,48 +31,41 @@ class Fit(object):
 
 class Iterative(Fit):
 
-    def __init__(self, n_iterations=10, batch_size=100, augmentation=None):
+    def __init__(self, n_iterations=10, batch_size=100, X_valid=None, y_valid=None):
+        super(Iterative, self).__init__(X_valid, y_valid)
         self.n_iterations = n_iterations
-        self.augmentation = augmentation
         self.batch_size = batch_size
         self.i = T.lscalar()
 
-    #: it might be cleaner to pass the data into fit as well and construct
-    #: the fit function directly in fit instead of in the model
-
     def __call__(self, model, X, y):
+
+        model._fit(X, y)
+
         n_batches = len(X) / self.batch_size
         batch_start = self.i * self.batch_size
         batch_end = (self.i+1) * self.batch_size
 
-        if self.augmentation is not None:
-            X_augmented = self.augmentation(X)
-            model._fit(X_augmented, y)
-            X_shared = shared(np.asarray(X_augmented, dtype=config.floatX))
-        else:
-            model._fit(X, y)
-            X_shared = shared(np.asarray(X, dtype=config.floatX))
-
+        X_shared = shared(np.asarray(X, dtype=config.floatX))
         y_shared = shared(np.asarray(y, dtype='int64'))
         givens = {model.x: X_shared[batch_start:batch_end],
                   model.y: y_shared[batch_start:batch_end]}
 
-        fit_function = function(inputs=[self.i],
-                                outputs=model._symbolic_score(model.x, model.y),
-                                updates=model.updates,
-                                givens=givens)
-
-        begin = time.time()
+        fit_function = function([self.i], model._symbolic_score(model.x, model.y),
+                                updates=model.updates, givens=givens)
 
         for iteration in range(1, self.n_iterations + 1):
-
+            begin = time.time()
             batch_costs = [fit_function(batch) for batch in range(n_batches)]
+            elapsed = time.time() - begin
 
-            print("[%s] Iteration %d, costs = %.2f, time = %.2fs"
-                  % (type(model).__name__, iteration, np.mean(batch_costs), time.time() - begin))
-
-            if self.augmentation is not None:
-                X_shared.set_value(self.augmentation(X))
+            train_cost = np.mean(batch_costs)
+            if self.X_valid is not None and self.y_valid is not None:
+                valid_cost = model.score(self.X_valid, self.y_valid)
+                print("[%s] Iteration %d, train = %.2f, valid = %.2f, time = %.2fs"
+                      % (type(model).__name__, iteration, train_cost, valid_cost, elapsed))
+            else:
+                print("[%s] Iteration %d, train = %.2f, time = %.2fs"
+                      % (type(model).__name__, iteration, train_cost, elapsed))
 
         return model
 
