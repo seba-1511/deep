@@ -13,12 +13,12 @@
 
 import numpy as np
 
+from deep.layers import Layer
 from deep.base import Supervised
 from deep.fit.base import Iterative
+from deep.activations import Softmax
 from deep.costs.base import NegativeLogLikelihood
-from deep.layers.base import Layer
 from deep.updates.base import GradientDescent
-from deep.activations.base import Sigmoid, Softmax
 
 
 class NN(Supervised):
@@ -79,29 +79,9 @@ class NN(Supervised):
             X = layer._symbolic_transform(X)
         return X
 
-    #: this is fixed in another branch
     def _fit(self, X, y):
-        x = np.zeros((1, X.shape[1]))
-        for layer in self.layers:
-            x = layer.fit_transform(x)
-
-        #: want to fit last layer to classes
-        #: should we let user do this or keep as is?
         n_classes = len(np.unique(y))
+        self.layers.append(Layer(n_classes, Softmax()))
 
-        softmax = Layer(n_classes, Softmax())
-        softmax.fit(x)
-        self.layers.append(softmax)
-
-    def fit(self, X, y):
-        #: fit_method call _fit to get around
-        #: data resizing during augmentation
-        #: (check fit method for output size)
-        self.fit_method(self, X, y)
-
-        #: hack to get clean predictions after training
-        #: this fails if we retrain the model since it won't
-        #: have the original corruption.
         for layer in self.layers:
-            layer.corruption = None
-        return self
+            X = layer.fit_transform(X)

@@ -97,6 +97,11 @@ class Supervised(object):
             cost = PredictionError()
         return cost(self._symbolic_predict(x), y)
 
-    @abstractmethod
     def fit(self, X, y):
-        """"""
+        X = np.asarray(X, dtype=config.floatX)
+
+        self.fit_method(self, X, y)
+
+        for layer in self.layers:
+            layer.corruption = None
+        return self
