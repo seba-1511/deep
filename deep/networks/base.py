@@ -75,6 +75,19 @@ class NN(Supervised):
 
     def _symbolic_predict_proba(self, X):
         """A Theano expression representing a class distribution."""
+        n_samples, n_features = X.shape
+
+        import theano.tensor as T
+        from deep.layers import ConvolutionLayer
+        if isinstance(self.layers[0], ConvolutionLayer):
+            dim = T.cast(T.sqrt(n_features), dtype='int64')
+            X = X.reshape((n_samples, 1, dim, dim))
+
         for layer in self.layers:
+
+            if not isinstance(layer, ConvolutionLayer):
+                X = X.flatten(2)
+
             X = layer._symbolic_transform(X)
+
         return X

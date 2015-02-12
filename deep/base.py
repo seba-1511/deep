@@ -106,7 +106,24 @@ class Supervised(object):
             dataset = X
 
         X = dataset.batch(1)
+
+        #: hack to reshape for conv layers
+        from deep.layers import ConvolutionLayer
+        is_conv = False
+        if isinstance(self.layers[0], ConvolutionLayer):
+            n_features = X.shape[1]
+            dim = int(np.sqrt(n_features))
+            X = X.reshape(1, 1, dim, dim)
+            is_conv = True
+
         for layer in self.layers:
+
+            #: hack to reshape after conv layers
+            if not isinstance(layer, ConvolutionLayer):
+                X = X.reshape(1, -1)
+
+            print X.shape
+
             X = layer.fit_transform(X)
 
         self.fit_method(self, dataset)

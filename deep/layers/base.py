@@ -120,7 +120,7 @@ class ConvolutionLayer(Layer):
         self.filter_size = filter_size
         self.pool_size = (pool_size, pool_size)
         self.corruption = corruption
-        self.x = T.matrix()
+        self.x = T.tensor4()
         self.activation = activation
         self.regularization = regularization
         self._transform_function = None
@@ -131,27 +131,22 @@ class ConvolutionLayer(Layer):
         return self._transform_function(X)
 
     def _symbolic_transform(self, x):
-
-        #: does this get removed by theano optimization in the
-        #: case of multiple layers?
-        n_samples, n_features = x.shape
-        dim = T.cast(T.sqrt(n_features), dtype='int64')
-        x = x.reshape((n_samples, 1, dim, dim))
-
         if self.corruption is not None:
             x = self.corruption(x)
         x = conv2d(x, self.W, subsample=self.pool_size)
-        return self.activation(x + self.b.dimshuffle('x', 0, 'x', 'x')).flatten(2)
+        return self.activation(x + self.b.dimshuffle('x', 0, 'x', 'x'))
 
     def fit(self, X):
 
         #: where should the seed go?
         np.random.seed(1)
-        size = self.n_filters, 1, self.filter_size, self.filter_size
+        n_channels = X.shape[1]
+        size = self.n_filters, n_channels, self.filter_size, self.filter_size
 
         #: change init to 0-1 uniform?
         val = np.sqrt(24. / sum(size))
         self.W = np.random.uniform(low=-val, high=val, size=size)
+
         self.W = shared(np.asarray(self.W, dtype=config.floatX))
         return self
 

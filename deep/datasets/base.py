@@ -33,8 +33,8 @@ class SupervisedDataset(Dataset):
         self.X_original = X
         self.augmentation = augmentation
 
-        if augmentation is not None:
-            X = augmentation(X)
+        if self.augmentation is not None:
+            X = self.augmentation(X)
 
         self.X = shared(np.asarray(X, dtype=config.floatX))
         self.y = shared(np.asarray(y, dtype='int64'))
