@@ -1,3 +1,3 @@
-from base import FeedForwardNN
+from base import NN
 
-__all__ = ['FeedForwardNN']
+__all__ = ['NN']

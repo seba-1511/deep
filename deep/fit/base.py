@@ -17,6 +17,7 @@ import theano.tensor as T
 from abc import abstractmethod
 from theano import shared, config, function
 
+
 class Fit(object):
 
     def __init__(self, X_valid, y_valid):

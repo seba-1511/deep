@@ -16,7 +16,7 @@ import numpy as np
 
 from sklearn.datasets import load_iris
 from sklearn.utils.testing import assert_array_equal, assert_equal, assert_raises
-from deep.networks.base import FeedForwardNN
+from deep.networks.base import NN
 
 iris = load_iris()
 X = iris.data
@@ -28,7 +28,7 @@ class TestFeedForwardNN(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         """ Init and fit FeedForwardNN. """
-        cls.clf = FeedForwardNN(layers=[10], n_iter=5)
+        cls.clf = NN(layers=[10], n_iter=5)
 
         from deep.layers import Layer
         from deep.activations import Sigmoid, Softmax
@@ -38,7 +38,7 @@ class TestFeedForwardNN(unittest.TestCase):
         layer1 = Layer(size=(4, 100), activation=Sigmoid())
         layer2 = Layer(size=(100, 3), activation=Softmax())
 
-        nn = FeedForwardNN(layers=[layer1, layer2])
+        nn = NN(layers=[layer1, layer2])
         nn.fit(X, y)
 
         #: fix this
@@ -63,7 +63,7 @@ class TestFeedForwardNN(unittest.TestCase):
 
     def test_deterministic_fit(self):
         """ Test that multiple fits yield same scores. """
-        clf = FeedForwardNN(layers=[10], n_iter=5)
+        clf = NN(layers=[10], n_iter=5)
         clf.fit(X, y)
         assert_array_equal(self.clf._scores, clf._scores)
 

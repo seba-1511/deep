@@ -1,38 +1,102 @@
+import numpy as np
+import theano.tensor as T
+
 from abc import ABCMeta
-from sklearn.base import BaseEstimator
+from abc import abstractmethod
+from theano import function, config
+
+from deep.costs import PredictionError
 
 
-class LayeredModel(BaseEstimator):
-    """A model parametrized by a list of layers"""
+class Transformer(object):
 
-    __metaclass__ = ABCMeta
+    x = T.matrix()
 
-    #: layers = abstractproperty? (leads to syntax error in __len__)
-    layers = None
+    _transform_function = None
+
+    @abstractmethod
+    def transform(self, X):
+        """"""
+
+    @abstractmethod
+    def _symbolic_transform(self, X):
+        """"""
+
+    def fit(self, X):
+        return self
 
     @property
     def params(self):
-        """Collects the weight matrices and biases of each layer.
-        :rtype : object
-        """
-        return [param for layer in self.layers for param in layer.params]
+        return []
 
-    @property
-    def updates(self):
-        """Collects the updates for each param in each layer."""
-        rv = list()
-        for param in self.params:
-            cost = self._symbolic_cost(self.x, self.y)
-            updates = self.update(cost, param, self.learning_rate)
-            for update in updates:
-                rv.append(update)
-        return rv
 
-    def __len__(self):
-        return len(self.layers)
+class Unsupervised(Transformer):
 
-    def __iter__(self):
-        return iter(self.layers)
+    _inverse_transform_function = None
+    _score_function = None
 
-    def __getitem__(self, item):
-        return self.layers[item]
+    def inverse_transform(self, X):
+        if not self._predict_proba_function:
+            self._predict_proba_function = function([self.x], self._symbolic_predict_proba(self.x))
+        return self._predict_proba_function(X)
+
+    def score(self, X, y, cost):
+        X = np.asarray(X, dtype=config.floatX)
+        if not self._score_function or cost != self.cost:
+            self._score_function = function([self.x, self.y], self._symbolic_score(self.x, self.y))
+        return self._score_function(X, y)
+
+    @abstractmethod
+    def fit(self, X):
+        """"""
+
+    @abstractmethod
+    def _symbolic_inverse_transform(self, X):
+        """"""
+
+    @abstractmethod
+    def _symbolic_score(self, X, y):
+        """"""
+
+
+class Supervised(object):
+
+    x = T.matrix()
+    y = T.lvector()
+
+    _predict_function = None
+    _predict_proba_function = None
+    _score_function = None
+
+    def predict(self, X):
+        if not self._predict_function:
+            self._predict_function = function([self.x], self._symbolic_predict(self.x))
+        return self._predict_function(X)
+
+    def predict_proba(self, X):
+        if not self._predict_proba_function:
+            self._predict_proba_function = function([self.x], self._symbolic_predict_proba(self.x))
+        return self._predict_proba_function(X)
+
+    def score(self, X, y, cost):
+        X = np.asarray(X, dtype=config.floatX)
+        if not self._score_function or cost != self.cost:
+            self._score_function = function([self.x, self.y], self._symbolic_score(self.x, self.y))
+        return self._score_function(X, y)
+
+    def _symbolic_predict(self, x):
+        return T.argmax(self._symbolic_predict_proba(x), axis=1)
+
+    @abstractmethod
+    def _symbolic_predict_proba(self, x):
+        """"""
+
+    @abstractmethod
+    def _symbolic_score(self, x, y, cost=None):
+        if cost is None:
+            cost = PredictionError()
+        return cost(self._symbolic_predict(x), y)
+
+    @abstractmethod
+    def fit(self, X, y):
+        """"""
