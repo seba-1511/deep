@@ -88,6 +88,31 @@ class RandomPatch(Augmentation):
         return np.asarray(patches).reshape(n_samples, -1)
 
 
+class RandomRotation(Augmentation):
+
+    def __call__(self, X):
+        n_samples = len(X)
+
+        rotated = []
+        for x in X:
+
+            if x.ndim == 1:
+                size = int(np.sqrt(len(x)))
+                x = x.reshape((size, size))
+
+            from scipy.ndimage.interpolation import rotate
+            angle = np.random.randint(360)
+            order = np.random.randint(5) #: orders greater than 1 change background color
+
+            r = rotate(x, angle, reshape=False, order=order, mode='nearest')
+
+            #: should we normalize here?
+            r -= r.mean()
+
+            rotated.append(r)
+        return np.asarray(rotated).reshape(n_samples, -1)
+
+
 class RandomRotation90(Augmentation):
     """
 
