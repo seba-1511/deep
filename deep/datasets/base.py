@@ -29,7 +29,13 @@ class SupervisedDataset(Dataset):
 
     batch_index = T.lscalar()
 
-    def __init__(self, X, y):
+    def __init__(self, X, y, augmentation=None):
+        self.X_original = X
+        self.augmentation = augmentation
+
+        if augmentation is not None:
+            X = augmentation(X)
+
         self.X = shared(np.asarray(X, dtype=config.floatX))
         self.y = shared(np.asarray(y, dtype='int64'))
 
@@ -39,5 +45,12 @@ class SupervisedDataset(Dataset):
         return {x: self.X[batch_start:batch_end],
                 y: self.y[batch_start:batch_end]}
 
+    def batch(self, batch_size):
+        return self.X.get_value()[:batch_size]
+
+    def update(self):
+        if self.augmentation is not None:
+            self.X.set_value(self.augmentation(self.X_original))
+
     def __len__(self):
-        return len(self.X.get_value())
+        return len(self.X.get_value(self.X))

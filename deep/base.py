@@ -98,10 +98,14 @@ class Supervised(object):
             cost = PredictionError()
         return cost(self._symbolic_predict(x), y)
 
-    def fit(self, X, y):
-        dataset = SupervisedDataset(X, y)
+    #: should we just remove X, y and take a dataset?
+    def fit(self, X, y=None):
+        if not isinstance(X, SupervisedDataset):
+            dataset = SupervisedDataset(X, y)
+        else:
+            dataset = X
 
-        #: fit this on a batch from dataset
+        X = dataset.batch(1)
         for layer in self.layers:
             X = layer.fit_transform(X)
 
