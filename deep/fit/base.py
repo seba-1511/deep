@@ -79,56 +79,54 @@ class Iterative(Fit):
 
 class EarlyStopping(Fit):
 
-    def __init__(self, X_valid=None, y_valid=None, n_iterations=10, batch_size=100):
-        self.X_valid = X_valid
-        self.y_valid = y_valid
+    #: how to combine this with iterative fit?
+
+    def __init__(self, valid, n_iterations=100, batch_size=100):
         self.n_iterations = n_iterations
         self.batch_size = batch_size
+        self.valid = valid
+        self.i = T.lscalar()
 
-    def __call__(self, model):
+    def __call__(self, model, dataset):
 
-        raise NotImplementedError
+        x = model.x
+        y = model.y
 
+        index = [dataset.batch_index]
+        score = model._symbolic_score(x, y)
+        updates = model.updates
 
-class ContinuousAugmentation(Fit):
+        givens = dataset.givens(x, y, self.batch_size)
+        train = function(index, score, None, updates, givens)
+        givens = self.valid.givens(x, y, self.batch_size)
+        valid = function(index, score, None, None, givens)
 
-    def __init__(self, fit=Iterative(), augmentation=None):
-        self.n_iterations = fit.n_iterations
-        fit.n_iterations = 1
-        self.fit = fit
-        self.augmentation = augmentation
+        n_train_batches = len(dataset) / self.batch_size
+        n_valid_batches = len(self.valid) / self.batch_size
 
-    def __call__(self, model, X, y):
-
-        A = self.augmentation(X)
-
-        model._fit(A, y)
-
-        n_batches = len(X) / self.fit.batch_size
-        batch_start = self.fit.i * self.fit.batch_size
-        batch_end = (self.fit.i+1) * self.fit.batch_size
-
-        #: need this in continuous augmentation fit (how to remove?)
-        A_shared = shared(np.asarray(A, dtype=config.floatX))
-        y_shared = shared(np.asarray(y, dtype='int64'))
-        givens = {model.x: A_shared[batch_start:batch_end],
-                  model.y: y_shared[batch_start:batch_end]}
-
-        fit_function = function([self.fit.i], model._symbolic_score(model.x, model.y),
-                                updates=model.updates, givens=givens)
-
+        last_valid_cost = 0
         for iteration in range(1, self.n_iterations + 1):
             begin = time.time()
-            batch_costs = [fit_function(batch) for batch in range(n_batches)]
+            train_costs = [train(batch) for batch in range(n_train_batches)]
+            valid_costs = [valid(batch) for batch in range(n_valid_batches)]
             elapsed = time.time() - begin
 
-            train_cost = np.mean(batch_costs)
-            print("[%s] Iteration %d, train = %.2f, time = %.2fs"
-                  % (type(model).__name__, iteration, train_cost, elapsed))
+            train_cost = np.mean(train_costs)
+            valid_cost = np.mean(valid_costs)
 
-            A_shared.set_value(self.augmentation(X))
+            if valid_cost < last_valid_cost:
+                break
+            else:
+                last_valid_cost = valid_cost
+
+            print("[%s] Iteration %d, train = %.2f, valid = %.2f, time = %.2fs"
+                  % (type(model).__name__, iteration, train_cost, valid_cost, elapsed))
+
+            dataset.update()
 
         return model
+
+
 
 
 #: this sucks
