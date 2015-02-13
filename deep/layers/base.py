@@ -66,9 +66,7 @@ class Layer(object):
         np.random.seed(1)
         size = X.shape[1], self.n_hidden
 
-        #: change init to 0-1 uniform?
-        val = np.sqrt(24. / sum(size))
-        self.W = np.random.uniform(low=-val, high=val, size=size)
+        self.W = np.random.normal(loc=0, scale=.01, size=size)
         self.W = shared(np.asarray(self.W, dtype=config.floatX))
         return self
 
@@ -210,11 +208,7 @@ class ConvolutionLayer(Layer):
         np.random.seed(1)
         n_channels = X.shape[1]
         size = self.n_filters, n_channels, self.filter_size, self.filter_size
-
-        #: change init to 0-1 uniform?
-        val = np.sqrt(24. / sum(size))
-        self.W = np.random.uniform(low=-val, high=val, size=size)
-
+        self.W = np.random.normal(loc=0, scale=.01, size=size)
         self.W = shared(np.asarray(self.W, dtype=config.floatX))
         return self
 
