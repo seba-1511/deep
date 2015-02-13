@@ -93,6 +93,28 @@ class ParametrizedRectifiedLinear(Activation):
     def params(self):
         return self.slope
 
+class ConvPReLU(Activation):
+    """A rectified linear activation transforms the input by taking the maximum
+    of the input or 0 for each value.
+
+    :reference: "Delving Deep into Rectifiers: Surpassing Human-Level Performance
+                 on ImageNet Classification"
+                 Kaiming He Xiangyu Zhang Shaoqing Ren Jian Sun
+                 arxiv: http://arxiv.org/pdf/1502.01852v1.pdf
+
+    :param x: a tensor_like Theano symbolic representing the input.
+    :return: a transformed Theano symbolic of same dims as the input.
+    """
+    def __init__(self, n_hidden):
+        self.slope = shared(np.zeros(n_hidden, dtype=config.floatX))
+
+    def __call__(self, X):
+        return T.switch(X > 0.0, X, X * self.slope.dimshuffle('x', 0, 'x', 'x'))
+
+    @property
+    def params(self):
+        return self.slope
+
 
 class Sigmoid(Activation):
     """A sigmoid activation transforms the input by applying the sigmoid
