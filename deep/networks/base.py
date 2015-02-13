@@ -68,6 +68,12 @@ class NN(Supervised):
     @property
     def updates(self):
         cost = self.cost(self._symbolic_predict_proba(self.x), self.y)
+
+        for layer in self.layers:
+            for param in layer.params:
+                if param is not None and layer.regularization is not None:
+                    cost += layer.regularization(param)
+
         updates = list()
         for param in self.params:
             updates.extend(self.update(cost, param, self.learning_rate))
