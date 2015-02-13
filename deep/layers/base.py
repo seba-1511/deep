@@ -20,6 +20,9 @@ from theano.tensor.nnet import conv2d
 from deep.activations.base import Sigmoid
 
 
+#: change the noisy argument to a boolean in each layer
+
+
 class Layer(object):
     """An abstract class that represents a neural network layer. Is used
     implicitly by models and can also be used explicity to create
@@ -47,14 +50,16 @@ class Layer(object):
     def shape(self):
         return self.W.get_value().shape
 
+    #: if we add a noisy option like _symbolic we need to either
+    #: add a separate function or recompile each time
     def transform(self, X):
         """ """
         if not self._transform_function:
             self._transform_function = function([self.x], self._symbolic_transform(self.x))
         return self._transform_function(X)
 
-    def _symbolic_transform(self, X):
-        if self.corruption is not None:
+    def _symbolic_transform(self, X, noisy=True):
+        if noisy and self.corruption is not None:
             X = self.corruption(X)
         return self.activation(T.dot(X, self.W) + self.b)
 
@@ -76,32 +81,6 @@ class Layer(object):
         return layer_name + '(shape=' + layer_shape + ')'
 
 
-#: I hate this. Kill it with fire.
-class InvertibleLayer(Layer):
-
-    def __init__(self, n_hidden=100, activation=Sigmoid(), corruption=None, regularization=None):
-        self._inverse_transform_function = None
-        super(InvertibleLayer, self).__init__(n_hidden, activation, corruption, regularization)
-
-    @property
-    def params(self):
-        return self.W, self.b, self.b_inverse
-
-    def inverse_transform(self, X):
-        """ """
-        if not self._inverse_transform_function:
-            self._inverse_transform_function = function([self.x], self._symbolic_transform(self.x))
-        return self._inverse_transform_function(X)
-
-    def _symbolic_inverse_transform(self, X):
-        return self.activation(T.dot(X, self.W.T) + self.b_inverse)
-
-    def fit(self, X):
-        n_features = X.shape[1]
-        self.b_inverse = shared(np.zeros(n_features, dtype=config.floatX))
-        return super(InvertibleLayer, self).fit(X)
-
-
 class PreConv(object):
 
     def fit(self, X):
@@ -112,7 +91,7 @@ class PreConv(object):
         dim = int(np.sqrt(n_features))
         return X.reshape(n_samples, 1, dim, dim)
 
-    def _symbolic_transform(self, x):
+    def _symbolic_transform(self, x, noisy=None):
         n_samples, n_features = x.shape
         dim = T.cast(T.sqrt(n_features), dtype='int64')
         return x.reshape((n_samples, 1, dim, dim))
@@ -133,7 +112,7 @@ class PostConv(object):
     def transform(self, X):
         return X.reshape(1, -1)
 
-    def _symbolic_transform(self, x):
+    def _symbolic_transform(self, x, noisy=None):
         return x.flatten(2)
 
     def fit_transform(self, X):
@@ -167,7 +146,7 @@ class Pooling(object):
             self._transform_function = function([self.x], self._symbolic_transform(self.x))
         return self._transform_function(X)
 
-    def _symbolic_transform(self, x):
+    def _symbolic_transform(self, x, noisy=None):
         return max_pool_2d(x, self.pool_size)
 
 
@@ -196,8 +175,8 @@ class ConvolutionLayer(Layer):
             self._transform_function = function([self.x], self._symbolic_transform(self.x))
         return self._transform_function(X)
 
-    def _symbolic_transform(self, x):
-        if self.corruption is not None:
+    def _symbolic_transform(self, x, noisy=True):
+        if noisy and self.corruption is not None:
             x = self.corruption(x)
         x = conv2d(x, self.W, filter_shape=self.W.get_value().shape)
         return self.activation(x + self.b.dimshuffle('x', 0, 'x', 'x'))

@@ -85,18 +85,18 @@ class Supervised(object):
             self._score_function = function([self.x, self.y], self._symbolic_score(self.x, self.y))
         return self._score_function(X, y)
 
-    def _symbolic_predict(self, x):
-        return T.argmax(self._symbolic_predict_proba(x), axis=1)
+    def _symbolic_predict(self, x, noisy=True):
+        return T.argmax(self._symbolic_predict_proba(x, noisy), axis=1)
 
     @abstractmethod
-    def _symbolic_predict_proba(self, x):
+    def _symbolic_predict_proba(self, x, noisy=True):
         """"""
 
     @abstractmethod
-    def _symbolic_score(self, x, y, cost=None):
+    def _symbolic_score(self, x, y, noisy=True, cost=None):
         if cost is None:
             cost = PredictionError()
-        return cost(self._symbolic_predict(x), y)
+        return cost(self._symbolic_predict(x, noisy), y)
 
     #: should we just remove X, y and take a dataset?
     def fit(self, X, y=None):
@@ -111,7 +111,3 @@ class Supervised(object):
             X = layer.fit_transform(X)
 
         self.fit_method(self, dataset)
-
-        for layer in self.layers:
-            layer.corruption = None
-        return self

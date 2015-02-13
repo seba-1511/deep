@@ -48,9 +48,10 @@ class Iterative(Fit):
         index = [dataset.batch_index]
         score = model._symbolic_score(x, y)
         updates = model.updates #: this needs to get x, y
-
         givens = dataset.givens(x, y, self.batch_size)
         train = function(index, score, None, updates, givens)
+
+        score = model._symbolic_score(x, y, noisy=False)
         givens = self.valid.givens(x, y, self.batch_size)
         valid = function(index, score, None, None, givens)
 

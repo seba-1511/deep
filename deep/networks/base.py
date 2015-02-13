@@ -73,8 +73,8 @@ class NN(Supervised):
             updates.extend(self.update(cost, param, self.learning_rate))
         return updates
 
-    def _symbolic_predict_proba(self, X):
+    def _symbolic_predict_proba(self, X, noisy=True):
         """A Theano expression representing a class distribution."""
         for layer in self.layers:
-            X = layer._symbolic_transform(X)
+            X = layer._symbolic_transform(X, noisy)
         return X
