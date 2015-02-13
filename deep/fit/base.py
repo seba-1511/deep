@@ -31,10 +31,10 @@ class Fit(object):
 
 class Iterative(Fit):
 
-    def __init__(self, n_iterations=10, batch_size=100, X_valid=None, y_valid=None):
-        super(Iterative, self).__init__(X_valid, y_valid)
+    def __init__(self, n_iterations=10, batch_size=100, valid=None):
         self.n_iterations = n_iterations
         self.batch_size = batch_size
+        self.valid = valid
         self.i = T.lscalar()
 
     def __call__(self, model, dataset):
@@ -48,19 +48,24 @@ class Iterative(Fit):
         index = [dataset.batch_index]
         score = model._symbolic_score(x, y)
         updates = model.updates #: this needs to get x, y
+
         givens = dataset.givens(x, y, self.batch_size)
-        fit_function = function(index, score, None, updates, givens)
+        train = function(index, score, None, updates, givens)
+        givens = self.valid.givens(x, y, self.batch_size)
+        valid = function(index, score, None, None, givens)
 
         n_batches = len(dataset) / self.batch_size
 
         for iteration in range(1, self.n_iterations + 1):
             begin = time.time()
-            batch_costs = [fit_function(batch) for batch in range(n_batches)]
+            train_costs = [train(batch) for batch in range(n_batches)]
             elapsed = time.time() - begin
 
-            train_cost = np.mean(batch_costs)
-            if self.X_valid is not None and self.y_valid is not None:
-                valid_cost = model.score(self.X_valid, self.y_valid)
+            train_cost = np.mean(train_costs)
+            if self.valid is not None:
+                n_batches = len(self.valid) / self.batch_size
+                valid_costs = [valid(batch) for batch in range(n_batches)]
+                valid_cost = np.mean(valid_costs)
                 print("[%s] Iteration %d, train = %.2f, valid = %.2f, time = %.2fs"
                       % (type(model).__name__, iteration, train_cost, valid_cost, elapsed))
             else:
