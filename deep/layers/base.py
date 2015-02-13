@@ -104,6 +104,75 @@ class InvertibleLayer(Layer):
         return super(InvertibleLayer, self).fit(X)
 
 
+class PreConv(object):
+
+    def fit(self, X):
+        return self
+
+    def transform(self, X):
+        n_samples, n_features = X.shape
+        dim = int(np.sqrt(n_features))
+        return X.reshape(n_samples, 1, dim, dim)
+
+    def _symbolic_transform(self, x):
+        n_samples, n_features = x.shape
+        dim = T.cast(T.sqrt(n_features), dtype='int64')
+        return x.reshape((n_samples, 1, dim, dim))
+
+    def fit_transform(self, X):
+        return self.fit(X).transform(X)
+
+    @property
+    def params(self):
+        return []
+
+
+class PostConv(object):
+
+    def fit(self, X):
+        return self
+
+    def transform(self, X):
+        return X.reshape(1, -1)
+
+    def _symbolic_transform(self, x):
+        return x.flatten(2)
+
+    def fit_transform(self, X):
+        return self.fit(X).transform(X)
+
+    @property
+    def params(self):
+        return []
+
+from theano.tensor.signal.downsample import max_pool_2d
+class Pooling(object):
+
+    def __init__(self, pool_size, stride_size):
+        self.pool_size = (pool_size, pool_size)
+        self.stride_size = stride_size
+        self._transform_function = None
+        self.x = T.tensor4()
+
+    @property
+    def params(self):
+        return []
+
+    def fit_transform(self, X):
+        return self.fit(X).transform(X)
+
+    def fit(self, X):
+        return self
+
+    def transform(self, X):
+        if not self._transform_function:
+            self._transform_function = function([self.x], self._symbolic_transform(self.x))
+        return self._transform_function(X)
+
+    def _symbolic_transform(self, x):
+        return max_pool_2d(x, self.pool_size)
+
+
 class ConvolutionLayer(Layer):
     """An abstract class that represents a convolutional layer. This is called
     implicitely by the ConvolutionalNN class and can also be used explicitly
@@ -114,11 +183,10 @@ class ConvolutionLayer(Layer):
     :param pool_size: the size of the subsampling pool.
     :param activation: the non-linearly to apply after pooling.
     """
-    def __init__(self, n_filters=10, filter_size=5, pool_size=2, activation=Sigmoid(), corruption=None, regularization=None):
+    def __init__(self, n_filters=10, filter_size=5, activation=Sigmoid(), corruption=None, regularization=None):
         self.b = shared(np.zeros(n_filters, dtype=config.floatX))
         self.n_filters = n_filters
         self.filter_size = filter_size
-        self.pool_size = (pool_size, pool_size)
         self.corruption = corruption
         self.x = T.tensor4()
         self.activation = activation
@@ -133,7 +201,7 @@ class ConvolutionLayer(Layer):
     def _symbolic_transform(self, x):
         if self.corruption is not None:
             x = self.corruption(x)
-        x = conv2d(x, self.W, subsample=self.pool_size)
+        x = conv2d(x, self.W, filter_shape=self.W.get_value().shape)
         return self.activation(x + self.b.dimshuffle('x', 0, 'x', 'x'))
 
     def fit(self, X):

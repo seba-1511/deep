@@ -90,7 +90,7 @@ class RandomPatch(Augmentation):
 
 class RandomRotation(Augmentation):
 
-    def __call__(self, X):
+    def __call__(self, X, white_bg=True):
         n_samples = len(X)
 
         rotated = []
@@ -102,9 +102,9 @@ class RandomRotation(Augmentation):
 
             from scipy.ndimage.interpolation import rotate
             angle = np.random.randint(360)
-            order = np.random.randint(5) #: orders greater than 1 change background color
+            order = np.random.randint(6) #: orders greater than 1 change background color
 
-            r = rotate(x, angle, reshape=False, order=order, mode='nearest')
+            r = rotate(x, angle, reshape=False, order=order, mode='reflect')
 
             #: should we normalize here?
             r -= r.mean()
