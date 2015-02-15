@@ -106,7 +106,7 @@ class EarlyStopping(Fit):
         n_train_batches = len(dataset) / self.batch_size
         n_valid_batches = len(self.valid) / self.batch_size
 
-        last_valid_nll = 0
+        last_valid_nll = 100
         for iteration in range(1, self.n_iterations + 1):
             begin = time.time()
             #train_costs = [train(batch) for batch in range(n_train_batches)]
