@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-    deep.networks.base
+    deep.models.base
     ---------------------
 
     Implements the feed forward neural network model.
@@ -34,7 +34,7 @@ class NN(Supervised):
         X_train, y_train = mnist[0]
         X_test, y_test = mnist[2]
 
-        from deep.networks import FeedForwardNN
+        from deep.models import FeedForwardNN
         clf = FeedForwardNN()
 
         clf.fit(X_train, y_train)

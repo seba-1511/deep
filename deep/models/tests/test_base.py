@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-    deep.networks.base
+    deep.models.base
     ---------------------
 
     Tests the feed forward neural network model.
@@ -16,7 +16,7 @@ import numpy as np
 
 from sklearn.datasets import load_iris
 from sklearn.utils.testing import assert_array_equal, assert_equal, assert_raises
-from deep.networks.base import NN
+from deep.models.base import NN
 
 iris = load_iris()
 X = iris.data
