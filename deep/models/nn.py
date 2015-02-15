@@ -13,15 +13,15 @@
 
 import numpy as np
 
-from deep.layers import Layer
-from deep.base import Supervised
+import theano.tensor as T
+from theano import function
+
 from deep.fit.base import Iterative
-from deep.activations import Softmax
-from deep.costs.base import NegativeLogLikelihood
+from deep.costs.base import NegativeLogLikelihood, PredictionError
 from deep.updates.base import GradientDescent
+from deep.datasets import SupervisedData
 
-
-class NN(Supervised):
+class NN(object):
     """A Feed Forward Neural Network is composed of one or more layers,
     each parametrized by a weight matrix and a biases vector. The weights
     are learned, typically through an iterative optimization procedure, and
@@ -61,6 +61,10 @@ class NN(Supervised):
         self.cost = cost
         self.update = update
 
+    x = T.matrix()
+    y = T.lvector()
+    _predict_proba_function = None
+
     @property
     def params(self):
         return [param for layer in self.layers for param in layer.params]
@@ -69,18 +73,48 @@ class NN(Supervised):
     def updates(self):
         cost = self.cost(self._symbolic_predict_proba(self.x), self.y)
 
-        for layer in self.layers:
-            for param in layer.params:
-                if param is not None and layer.regularization is not None:
-                    cost += layer.regularization(param)
+        #: add regularizer to network
 
         updates = list()
         for param in self.params:
             updates.extend(self.update(cost, param, self.learning_rate))
         return updates
 
-    def _symbolic_predict_proba(self, X, noisy=True):
+    def predict(self, X):
+        return np.argmax(self.predict_proba(X), axis=1)
+
+    def predict_proba(self, X):
+        #: compile these in fit method
+        if not self._predict_proba_function:
+            self._predict_proba_function = function([self.x], self._symbolic_predict_proba(self.x))
+        return self._predict_proba_function(X)
+
+    def score(self, X, y):
+        return np.mean(self.predict(X) == y)
+
+    def _symbolic_predict(self, x):
+        return T.argmax(self._symbolic_predict_proba(x), axis=1)
+
+    def _symbolic_predict_proba(self, X):
         """A Theano expression representing a class distribution."""
         for layer in self.layers:
-            X = layer._symbolic_transform(X, noisy)
+            X = layer._symbolic_transform(X)
         return X
+
+    def _symbolic_score(self, x, y):
+        cost = PredictionError()
+        return cost(self._symbolic_predict(x), y)
+
+    def fit(self, X, y=None):
+        #: should we just remove X, y and take a dataset?
+        if not isinstance(X, SupervisedData):
+            dataset = SupervisedData(X, y)
+        else:
+            dataset = X
+
+        X = dataset.batch(1)
+
+        for layer in self.layers:
+            X = layer.fit_transform(X)
+
+        return self.fit_method(self, dataset)
