@@ -58,7 +58,7 @@ class Layer(object):
             self._transform_function = function([self.x], self._symbolic_transform(self.x))
         return self._transform_function(X)
 
-    def _symbolic_transform(self, X, noisy=True):
+    def _symbolic_transform(self, X):
         if noisy and self.corruption is not None:
             X = self.corruption(X)
         return self.activation(T.dot(X, self.W) + self.b)
@@ -160,9 +160,8 @@ class ConvolutionLayer(Layer):
     :param pool_size: the size of the subsampling pool.
     :param activation: the non-linearly to apply after pooling.
     """
-    def __init__(self, n_filters=10, filter_size=5, stride=2, activation=Sigmoid(), corruption=None, regularization=None):
+    def __init__(self, n_filters=10, filter_size=5, activation=Sigmoid(), corruption=None, regularization=None):
         self.b = shared(np.zeros(n_filters, dtype=config.floatX))
-        self.stride = (stride, stride)
         self.n_filters = n_filters
         self.filter_size = filter_size
         self.corruption = corruption
@@ -176,7 +175,7 @@ class ConvolutionLayer(Layer):
             self._transform_function = function([self.x], self._symbolic_transform(self.x))
         return self._transform_function(X)
 
-    def _symbolic_transform(self, x, noisy=True):
+    def _symbolic_transform(self, x):
         if noisy and self.corruption is not None:
             x = self.corruption(x)
         x = conv2d(x, self.W, filter_shape=self.W.get_value().shape)
