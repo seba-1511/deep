@@ -65,17 +65,10 @@ class Supervised(object):
     x = T.matrix()
     y = T.lvector()
 
-    _predict_function = None
     _predict_proba_function = None
-    _score_function = None
 
     def predict(self, X):
-        #: do we need separate functions for predict and predict_proba?
-        #: we could probably just np.argmax here
-        #: same comment for score
-        if not self._predict_function:
-            self._predict_function = function([self.x], self._symbolic_predict(self.x))
-        return self._predict_function(X)
+        return T.argmax(self.predict_proba(X), axis=1)
 
     def predict_proba(self, X):
         #: compile these in fit method
@@ -83,11 +76,8 @@ class Supervised(object):
             self._predict_proba_function = function([self.x], self._symbolic_predict_proba(self.x))
         return self._predict_proba_function(X)
 
-    def score(self, X, y, cost=None):
-        X = np.asarray(X, dtype=config.floatX)
-        if not self._score_function or cost != self.cost:
-            self._score_function = function([self.x, self.y], self._symbolic_score(self.x, self.y))
-        return self._score_function(X, y)
+    def score(self, X, y):
+        return T.mean(self.predict(X) == y)
 
     def _symbolic_predict(self, x, noisy=True):
         return T.argmax(self._symbolic_predict_proba(x, noisy), axis=1)
