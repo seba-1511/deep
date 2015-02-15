@@ -93,35 +93,44 @@ class EarlyStopping(Fit):
         y = model.y
         index = [dataset.batch_index]
 
-        score = model._symbolic_score(x, y)
+        from deep.costs import NegativeLogLikelihood
+
+        score = [model._symbolic_score(x, y), NegativeLogLikelihood()(model._symbolic_predict_proba(x), y)]
         updates = model.updates
         givens = dataset.givens(x, y, self.batch_size)
         train = function(index, score, None, updates, givens)
 
-        score = model._symbolic_score(x, y, noisy=False)
         givens = self.valid.givens(x, y, self.batch_size)
         valid = function(index, score, None, None, givens)
 
         n_train_batches = len(dataset) / self.batch_size
         n_valid_batches = len(self.valid) / self.batch_size
 
-        last_valid_cost = 0
+        last_valid_nll = 0
         for iteration in range(1, self.n_iterations + 1):
             begin = time.time()
-            train_costs = [train(batch) for batch in range(n_train_batches)]
-            valid_costs = [valid(batch) for batch in range(n_valid_batches)]
+            #train_costs = [train(batch) for batch in range(n_train_batches)]
+            #valid_costs = [valid(batch) for batch in range(n_valid_batches)]
+
+            for batch in range(n_train_batches):
+                train_costs, train_nlls = train(batch)
+            for batch in range(n_valid_batches):
+                valid_costs, valid_nlls = valid(batch)
             elapsed = time.time() - begin
 
             train_cost = np.mean(train_costs)
             valid_cost = np.mean(valid_costs)
 
-            if valid_cost < last_valid_cost:
+            train_nll = np.mean(train_nlls)
+            valid_nll = np.mean(valid_nlls)
+
+            if valid_nll > last_valid_nll:
                 break
             else:
-                last_valid_cost = valid_cost
+                last_valid_nll = valid_nll
 
-            print("[%s] Iteration %d, train = %.2f, valid = %.2f, time = %.2fs"
-                  % (type(model).__name__, iteration, train_cost, valid_cost, elapsed))
+            print("[%s] Iteration %d, train = %.0f%% (%.2f), valid = %.0f%% (%.2f), time = %.2fs"
+                  % (type(model).__name__, iteration, train_cost*100, train_nll, valid_cost*100, valid_nll, elapsed))
 
             dataset.update()
 

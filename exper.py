@@ -7,6 +7,9 @@ size = 28
 X = Reshape(size).transform(X)
 X_test = Reshape(size).transform(X_test)
 
+from sklearn.cross_validation import train_test_split
+X, X_valid, y, y_valid = train_test_split(X, y, test_size=.1)
+
 import numpy as np
 def augment(X):
     X = X.reshape(-1, size, size)
@@ -28,13 +31,12 @@ X = np.vstack(augment(X))
 y = np.hstack((y, y, y, y, y, y, y, y))
 
 from sklearn.preprocessing import StandardScaler
+X = np.vstack((X, X_valid))
 X = np.vstack((X, X_test))
 X = StandardScaler().fit_transform(X)
 X_test = X[-len(X_test):]
-X = X[:-len(X_test)]
-
-from sklearn.cross_validation import train_test_split
-X, X_valid, y, y_valid = train_test_split(X, y, test_size=.1)
+X_valid = X[-(len(X_test) + len(X_valid)):-len(X_test)]
+X = X[:-(len(X_test) + len(X_valid))]
 
 from deep.datasets import SupervisedData
 train = SupervisedData((X, y))
