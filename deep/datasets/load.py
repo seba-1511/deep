@@ -107,7 +107,7 @@ def load_plankton(test=False):
 
     """
     if test:
-        path = '/home/gabrielpereyra/Desktop/plankton.pkl.gz'
+        path = '/home/gabrielpereyra/Desktop/plankton_test.pkl.gz'
     else:
         path = '/home/gabrielpereyra/Desktop/plankton.pkl.gz'
     with gzip.open(path) as data_file:
