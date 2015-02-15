@@ -79,7 +79,7 @@ class NegativeLogLikelihood(Cost):
     :return: a Theano expression representing the cost function.
     """
     def __call__(self, x, y):
-        return -T.mean(T.log(x)[T.arange(y.shape[0]), y])
+        return T.mean(T.nnet.categorical_crossentropy(x, y))
 
 
 class PredictionError(Cost):

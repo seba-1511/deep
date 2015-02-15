@@ -22,27 +22,22 @@ from scipy.misc import imresize
 
 class Augmentation(object):
 
-    def __call__(self, X):
-        return self.X
+    #: so these are compatible with sklearn preprocessing
+    def fit(self, X):
+        return self
 
-
-class AugmentationSequence(Augmentation):
-
-    def __init__(self, augmentations):
-        self.augmentations = augmentations
-
-    def __call__(self, X):
-        for augmentation in self.augmentations:
-            X = augmentation(X)
+    def transform(self, X):
         return X
 
+    def fit_transform(self, X):
+        return self.fit(X).transform(X)
 
 class CenterPatch(Augmentation):
 
     def __init__(self, patch_size):
         self.patch_size = patch_size
 
-    def __call__(self, X):
+    def transform(self, X):
         n_samples = len(X)
 
         patches = []
@@ -68,7 +63,7 @@ class RandomPatch(Augmentation):
     def __init__(self, patch_size):
         self.patch_size = patch_size
 
-    def __call__(self, X):
+    def transform(self, X):
         n_samples = len(X)
 
         patches = []
@@ -90,7 +85,7 @@ class RandomPatch(Augmentation):
 
 class RandomRotation(Augmentation):
 
-    def __call__(self, X, white_bg=True):
+    def transform(self, X, white_bg=True):
         n_samples = len(X)
 
         rotated = []
@@ -119,7 +114,7 @@ class RandomRotation90(Augmentation):
     :param examples: list of 2d numpy arrays
     """
 
-    def __call__(self, X):
+    def transform(self, X):
         n_samples = len(X)
 
         rotated = []
@@ -144,7 +139,7 @@ class Resize(Augmentation):
     def __init__(self, new_size):
         self.new_size = new_size
 
-    def __call__(self, X):
+    def transform(self, X):
         #: how to include random new size
         #: make new_dim a tuple
         #: put this in a separate function
@@ -158,3 +153,21 @@ class Resize(Augmentation):
             size = float(self.new_size) / min(height, width) + .0001
             resized.append(imresize(x, size))
         return resized
+
+
+class Reshape(Augmentation):
+    """
+
+    :param examples: list of 2d numpy arrays
+    :param new_dim: dimension of new images
+    """
+
+    def __init__(self, size):
+        self.size = (size, size)
+
+    def transform(self, X):
+        #: how to handle non-uniform rectanglur image data?
+        n_samples = len(X)
+        reshaped = [imresize(x, self.size) for x in X]
+        from theano import config
+        return np.asarray(reshaped, dtype=config.floatX).reshape(n_samples, -1)

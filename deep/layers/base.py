@@ -160,8 +160,9 @@ class ConvolutionLayer(Layer):
     :param pool_size: the size of the subsampling pool.
     :param activation: the non-linearly to apply after pooling.
     """
-    def __init__(self, n_filters=10, filter_size=5, activation=Sigmoid(), corruption=None, regularization=None):
+    def __init__(self, n_filters=10, filter_size=5, stride=2, activation=Sigmoid(), corruption=None, regularization=None):
         self.b = shared(np.zeros(n_filters, dtype=config.floatX))
+        self.stride = (stride, stride)
         self.n_filters = n_filters
         self.filter_size = filter_size
         self.corruption = corruption

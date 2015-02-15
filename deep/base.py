@@ -5,7 +5,7 @@ from abc import abstractmethod
 from theano import function, config
 
 from deep.costs import PredictionError
-from deep.datasets.base import SupervisedDataset
+from deep.datasets.base import SupervisedData
 
 
 class Transformer(object):
@@ -70,11 +70,15 @@ class Supervised(object):
     _score_function = None
 
     def predict(self, X):
+        #: do we need separate functions for predict and predict_proba?
+        #: we could probably just np.argmax here
+        #: same comment for score
         if not self._predict_function:
             self._predict_function = function([self.x], self._symbolic_predict(self.x))
         return self._predict_function(X)
 
     def predict_proba(self, X):
+        #: compile these in fit method
         if not self._predict_proba_function:
             self._predict_proba_function = function([self.x], self._symbolic_predict_proba(self.x))
         return self._predict_proba_function(X)
@@ -100,8 +104,8 @@ class Supervised(object):
 
     #: should we just remove X, y and take a dataset?
     def fit(self, X, y=None):
-        if not isinstance(X, SupervisedDataset):
-            dataset = SupervisedDataset(X, y)
+        if not isinstance(X, SupervisedData):
+            dataset = SupervisedData(X, y)
         else:
             dataset = X
 

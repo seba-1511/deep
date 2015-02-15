@@ -90,7 +90,7 @@ def load_svhn():
     raise NotImplementedError
 
 
-def load_plankton():
+def load_plankton(test=False):
     """Load and return the mnist digit dataset (classification).
 
     :reference:
@@ -106,5 +106,9 @@ def load_plankton():
     =================   ==============
 
     """
-    with gzip.open('/home/gabrielpereyra/Desktop/plankton.pkl.gz') as data_file:
-        return cPickle.load(data_file)
+    if test:
+        path = '/home/gabrielpereyra/Desktop/plankton.pkl.gz'
+    else:
+        path = '/home/gabrielpereyra/Desktop/plankton.pkl.gz'
+    with gzip.open(path) as data_file:
+       return cPickle.load(data_file)

@@ -28,7 +28,7 @@ def setup_plot(func):
 def plot_image_data(X, filename=None):
 
     for index, x in enumerate(X):
-        plt.setp(plt.subplot(10, 10, index), xticks=[], yticks=[])
+        plt.setp(plt.subplot(10, 10, index+1), xticks=[], yticks=[])
         plt.imshow(x.reshape(28, 28), cmap=plt.get_cmap('gray'),
                    interpolation='nearest')
 

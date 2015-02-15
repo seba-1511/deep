@@ -15,33 +15,28 @@ import numpy as np
 import theano.tensor as T
 
 from theano import config, shared
-from abc import abstractmethod
 
 
-
-
-class Dataset(object):
-    """"""
-
-
-#: calling this Supervised conflicts with supervised(model)
-class SupervisedDataset(Dataset):
+class SupervisedData(object):
 
     batch_index = T.lscalar()
 
-    def __init__(self, X, y, augmentation=None):
-        self.X_original = X
-        self.augmentation = augmentation
+    def __init__(self, data, augment=None, ):
+        X, y = data
 
-        if self.augmentation is not None:
-            X = self.augmentation(X)
+        self.X_original = X
+        self.augment = augment
+
+        if self.augment is not None:
+            for augmentation in self.augment:
+                    X = augmentation.transform(X)
 
         self.X = shared(np.asarray(X, dtype=config.floatX))
         self.y = shared(np.asarray(y, dtype='int64'))
 
     def givens(self, x, y,  batch_size=128):
         batch_start = self.batch_index * batch_size
-        batch_end = batch_start + batch_size
+        batch_end = (self.batch_index+1) * batch_size
         return {x: self.X[batch_start:batch_end],
                 y: self.y[batch_start:batch_end]}
 
@@ -49,8 +44,21 @@ class SupervisedDataset(Dataset):
         return self.X.get_value()[:batch_size]
 
     def update(self):
-        if self.augmentation is not None:
-            self.X.set_value(self.augmentation(self.X_original))
+        if self.augment is not None:
+            for augmentation in self.augment:
+                    X = augmentation.transform(self.X_original)
+            self.X.set_value(X)
 
     def __len__(self):
         return len(self.X.get_value(self.X))
+
+
+class SupervisedDataset(object):
+
+    #: normalizes data together
+
+    def __init__(self, dataset, augment):
+        self.train = SupervisedData(dataset[0], augment)
+        self.valid = SupervisedData(dataset[1], augment)
+        self.test = SupervisedData(dataset[2], augment)
+        self. augment = augment

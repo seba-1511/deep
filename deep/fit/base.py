@@ -83,22 +83,22 @@ class EarlyStopping(Fit):
     #: how to combine this with iterative fit?
 
     def __init__(self, valid, n_iterations=100, batch_size=100):
+        self.valid = valid
         self.n_iterations = n_iterations
         self.batch_size = batch_size
-        self.valid = valid
         self.i = T.lscalar()
 
     def __call__(self, model, dataset):
-
         x = model.x
         y = model.y
-
         index = [dataset.batch_index]
+
         score = model._symbolic_score(x, y)
         updates = model.updates
-
         givens = dataset.givens(x, y, self.batch_size)
         train = function(index, score, None, updates, givens)
+
+        score = model._symbolic_score(x, y, noisy=False)
         givens = self.valid.givens(x, y, self.batch_size)
         valid = function(index, score, None, None, givens)
 

@@ -1,3 +1,6 @@
-from deep.datasets.load import load_mnist
+from load import load_mnist
+from base import SupervisedData, SupervisedDataset
 
-__all__ = ['load_mnist']
+__all__ = ['load_mnist',
+           'SupervisedData',
+           'SupervisedDataset']
