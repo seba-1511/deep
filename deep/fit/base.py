@@ -15,7 +15,7 @@ import time
 import numpy as np
 import theano.tensor as T
 from abc import abstractmethod
-from theano import shared, config, function
+from theano import function
 
 from deep.datasets import SupervisedData, UnsupervisedData
 
@@ -45,11 +45,17 @@ class Iterative(Fit):
         if isinstance(dataset, SupervisedData):
             y = T.lvector()
             train_score = model._symbolic_score(x, y)
+            updates = model.updates(x, y)
             train_givens = dataset.givens(x, y, self.batch_size)
 
             if self.valid is not None:
+
+                #: remove noise to compile clean score
+                for layer in model.layers:
+                    layer.corruption = None
+
                 valid_score = model._symbolic_score(x, y)
-                valid_givens = dataset.givens(x, y, self.batch_size)
+                valid_givens = self.valid.givens(x, y, self.batch_size)
 
         if isinstance(dataset, UnsupervisedData):
             train_score = model._symbolic_score(x)
@@ -58,7 +64,7 @@ class Iterative(Fit):
 
             if self.valid is not None:
                 valid_score = model._symbolic_score(x)
-                valid_givens = dataset.givens(x, self.batch_size)
+                valid_givens = self.valid.givens(x, self.batch_size)
 
         train = function(index, train_score, None, updates, train_givens)
         n_train_batches = len(dataset) / self.batch_size
@@ -80,13 +86,12 @@ class Iterative(Fit):
             if self.valid is not None:
                 valid_cost = np.mean(valid_costs)
 
-            print("[%s] Iteration %d, train = %.2f, valid = %.2f, time = %.2fs"
+            print("[%s] Iteration %d, train = %.2f, valid = %.4f, time = %.2fs"
                   % (type(model).__name__, iteration, train_cost, valid_cost, elapsed))
 
             dataset.update()
 
         return model
-
 
 
 class EarlyStopping(Fit):

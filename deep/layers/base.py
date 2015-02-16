@@ -37,7 +37,8 @@ class Layer(object):
         self.corruption = corruption
         self.regularization = regularization
         self.n_hidden = n_hidden
-        self.x = T.matrix()
+
+    x = T.matrix()
 
     @property
     def params(self):
@@ -49,10 +50,7 @@ class Layer(object):
     def shape(self):
         return self.W.get_value().shape
 
-    #: if we add a noisy option like _symbolic we need to either
-    #: add a separate function or recompile each time
     def transform(self, X):
-        """ """
         if not self._transform_function:
             self._transform_function = function([self.x], self._symbolic_transform(self.x))
         return self._transform_function(X)
@@ -79,6 +77,7 @@ class Layer(object):
         return layer_name + '(shape=' + layer_shape + ')'
 
 
+#: need to clean these up
 class PreConv(object):
 
     def fit(self, X):

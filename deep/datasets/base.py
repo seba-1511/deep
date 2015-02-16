@@ -21,9 +21,7 @@ class SupervisedData(object):
 
     batch_index = T.lscalar()
 
-    def __init__(self, data, augment=None, ):
-        X, y = data
-
+    def __init__(self, X, y, augment=None, ):
         self.X_original = X
         self.augment = augment
 

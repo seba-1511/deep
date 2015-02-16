@@ -16,7 +16,7 @@ import numpy as np
 
 from sklearn.datasets import load_iris
 from sklearn.utils.testing import assert_array_equal, assert_equal, assert_raises
-from deep.models.base import NN
+from deep.models.nn import NN
 
 iris = load_iris()
 X = iris.data
