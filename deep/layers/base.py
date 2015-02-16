@@ -32,7 +32,6 @@ class Layer(object):
     :param activation: the activation function to apply after linear transform.
     """
     def __init__(self, n_hidden=100, activation=Sigmoid(), corruption=None, regularization=None):
-        self.b = shared(np.zeros(n_hidden, dtype=config.floatX))
         self._transform_function = None
         self.activation = activation
         self.corruption = corruption
@@ -59,7 +58,7 @@ class Layer(object):
         return self._transform_function(X)
 
     def _symbolic_transform(self, X):
-        if noisy and self.corruption is not None:
+        if self.corruption is not None:
             X = self.corruption(X)
         return self.activation(T.dot(X, self.W) + self.b)
 
@@ -67,12 +66,11 @@ class Layer(object):
         return self.fit(X).transform(X)
 
     def fit(self, X):
-        #: where should the seed go?
         np.random.seed(1)
         size = X.shape[1], self.n_hidden
-
         self.W = np.random.normal(loc=0, scale=.01, size=size)
         self.W = shared(np.asarray(self.W, dtype=config.floatX))
+        self.b = shared(np.zeros(self.n_hidden, dtype=config.floatX))
         return self
 
     def __repr__(self):
@@ -161,15 +159,16 @@ class ConvolutionLayer(Layer):
     :param activation: the non-linearly to apply after pooling.
     """
     def __init__(self, n_filters=10, filter_size=5, activation=Sigmoid(), corruption=None, regularization=None):
-        self.b = shared(np.zeros(n_filters, dtype=config.floatX))
         self.n_filters = n_filters
         self.filter_size = filter_size
         self.corruption = corruption
-        self.x = T.tensor4()
         self.activation = activation
         self.regularization = regularization
-        self._transform_function = None
 
+    x = T.tensor4()
+    _transform_function = None
+
+    #: can we remove this?
     def transform(self, X):
         if not self._transform_function:
             self._transform_function = function([self.x], self._symbolic_transform(self.x))
@@ -182,6 +181,7 @@ class ConvolutionLayer(Layer):
         return self.activation(x + self.b.dimshuffle('x', 0, 'x', 'x'))
 
     def fit(self, X):
+        self.b = shared(np.zeros(self.n_filters, dtype=config.floatX))
 
         #: where should the seed go?
         np.random.seed(1)

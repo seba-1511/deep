@@ -1,3 +1,4 @@
-from base import Momentum
+from base import GradientDescent, Momentum
 
-__all__ = ['Momentum']
+__all__ = ['GradientDescent',
+           'Momentum']
