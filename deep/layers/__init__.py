@@ -1,4 +1,8 @@
-from deep.layers.base import Layer
-from deep.layers.base import ConvolutionLayer
+from base import Layer, ConvolutionLayer, Transpose, Pooling, PreConv, PostConv
 
-__all__ = ['Layer', 'ConvolutionLayer']
+__all__ = ['Layer',
+           'ConvolutionLayer',
+           'Transpose',
+           'Pooling',
+           'PreConv',
+           'PostConv']

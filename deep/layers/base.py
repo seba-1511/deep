@@ -32,13 +32,13 @@ class Layer(object):
     :param activation: the activation function to apply after linear transform.
     """
     def __init__(self, n_hidden=100, activation=Sigmoid(), corruption=None, regularization=None):
-        self._transform_function = None
         self.activation = activation
         self.corruption = corruption
         self.regularization = regularization
         self.n_hidden = n_hidden
 
     x = T.matrix()
+    _transform_function = None
 
     @property
     def params(self):
@@ -174,7 +174,7 @@ class ConvolutionLayer(Layer):
         return self._transform_function(X)
 
     def _symbolic_transform(self, x):
-        if noisy and self.corruption is not None:
+        if self.corruption is not None:
             x = self.corruption(x)
         x = conv2d(x, self.W, filter_shape=self.W.get_value().shape)
         return self.activation(x + self.b.dimshuffle('x', 0, 'x', 'x'))
@@ -192,3 +192,33 @@ class ConvolutionLayer(Layer):
 
     def __repr__(self):
         return self.__class__.__name__
+
+
+class Transpose(object):
+
+    def __init__(self, layer):
+        self.n_hidden = layer.shape[0]
+        self.activation = layer.activation
+        self.W = layer.W.T
+
+    x = T.matrix()
+    _transform_function = None
+
+    def fit(self, X):
+        self.b = shared(np.zeros(self.n_hidden, dtype=config.floatX))
+        return self
+
+    def transform(self, X):
+        if not self._transform_function:
+            self._transform_function = function([self.x], self._symbolic_transform(self.x))
+        return self._transform_function(X)
+
+    def fit_transform(self, X):
+        return self.fit(X).transform(X)
+
+    def _symbolic_transform(self, X):
+        return self.activation(T.dot(X, self.W) + self.b)
+
+    @property
+    def params(self):
+        return []

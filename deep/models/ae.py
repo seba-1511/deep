@@ -15,14 +15,15 @@ from theano import function
 from deep.fit import Iterative
 from deep.costs import BinaryCrossEntropy
 from deep.updates import GradientDescent
+from deep.layers import Transpose
 
 
 class AE(object):
 
-    def __init__(self, encoder, decoder, learning_rate=10, update=GradientDescent(),
+    def __init__(self, encoder, decoder=None, learning_rate=10, update=GradientDescent(),
                  fit=Iterative(), cost=BinaryCrossEntropy()):
         self.encoder = encoder
-        self.decoder = decoder
+        self.decoder = decoder or []
         self.learning_rate = learning_rate
         self.update = update
         self.fit_method = fit
@@ -71,7 +72,6 @@ class AE(object):
 
     #: compile this in fit
     def inverse_transform(self, X):
-        #: compile these in fit method
         if not self._inverse_transform_function:
             self._inverse_transform_function = function([self.x], self._symbolic_inverse_transform(self.x))
         return self._inverse_transform_function(X)
@@ -85,7 +85,14 @@ class AE(object):
 
     def fit(self, X, y=None):
         x = X[:1]
-        for layer in self.encoder + self.decoder:
+        for layer in self.encoder:
+            x = layer.fit_transform(x)
+
+        if not self.decoder:
+            for layer in reversed(self.encoder):
+                self.decoder.append(Transpose(layer))
+
+        for layer in self.decoder:
             x = layer.fit_transform(x)
         return self.fit_method.fit(self, X, y)
 

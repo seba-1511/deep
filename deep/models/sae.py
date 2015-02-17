@@ -34,6 +34,6 @@ class SAE(object):
             X = autoencoder.fit_transform(X)
 
             from sklearn.preprocessing import MinMaxScaler
-            X = MinMaxScaler().fit_transform(X)
+            #X = MinMaxScaler().fit_transform(X)
 
         return self

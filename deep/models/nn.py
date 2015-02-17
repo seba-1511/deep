@@ -78,4 +78,4 @@ class NN(object):
         for layer in self.layers:
             X = layer.fit_transform(X)
 
-        return self.fit_method(self, X, y)
+        return self.fit_method.fit(self, X, y)
