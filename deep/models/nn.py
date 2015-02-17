@@ -19,7 +19,6 @@ from theano import function
 from deep.fit.base import Iterative
 from deep.costs.base import NegativeLogLikelihood, PredictionError
 from deep.updates.base import GradientDescent
-from deep.datasets import SupervisedData
 
 class NN(object):
 
@@ -76,15 +75,7 @@ class NN(object):
         return np.mean(self.predict(X) == y)
 
     def fit(self, X, y=None):
-        #: should we just remove X, y and take a dataset?
-        if not isinstance(X, SupervisedData):
-            dataset = SupervisedData(X, y)
-        else:
-            dataset = X
-
-        X = dataset.batch(1)
-
         for layer in self.layers:
             X = layer.fit_transform(X)
 
-        return self.fit_method(self, dataset)
+        return self.fit_method(self, X, y)

@@ -11,14 +11,11 @@
     :license: BSD, see LICENSE for more details.
 """
 
-import numpy as np
-
 from theano import function
-
 from deep.fit import Iterative
 from deep.costs import BinaryCrossEntropy
 from deep.updates import GradientDescent
-from deep.datasets import UnsupervisedData
+
 
 class AE(object):
 
@@ -31,6 +28,10 @@ class AE(object):
         self.fit_method = fit
         self.cost = cost
 
+        #: move this to fit
+        from theano.tensor import matrix
+        self.x = matrix()
+
     _transform_function = None
     _inverse_transform_function = None
 
@@ -39,8 +40,7 @@ class AE(object):
         return [param for layer in self.encoder + self.decoder for param in layer.params]
 
     def updates(self, x):
-        reconstruct = self._symbolic_inverse_transform(self._symbolic_transform(x))
-        cost = self.cost(reconstruct, x)
+        cost = self._symbolic_score(x)
 
         #: add regularizer to network
 
@@ -63,11 +63,13 @@ class AE(object):
         reconstruct = self._symbolic_inverse_transform(self._symbolic_transform(x))
         return self.cost(reconstruct, x)
 
+    #: compile this in fit
     def transform(self, X):
         if not self._transform_function:
             self._transform_function = function([self.x], self._symbolic_transform(self.x))
         return self._transform_function(X)
 
+    #: compile this in fit
     def inverse_transform(self, X):
         #: compile these in fit method
         if not self._inverse_transform_function:
@@ -82,14 +84,10 @@ class AE(object):
         raise NotImplementedError
 
     def fit(self, X, y=None):
-        if not isinstance(X, UnsupervisedData):
-            dataset = UnsupervisedData(X)
-        else:
-            dataset = X
-
-        X = dataset.batch(1)
-
+        x = X[:1]
         for layer in self.encoder + self.decoder:
-            X = layer.fit_transform(X)
+            x = layer.fit_transform(x)
+        return self.fit_method.fit(self, X, y)
 
-        return self.fit_method(self, dataset)
+    def fit_transform(self, X):
+        return self.fit(X).transform(X)
