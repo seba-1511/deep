@@ -73,7 +73,7 @@ class Layer(object):
         size = X.shape[1], self.n_hidden
         self.W = np.random.normal(loc=0, scale=.01, size=size)
         self.W = shared(np.asarray(self.W, dtype=config.floatX))
-        self.b = shared(np.zeros(self.n_hidden, dtype=config.floatX))
+        self.b = shared(np.ones(self.n_hidden, dtype=config.floatX))
         return self
 
     def __repr__(self):
