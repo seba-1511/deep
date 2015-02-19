@@ -99,8 +99,8 @@ def load_plankton(test=False):
 
     =================   ==============
     Classes                         10
-    Samples per class            ~7000
-    Samples total                70000
+    Samples per class             ~350
+    Samples total                33000
     Dimensionality                 784
     Features                floats 0-1
     =================   ==============
