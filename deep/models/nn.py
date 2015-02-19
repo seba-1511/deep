@@ -23,12 +23,13 @@ from deep.updates.base import GradientDescent
 class NN(object):
 
     def __init__(self, layers, learning_rate=10, update=GradientDescent(),
-                 fit=Iterative(), cost=NegativeLogLikelihood()):
+                 fit=Iterative(), cost=NegativeLogLikelihood(), regularize=None):
         self.layers = layers
         self.learning_rate = learning_rate
         self.update = update
         self.fit_method = fit
         self.cost = cost
+        self.regularize = regularize
 
     #: this is only used to compile predict_proba
     #: do this in fit?
@@ -43,7 +44,8 @@ class NN(object):
     def updates(self, x, y):
         cost = self.cost(self._symbolic_predict_proba(x), y)
 
-        #: add regularizer to network
+        for param in self.params:
+            cost += self.regularize(param)
 
         updates = list()
         for param in self.params:
@@ -75,7 +77,7 @@ class NN(object):
         return np.mean(self.predict(X) == y)
 
     def fit(self, X, y=None):
+        x = X[:1]
         for layer in self.layers:
-            X = layer.fit_transform(X)
-
+            x = layer.fit_transform(x)
         return self.fit_method.fit(self, X, y)

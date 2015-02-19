@@ -20,7 +20,10 @@ from theano.tensor.nnet import conv2d
 from deep.activations.base import Sigmoid
 
 
-#: change the noisy argument to a boolean in each layer
+#: a possible way to implement a deeply supervised net that
+#: applies the identity transform to its input while also
+#: returning the softmax cost. Still need to figure out a cheeky
+#: way for it to get access to targets.
 
 
 class Layer(object):
@@ -31,10 +34,12 @@ class Layer(object):
     :param shape: a tuple (input_size, output_size).
     :param activation: the activation function to apply after linear transform.
     """
-    def __init__(self, n_hidden=100, activation=Sigmoid(), corruption=None, regularization=None):
+
+    #: make a corruption layer
+
+    def __init__(self, n_hidden=100, activation=Sigmoid(), corruption=None):
         self.activation = activation
         self.corruption = corruption
-        self.regularization = regularization
         self.n_hidden = n_hidden
 
     x = T.matrix()
@@ -88,7 +93,7 @@ class PreConv(object):
         dim = int(np.sqrt(n_features))
         return X.reshape(n_samples, 1, dim, dim)
 
-    def _symbolic_transform(self, x, noisy=None):
+    def _symbolic_transform(self, x):
         n_samples, n_features = x.shape
         dim = T.cast(T.sqrt(n_features), dtype='int64')
         return x.reshape((n_samples, 1, dim, dim))
@@ -157,12 +162,11 @@ class ConvolutionLayer(Layer):
     :param pool_size: the size of the subsampling pool.
     :param activation: the non-linearly to apply after pooling.
     """
-    def __init__(self, n_filters=10, filter_size=5, activation=Sigmoid(), corruption=None, regularization=None):
+    def __init__(self, n_filters=10, filter_size=5, activation=Sigmoid(), corruption=None):
         self.n_filters = n_filters
         self.filter_size = filter_size
         self.corruption = corruption
         self.activation = activation
-        self.regularization = regularization
 
     x = T.tensor4()
     _transform_function = None

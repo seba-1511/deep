@@ -18,11 +18,6 @@ from theano import function, shared, config
 
 from sklearn.cross_validation import train_test_split
 
-class ansi:
-    GREEN = '\033[32m'
-    ENDC = '\033[0m'
-ansi = ansi()
-
 
 def _print_header():
     print("""
@@ -31,24 +26,19 @@ def _print_header():
 """)
 
 
-def _print_iter(best_train, best_valid, elapsed, iteration, train_cost, valid_cost):
-    print("  {:>5} | {}{:>7.4f}{} | {}{:>7.4f}{} "
-          "| {:>4.1f}s".format(
-        iteration,
-        ansi.GREEN if best_train else "",
-        train_cost,
-        ansi.ENDC if best_train else "",
-        ansi.GREEN if best_valid else "",
-        valid_cost,
-        ansi.ENDC if best_valid else "",
-        elapsed,
-    ))
-
+def _print_iter(iteration, train_cost, valid_cost, elapsed):
+    print("  {:>5} | {:>7.4f} | {:>7.4f} | {:>4.1f}s".format(
+        iteration, train_cost, valid_cost, elapsed))
 
 
 #: separate X, y givens to combine these
 def supervised_givens(i, x, X, y, Y, batch_size):
-    raise NotImplementedError
+    X = shared(np.asarray(X, dtype=config.floatX))
+    Y = shared(np.asarray(Y, dtype='int64'))
+    batch_start = i * batch_size
+    batch_end = (i+1) * batch_size
+    return {x: X[batch_start:batch_end],
+            y: Y[batch_start:batch_end]}
 
 
 def unsupervised_givens(i, x, X, batch_size):
@@ -69,6 +59,11 @@ class Iterative(object):
     y = T.lvector()
     i = T.lscalar()
 
+    #: sign flipped for plankton
+    #: how to handle init in general case?
+    train_scores = [np.inf]
+    valid_scores = [np.inf]
+
     def compile_train_function(self, model, X, y):
         if y is None:
             score = model._symbolic_score(self.x)
@@ -76,7 +71,12 @@ class Iterative(object):
             givens = unsupervised_givens(self.i, self.x, X, self.batch_size)
 
         else:
-            score = model._symbolic_score(self.x, self.y)
+
+            #: for plankton competition
+            from deep.costs import NegativeLogLikelihood
+            score = NegativeLogLikelihood()(model._symbolic_predict_proba(self.x), self.y)
+            #score = model._symbolic_score(self.x, self.y)
+
             updates = model.updates(self.x, self.y)
             givens = supervised_givens(self.i, self.x, X, self.y, y, self.batch_size)
         return function([self.i], score, None, updates, givens)
@@ -86,10 +86,18 @@ class Iterative(object):
             score = model._symbolic_score(self.x)
             givens = unsupervised_givens(self.i, self.x, X, self.batch_size)
         else:
-            score = model._symbolic_score(self.x, self.y)
+
+            #: hacky dropout fix to get clean valid predictions
+            for layer in model.layers:
+                layer.corruption = None
+
+            #: for plankton competition
+            from deep.costs import NegativeLogLikelihood
+            score = NegativeLogLikelihood()(model._symbolic_predict_proba(self.x), self.y)
+            #score = model._symbolic_score(self.x, self.y)
+
             givens = supervised_givens(self.i, self.x, X, self.y, y, self.batch_size)
         return function([self.i], score, None, None, givens)
-
 
     def fit(self, model, X, y=None):
         if y is None:
@@ -106,9 +114,6 @@ class Iterative(object):
 
         _print_header()
 
-        best_train_cost = np.inf
-        best_valid_cost = np.inf
-
         for iteration in range(1, self.n_iterations+1):
             begin = time.time()
 
@@ -118,17 +123,29 @@ class Iterative(object):
             train_cost = np.mean(train_costs)
             valid_cost = np.mean(valid_costs)
 
-            if train_cost < best_train_cost:
-                best_train_cost = train_cost
-            if valid_cost < best_valid_cost:
-                best_valid_cost = valid_cost
-
-            best_train = best_train_cost == train_cost
-            best_valid = best_valid_cost == valid_cost
+            self.train_scores.append(train_cost)
+            self.valid_scores.append(valid_cost)
 
             elapsed = time.time() - begin
 
-            _print_iter(best_train, best_valid, elapsed,
-                        iteration, train_cost, valid_cost)
+            _print_iter(iteration, train_cost, valid_cost, elapsed)
+
+            if self.finished:
+                break
 
         return model
+
+    @property
+    def finished(self):
+        return False
+
+
+class EarlyStopping(Iterative):
+
+    @property
+    def finished(self):
+        #: sign flipped for plankton
+        #: need to add a parameter to costs that specifies
+        #: whether it is a increasing or decreasing cost.
+        return self.valid_scores[-1] > self.valid_scores[-2]
+

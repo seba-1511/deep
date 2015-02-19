@@ -21,9 +21,6 @@ from theano.sandbox.rng_mrg import MRG_RandomStreams
 from scipy.ndimage.interpolation import rotate, shift, zoom
 
 
-#: this need documentation that explains the @theano_compatible decorator.
-
-
 class Corruption(object):
     """An abstract class that represents a corruption function. Once
     initialized, a corruption class corrupts inputs through its
