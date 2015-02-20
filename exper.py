@@ -14,12 +14,12 @@ from deep.activations import RectifiedLinear, Softmax
 from deep.corruptions import Gaussian
 layers = [
     PreConv(),
-    ConvolutionLayer(32, 7, RectifiedLinear()),
-    Pooling(5, 2),
-    ConvolutionLayer(64, 5, RectifiedLinear()),
+    ConvolutionLayer(94, 3, RectifiedLinear()),
+    Pooling(4, 2),
+    ConvolutionLayer(94, 3, RectifiedLinear()),
     Pooling(3, 2),
     PostConv(),
-    Layer(1000, RectifiedLinear()),
+    Layer(1048, RectifiedLinear()),
     Layer(121, Softmax(), Gaussian(.25))
 ]
 
@@ -28,5 +28,5 @@ from deep.models import NN
 from deep.updates import Momentum
 from deep.fit import EarlyStopping
 from deep.regularizers import L2
-nn = NN(layers, .01, Momentum(.9), EarlyStopping(batch_size=128), regularize=L2(.0005))
+nn = NN(layers, .01, Momentum(.9), EarlyStopping(batch_size=128), regularize=L2(.005))
 nn.fit(X, y)
