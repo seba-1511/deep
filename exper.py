@@ -4,8 +4,8 @@ X, y = load_plankton()
 X_test, y_test = load_plankton(test=True)
 
 from deep.augmentation import Reshape
-X = Reshape(32).fit_transform(X)
-X_test = Reshape(32).fit_transform(X_test)
+X = Reshape(48).fit_transform(X)
+X_test = Reshape(48).fit_transform(X_test)
 
 import numpy as np
 X = np.vstack((X, X_test))
@@ -29,7 +29,7 @@ layers = [
     Pooling(3, 2),
     PostConv(),
     Layer(3000, RectifiedLinear(), Dropout(.68)),
-    Layer(2500, RectifiedLinear(), Dropout(.688)),
+    Layer(2500, RectifiedLinear(), Dropout(.68)),
     Layer(121, Softmax(), Dropout(.5))
 ]
 
@@ -38,7 +38,7 @@ from deep.models import NN
 from deep.updates import Momentum
 from deep.regularizers import L2
 from deep.fit import Iterative
-nn = NN(layers, .01, Momentum(.9), fit=Iterative(750), regularize=L2(.0005))
+nn = NN(layers, .01, Momentum(.9), fit=Iterative(135), regularize=L2(.0005))
 nn.fit(X, y)
 
 
