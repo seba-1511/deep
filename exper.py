@@ -22,10 +22,10 @@ from deep.activations.base import RectifiedLinear, Softmax
 from deep.corruptions import Dropout
 layers = [
     PreConv(),
-    ConvolutionLayer(48, 3, RectifiedLinear()),
-    ConvolutionLayer(96, 3, RectifiedLinear(), Dropout(.40)),
+    ConvolutionLayer(48, 3, RectifiedLinear(), Dropout(.2)),
+    ConvolutionLayer(96, 3, RectifiedLinear(), Dropout(.4)),
     Pooling(3, 3),
-    ConvolutionLayer(128, 5, RectifiedLinear(), Dropout(.40)),
+    ConvolutionLayer(128, 5, RectifiedLinear(), Dropout(.5)),
     Pooling(3, 2),
     PostConv(),
     Layer(3000, RectifiedLinear(), Dropout(.68)),
@@ -39,7 +39,7 @@ from deep.updates import Momentum
 from deep.regularizers import L2
 from deep.fit import Iterative
 from deep.plot.base import plot_training
-nn = NN(layers, .01, Momentum(.9), fit=Iterative(15), regularize=L2(.0005))
+nn = NN(layers, .01, Momentum(.9), fit=Iterative(135), regularize=L2(.005))
 nn.fit(X, y)
 plot_training(nn)
 
