@@ -57,11 +57,9 @@ class Fit(object):
     def __init__(self):
         raise NotImplementedError("Should have implemented this")
 
-    @abstractmethod
     def fit(self):
         raise NotImplementedError("Should have implemented this")
 
-    @abstractmethod
     def finished(self):
         raise NotImplementedError("Should have implemented this")
 
