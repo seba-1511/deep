@@ -1,7 +1,7 @@
 import matplotlib.pyplot as plt
 
 from deep.corruptions import SaltAndPepper
-from deep.plot.plot import plotLines
+from deep.plot.helper import plotLines
 
 import numpy as np
 
@@ -62,6 +62,6 @@ def plot_training(model, name='training'):
     train = model.fit_method.train_scores
     valid = model.fit_method.valid_scores
     index = [i for i, _ in enumerate(valid)]
-    train = (train, index)
-    valid = (valid, index)
+    train = (index, train)
+    valid = (index, valid)
     plotLines((train, valid), title=name, xlabel='Iterations', ylabel='Score')
