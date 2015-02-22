@@ -48,7 +48,25 @@ def unsupervised_givens(i, x, X, batch_size):
     return {x: X[batch_start:batch_end]}
 
 
-class Iterative(object):
+class Fit(object):
+
+    """
+        The function that defines the interface for the fit functions
+    """
+
+    def __init__(self):
+        raise NotImplementedError("Should have implemented this")
+
+    @abstractmethod
+    def fit(self):
+        raise NotImplementedError("Should have implemented this")
+
+    @abstractmethod
+    def finished(self):
+        raise NotImplementedError("Should have implemented this")
+
+
+class Iterative(Fit):
 
     def __init__(self, n_iterations=100, batch_size=128, valid_size=0.1):
         self.n_iterations = n_iterations
