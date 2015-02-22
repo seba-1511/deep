@@ -4,8 +4,9 @@ X, y = load_plankton()
 X_test, y_test = load_plankton(test=True)
 
 from deep.augmentation import Reshape
-X = Reshape(48).fit_transform(X)
-X_test = Reshape(48).fit_transform(X_test)
+from scipy.ndimage.interpolation import rotate
+X = Reshape(60).fit_transform(X)
+X_test = Reshape(60).fit_transform(X_test)
 
 import numpy as np
 X = np.vstack((X, X_test))
@@ -22,11 +23,16 @@ from deep.activations.base import RectifiedLinear, Softmax
 from deep.corruptions import Dropout
 layers = [
     PreConv(),
-    ConvolutionLayer(48, 3, RectifiedLinear(), Dropout(.2)),
-    ConvolutionLayer(96, 3, RectifiedLinear(), Dropout(.4)),
-    Pooling(3, 3),
-    ConvolutionLayer(128, 5, RectifiedLinear(), Dropout(.5)),
-    Pooling(3, 2),
+    ConvolutionLayer(48, 2, RectifiedLinear(), Dropout(.45)),
+    Pooling(2, 1),
+    ConvolutionLayer(96, 2, RectifiedLinear(), Dropout(.45)),
+    Pooling(2, 1),
+    ConvolutionLayer(128, 3, RectifiedLinear(), Dropout(.45)),
+    Pooling(3, 1),
+    ConvolutionLayer(164, 3, RectifiedLinear(), Dropout(.45)),
+    Pooling(3, 1),
+    # ConvolutionLayer(164, 5, RectifiedLinear(), Dropout(.45)),
+    # Pooling(3, 1),
     PostConv(),
     Layer(3000, RectifiedLinear(), Dropout(.68)),
     Layer(2500, RectifiedLinear(), Dropout(.68)),
@@ -38,7 +44,7 @@ from deep.models import NN
 from deep.updates import Momentum
 from deep.regularizers import L2
 from deep.fit import Iterative
-nn = NN(layers, .01, Momentum(.9), fit=Iterative(135), regularize=L2(.005))
+nn = NN(layers, .01, Momentum(.9), fit=Iterative(135), regularize=L2(.0005))
 nn.fit(X, y)
 
 
