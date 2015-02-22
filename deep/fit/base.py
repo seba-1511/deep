@@ -36,7 +36,7 @@ def supervised_givens(i, x, X, y, Y, batch_size):
     X = shared(np.asarray(X, dtype=config.floatX))
     Y = shared(np.asarray(Y, dtype='int64'))
     batch_start = i * batch_size
-    batch_end = (i+1) * batch_size
+    batch_end = (i + 1) * batch_size
     return {x: X[batch_start:batch_end],
             y: Y[batch_start:batch_end]}
 
@@ -44,16 +44,18 @@ def supervised_givens(i, x, X, y, Y, batch_size):
 def unsupervised_givens(i, x, X, batch_size):
     X = shared(np.asarray(X, dtype=config.floatX))
     batch_start = i * batch_size
-    batch_end = (i+1) * batch_size
+    batch_end = (i + 1) * batch_size
     return {x: X[batch_start:batch_end]}
 
 
 class Iterative(object):
 
-    def __init__(self, n_iterations=100, batch_size=128, valid_size=0.1):
+    def __init__(self, n_iterations=100, batch_size=128, valid_size=0.1,
+                 plot=None):
         self.n_iterations = n_iterations
         self.batch_size = batch_size
         self.valid_size = valid_size
+        self.plot = plot
 
     x = T.matrix()
     y = T.lvector()
@@ -74,11 +76,13 @@ class Iterative(object):
 
             #: for plankton competition
             from deep.costs import NegativeLogLikelihood
-            score = NegativeLogLikelihood()(model._symbolic_predict_proba(self.x), self.y)
+            score = NegativeLogLikelihood()(
+                model._symbolic_predict_proba(self.x), self.y)
             #score = model._symbolic_score(self.x, self.y)
 
             updates = model.updates(self.x, self.y)
-            givens = supervised_givens(self.i, self.x, X, self.y, y, self.batch_size)
+            givens = supervised_givens(
+                self.i, self.x, X, self.y, y, self.batch_size)
         return function([self.i], score, None, updates, givens)
 
     def compile_valid_function(self, model, X, y):
@@ -93,10 +97,12 @@ class Iterative(object):
 
             #: for plankton competition
             from deep.costs import NegativeLogLikelihood
-            score = NegativeLogLikelihood()(model._symbolic_predict_proba(self.x), self.y)
+            score = NegativeLogLikelihood()(
+                model._symbolic_predict_proba(self.x), self.y)
             #score = model._symbolic_score(self.x, self.y)
 
-            givens = supervised_givens(self.i, self.x, X, self.y, y, self.batch_size)
+            givens = supervised_givens(
+                self.i, self.x, X, self.y, y, self.batch_size)
         return function([self.i], score, None, None, givens)
 
     def fit(self, model, X, y=None):
@@ -114,11 +120,13 @@ class Iterative(object):
 
         _print_header()
 
-        for iteration in range(1, self.n_iterations+1):
+        for iteration in xrange(1, self.n_iterations + 1):
             begin = time.time()
 
-            train_costs = [train_function(batch) for batch in range(n_train_batches)]
-            valid_costs = [valid_function(batch) for batch in range(n_valid_batches)]
+            train_costs = [train_function(batch)
+                           for batch in xrange(n_train_batches)]
+            valid_costs = [valid_function(batch)
+                           for batch in xrange(n_valid_batches)]
 
             train_cost = np.mean(train_costs)
             valid_cost = np.mean(valid_costs)
@@ -148,4 +156,3 @@ class EarlyStopping(Iterative):
         #: need to add a parameter to costs that specifies
         #: whether it is a increasing or decreasing cost.
         return self.valid_scores[-1] > self.valid_scores[-2]
-

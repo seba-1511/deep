@@ -1,6 +1,7 @@
 import matplotlib.pyplot as plt
 
 from deep.corruptions import SaltAndPepper
+from deep.plot.plot import plotLines
 
 import numpy as np
 
@@ -12,7 +13,7 @@ def setup_plot(func):
         dim = int(np.sqrt(n_samples))
         plt.figure(figsize=(dim, dim))
         plt.subplots_adjust(left=0.0, bottom=0.0, right=1.0,
-                    top=1.0, wspace=0.0, hspace=0.0)
+                            top=1.0, wspace=0.0, hspace=0.0)
 
         func(X, **kwargs)
 
@@ -28,9 +29,10 @@ def setup_plot(func):
 def plot_image_data(X, filename=None):
 
     for index, x in enumerate(X):
-        plt.setp(plt.subplot(10, 10, index+1), xticks=[], yticks=[])
+        plt.setp(plt.subplot(10, 10, index + 1), xticks=[], yticks=[])
         plt.imshow(x.reshape(28, 28), cmap=plt.get_cmap('gray'),
                    interpolation='nearest')
+
 
 def plot_layer(layer, filename=None):
     from deep.layers import ConvolutionLayer
@@ -54,3 +56,12 @@ def plot_classification_errors(classifier):
 
 def plot_fit(fit):
     raise NotImplementedError
+
+
+def plot_training(model, name='training'):
+    train = model.fit_method.train_scores
+    valid = model.fit_method.valid_scores
+    index = [i for i, _ in enumerate(valid)]
+    train = (train, index)
+    valid = (valid, index)
+    plotLines((train, valid), title=name, xlabel='Iterations', ylabel='Score')
