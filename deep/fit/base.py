@@ -54,7 +54,6 @@ class Iterative(object):
         self.n_iterations = n_iterations
         self.batch_size = batch_size
         self.valid_size = valid_size
-        self.plot = plot
 
     x = T.matrix()
     y = T.lvector()
