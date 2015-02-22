@@ -50,8 +50,7 @@ def unsupervised_givens(i, x, X, batch_size):
 
 class Iterative(object):
 
-    def __init__(self, n_iterations=100, batch_size=128, valid_size=0.1,
-                 plot=None):
+    def __init__(self, n_iterations=100, batch_size=128, valid_size=0.1):
         self.n_iterations = n_iterations
         self.batch_size = batch_size
         self.valid_size = valid_size
