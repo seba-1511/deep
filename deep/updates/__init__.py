@@ -1,4 +1,5 @@
-from base import GradientDescent, Momentum
+from base import GradientDescent, Momentum, NesterovMomentum
 
 __all__ = ['GradientDescent',
-           'Momentum']
+           'Momentum',
+           'NesterovMomentum']
