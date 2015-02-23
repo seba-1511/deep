@@ -36,8 +36,9 @@ X = X[:-len(X_test)]
 from deep.layers import Layer, PreConv, ConvolutionLayer, Pooling, PostConv
 from deep.activations.base import RectifiedLinear, Softmax
 from deep.corruptions import Dropout
+rec = Layer(500, RectifiedLinear())
 layers = [
-    Layer(500, RectifiedLinear()),
+    rec,
     Layer(121, Softmax(), Dropout(.5)),
 ]
 
@@ -48,8 +49,8 @@ from deep.regularizers import L2
 from deep.fit import Iterative
 from deep.plot.base import plot_training
 nn = NN(layers, .01, Momentum(.9), fit=Iterative(10), regularize=L2(.0005))
-import pdb; pdb.set_trace()
 nn.fit(X, y)
 print nn.score(X_test, y_test)
+import pdb; pdb.set_trace()
 
 plot_training(nn, 'General')

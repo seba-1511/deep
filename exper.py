@@ -47,6 +47,7 @@ from deep.updates import Momentum
 from deep.regularizers import L2
 from deep.fit import Iterative
 from deep.plot.base import plot_training
+#: Use NesterovMomentum or no ?
 nn = NN(layers, .01, Momentum(.9), fit=Iterative(135), regularize=L2(.005))
 nn.fit(X, y)
 plot_training(nn)
