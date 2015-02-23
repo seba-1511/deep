@@ -22,10 +22,10 @@ np.random.seed(1)
 class Initialization(object):
 
     @abstractmethod
-    def init_W(self, size):
+    def W(self, size):
         raise NotImplementedError
 
-    def init_b(self, size):
+    def b(self, size):
         b = np.zeros(size)
         return shared(np.asarray(b, dtype=config.floatX))
 
@@ -36,7 +36,7 @@ class Normal(Initialization):
     def __init__(self, scale=.01):
         self.scale = scale
 
-    def init_W(self, size):
+    def W(self, size):
         W = np.random.normal(scale=self.scale, size=size)
         return shared(np.asarray(W, dtype=config.floatX))
 
@@ -46,8 +46,14 @@ class Normal(Initialization):
 class Xavier(Initialization):
     """http://jmlr.org/proceedings/papers/v9/glorot10a/glorot10a.pdf"""
 
-    def init_W(self, size):
-        val = 1. / np.sqrt(size[0])
+    def W(self, size):
+        if len(size) == 2:
+            val = 1. / np.sqrt(size[0])
+        if len(size) == 4:
+            val = 1. / np.sqrt(np.prod(size[1:]))
+
+        #: should we throw an error for other sizes?
+
         W = np.random.uniform(low=-val, high=val, size=size)
         return shared(np.asarray(W, dtype=config.floatX))
 
@@ -55,8 +61,14 @@ class Xavier(Initialization):
 class MSR(Initialization):
     """http://arxiv.org/pdf/1502.01852v1.pdf"""
 
-    def init_W(self, size):
-        val = np.sqrt(2. / size[0])
+    def W(self, size):
+        if len(size) == 2:
+            val = np.sqrt(2. / size[0])
+        if len(size) == 4:
+            val = np.sqrt(2. / np.prod(size[1:]))
+
+        #: should we throw an error for other sizes?
+
         W = np.random.normal(loc=0, scale=val, size=size)
         return shared(np.asarray(W, dtype=config.floatX))
 
@@ -64,5 +76,5 @@ class MSR(Initialization):
 class Sparse(Initialization):
     """http://www.icml2010.org/papers/458.pdf"""
 
-    def init_W(self, size):
+    def W(self, size):
         raise NotImplementedError

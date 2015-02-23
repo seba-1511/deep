@@ -77,7 +77,7 @@ class Iterative(object):
             #: for plankton competition
             from deep.costs import NegativeLogLikelihood
             score = NegativeLogLikelihood()(model._symbolic_predict_proba(self.x), self.y)
-            score = model._symbolic_score(self.x, self.y)
+            #score = model._symbolic_score(self.x, self.y)
 
             updates = model.updates(self.x, self.y)
             givens = supervised_givens(self.i, self.x, X, self.y, y, self.batch_size)
@@ -94,8 +94,8 @@ class Iterative(object):
                 layer.corruption = None
 
             #: for plankton competition
-            #from deep.costs import NegativeLogLikelihood
-            #score = NegativeLogLikelihood()(model._symbolic_predict_proba(self.x), self.y)
+            from deep.costs import NegativeLogLikelihood
+            score = NegativeLogLikelihood()(model._symbolic_predict_proba(self.x), self.y)
             givens = supervised_givens(self.i, self.x, X, self.y, y, self.batch_size)
         return function([self.i], score, None, None, givens)
 

@@ -18,6 +18,7 @@ from theano import shared, config, function
 from theano.tensor.nnet import conv2d
 
 from deep.activations.base import Sigmoid
+from deep.initialization import Normal
 
 
 #: a possible way to implement a deeply supervised net that
@@ -37,10 +38,11 @@ class Layer(object):
 
     #: make a corruption layer
 
-    def __init__(self, n_hidden=100, activation=Sigmoid(), corruption=None):
+    def __init__(self, n_hidden=100, activation=Sigmoid(), corruption=None, initialize=Normal()):
+        self.n_hidden = n_hidden
         self.activation = activation
         self.corruption = corruption
-        self.n_hidden = n_hidden
+        self.initialize = initialize
 
     x = T.matrix()
     _transform_function = None
@@ -69,11 +71,9 @@ class Layer(object):
         return self.fit(X).transform(X)
 
     def fit(self, X):
-        np.random.seed(1)
         size = X.shape[1], self.n_hidden
-        self.W = np.random.normal(loc=0, scale=.01, size=size)
-        self.W = shared(np.asarray(self.W, dtype=config.floatX))
-        self.b = shared(np.ones(self.n_hidden, dtype=config.floatX))
+        self.W = self.initialize.W(size)
+        self.b = self.initialize.b(self.n_hidden)
         return self
 
     def __repr__(self):
@@ -162,20 +162,15 @@ class ConvolutionLayer(Layer):
     :param pool_size: the size of the subsampling pool.
     :param activation: the non-linearly to apply after pooling.
     """
-    def __init__(self, n_filters=10, filter_size=5, activation=Sigmoid(), corruption=None):
+    def __init__(self, n_filters=10, filter_size=5, activation=Sigmoid(), corruption=None, initialize=Normal()):
         self.n_filters = n_filters
         self.filter_size = filter_size
         self.corruption = corruption
         self.activation = activation
+        self.initialize = initialize
 
     x = T.tensor4()
     _transform_function = None
-
-    #: can we remove this?
-    def transform(self, X):
-        if not self._transform_function:
-            self._transform_function = function([self.x], self._symbolic_transform(self.x))
-        return self._transform_function(X)
 
     def _symbolic_transform(self, x):
         if self.corruption is not None:
@@ -184,18 +179,11 @@ class ConvolutionLayer(Layer):
         return self.activation(x + self.b.dimshuffle('x', 0, 'x', 'x'))
 
     def fit(self, X):
-        self.b = shared(np.zeros(self.n_filters, dtype=config.floatX))
-
-        #: where should the seed go?
-        np.random.seed(1)
         n_channels = X.shape[1]
         size = self.n_filters, n_channels, self.filter_size, self.filter_size
-        self.W = np.random.normal(loc=0, scale=.01, size=size)
-        self.W = shared(np.asarray(self.W, dtype=config.floatX))
+        self.W = self.initialize.W(size)
+        self.b = self.initialize.b(self.n_filters)
         return self
-
-    def __repr__(self):
-        return self.__class__.__name__
 
 
 class Transpose(object):
