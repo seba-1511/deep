@@ -93,4 +93,4 @@ class PredictionError(Cost):
     :return: a Theano expression representing the cost function.
     """
     def __call__(self, x, y):
-        return T.mean(T.eq(x, y))
+        return T.mean(T.neq(x, y))

@@ -63,9 +63,6 @@ class Iterative(object):
     y = T.lvector()
     i = T.lscalar()
 
-    #: sign flipped for plankton
-    #: how to handle init in general case?
-
     def compile_train_function(self, model, X, y):
         if y is None:
             score = model._symbolic_score(self.x)
@@ -147,8 +144,5 @@ class EarlyStopping(Iterative):
 
     @property
     def finished(self):
-        #: sign flipped for plankton
-        #: need to add a parameter to costs that specifies
-        #: whether it is a increasing or decreasing cost.
         return self.valid_scores[-1] > self.valid_scores[-2]
 
