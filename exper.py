@@ -3,9 +3,10 @@ from deep.datasets.load import load_plankton
 X, y = load_plankton()
 X_test, y_test = load_plankton(test=True)
 
-X = [i.reshape(28, 28) for i in X]
-X_test = [i.reshape(28, 28) for i in X_test]
+# X = [i.reshape(28, 28) for i in X]
+# X_test = [i.reshape(28, 28) for i in X_test]
 
+print 'Augmenting Data...'
 from deep.augmentation import Reshape, RandomPatch
 X_patch = Reshape(56).fit_transform(X)
 X_test = Reshape(48).fit_transform(X_test)
@@ -30,10 +31,10 @@ from deep.activations.base import RectifiedLinear, Softmax
 from deep.corruptions import Dropout
 layers = [
     PreConv(),
-    ConvolutionLayer(48, 3, RectifiedLinear(), Dropout(.2)),
+    ConvolutionLayer(48, 3, RectifiedLinear()),
     ConvolutionLayer(96, 3, RectifiedLinear(), Dropout(.4)),
     Pooling(3, 3),
-    ConvolutionLayer(128, 5, RectifiedLinear(), Dropout(.5)),
+    ConvolutionLayer(128, 5, RectifiedLinear(), Dropout(.4)),
     Pooling(3, 2),
     PostConv(),
     Layer(3000, RectifiedLinear(), Dropout(.68)),
@@ -47,7 +48,7 @@ from deep.updates import Momentum
 from deep.regularizers import L2
 from deep.fit import Iterative
 from deep.plot.base import plot_training
-nn = NN(layers, .01, Momentum(.9), fit=Iterative(135), regularize=L2(.005))
+nn = NN(layers, .01, Momentum(.9), fit=Iterative(135), regularize=L2(.0005))
 nn.fit(X, y)
 plot_training(nn)
 
