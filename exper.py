@@ -1,3 +1,4 @@
+#: Train: 0.94, valid: 0.86
 print 'Loading Planktons...'
 from deep.datasets.load import load_plankton
 X, y = load_plankton()
