@@ -45,11 +45,11 @@ layers = [
 
 print 'Learning...'
 from deep.models import NN
-from deep.updates import Momentum
+from deep.updates import Momentum, NesterovMomentum
 from deep.regularizers import L2
 from deep.fit import Iterative
 from deep.plot.base import plot_training
-nn = NN(layers, .01, Momentum(.9), fit=Iterative(135), regularize=L2(.0005))
+nn = NN(layers, .01, NesterovMomentum(.9), fit=Iterative(135), regularize=L2(.0005))
 nn.fit(X, y)
 plot_training(nn)
 
