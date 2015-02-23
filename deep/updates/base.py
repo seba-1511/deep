@@ -32,8 +32,7 @@ class Update(object):
     def __call__(self, cost, param, learning_rate):
         """"""
 
-    def __repr__(self):
-        return str(self.__class__.__name__)
+        return self.__class__.__name__
 
 
 class GradientDescent(Update):
@@ -74,6 +73,9 @@ class Momentum(Update):
         inc = self.momentum * vel - scaled_lr * grad
 
         return [(param, param + inc), (vel, inc)]
+
+    def __str__(self):
+        return '{}({})'.format(self.__class__.__name__, self.momentum)
 
 
 class NesterovMomentum(Momentum):

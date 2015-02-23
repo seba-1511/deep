@@ -44,7 +44,7 @@ class Corruption(object):
         """"""
 
     def __repr__(self):
-        return str(self.__class__.__name__) + 'Corruption'
+        return '{}({})'.format(self.__class__.__name__, self.corruption_level)
 
 
 class CorruptionSequence(object):

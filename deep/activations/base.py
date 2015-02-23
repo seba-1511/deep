@@ -40,7 +40,7 @@ class Activation(object):
         :param X:
         """
     def __repr__(self):
-        return str(self.__class__.__name__) + 'Activation'
+        return self.__class__.__name__
 
     @property
     def params(self):

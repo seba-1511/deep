@@ -25,7 +25,7 @@ class Regularizer(object):
         pass
 
     def __repr__(self):
-        return str(self.__class__.__name__) + 'Regularizer'
+        return '{}({})'.format(self.__class__.__name__, self.alpha)
 
 
 class L1(Regularizer):

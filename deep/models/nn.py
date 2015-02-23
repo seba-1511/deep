@@ -44,8 +44,9 @@ class NN(object):
     def updates(self, x, y):
         cost = self.cost(self._symbolic_predict_proba(x), y)
 
-        for param in self.params:
-            cost += self.regularize(param)
+        if self.regularize is not None:
+            for param in self.params:
+                cost += self.regularize(param)
 
         updates = list()
         for param in self.params:
@@ -80,4 +81,45 @@ class NN(object):
         x = X[:1]
         for layer in self.layers:
             x = layer.fit_transform(x)
+
+        print self
+
         return self.fit_method.fit(self, X, y)
+
+    def __str__(self):
+        hyperparams = ("""
+  Hyperparameters |      Value
+------------------|------------------
+  Learning Rate   | {:>s}
+  Update Method   | {:>s}
+  Fit Method      | {:>s}
+  Training Cost   | {:>s}
+  Regularization  | {:>s}
+""").format(str(self.learning_rate), str(self.update), str(self.fit_method),
+            str(self.cost), str(self.regularize))
+
+        layers = """
+  Layer | Shape | Activation | Corrupt
+--------|-------|------------|--------
+"""
+
+        #: push this into layer __str__
+        for layer in self.layers:
+
+            #: how can we avoid this?
+            from deep.layers import PreConv, PostConv, Pooling
+            if isinstance(layer, PreConv) or isinstance(layer, PostConv):
+                continue
+
+            if isinstance(layer, Pooling):
+                layers += ('  {:>s} | {:>s} | {:>s} | {:>s} \n'.format(
+                    layer.__class__.__name__, layer.pool_size, None, None
+                ))
+                continue
+
+            layers += ('  {:>s} | {:>s} | {:>s} | {:>s} \n'.format(
+                layer.__class__.__name__, layer.shape, layer.activation, layer.corruption
+            ))
+
+        return hyperparams + layers
+
