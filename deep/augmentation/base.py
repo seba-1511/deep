@@ -16,10 +16,6 @@ import numpy as np
 from scipy.misc import imresize
 
 
-#: unit test to check that augmentations return
-#: a 2d numpy array
-
-
 class Augmentation(object):
 
     #: so these are compatible with sklearn preprocessing
@@ -31,6 +27,7 @@ class Augmentation(object):
 
     def fit_transform(self, X):
         return self.fit(X).transform(X)
+
 
 class CenterPatch(Augmentation):
 
@@ -108,6 +105,26 @@ class RandomRotation(Augmentation):
         return np.asarray(rotated).reshape(n_samples, -1)
 
 
+class Rotate(Augmentation):
+
+    def __call__(self, X, y):
+
+        n_samples, n_features = X.shape
+        dim = int(np.sqrt(n_features))
+        X = X.reshape(-1, dim, dim)
+
+        X_90 = np.rot90(X.T, 1).T.reshape(n_samples, n_features)
+        X_180 = np.rot90(X.T, 1).T.reshape(n_samples, n_features)
+        X_270 = np.rot90(X.T, 1).T.reshape(n_samples, n_features)
+        X = X.reshape(n_samples, n_features)
+
+        X = np.vstack((X, X_90, X_180, X_270))
+        y = np.hstack((y, y, y, y))
+
+        return X, y
+
+
+
 class RandomRotation90(Augmentation):
     """
 
@@ -171,3 +188,23 @@ class Reshape(Augmentation):
         reshaped = [imresize(x, self.size) for x in X]
         from theano import config
         return np.asarray(reshaped, dtype=config.floatX).reshape(n_samples, -1)
+
+
+class HorizontalReflection(Augmentation):
+
+    def __call__(self, X, y):
+
+        n_samples, n_features = X.shape
+        dim = int(np.sqrt(n_features))
+        X = X.reshape(-1, dim, dim)
+
+        X_lr = np.fliplr(X).reshape(n_samples, n_features)
+        X = X.reshape(n_samples, n_features)
+
+        X = np.vstack((X, X_lr))
+        y = np.hstack((y, y))
+
+        return X, y
+
+def augmented_predict():
+    raise NotImplementedError
