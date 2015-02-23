@@ -50,19 +50,21 @@ def unsupervised_givens(i, x, X, batch_size):
 
 class Iterative(object):
 
-    def __init__(self, n_iterations=100, batch_size=128, valid_size=0.1):
+    def __init__(self, n_iterations=100, batch_size=128, valid_size=0.1, fixed_augmentation=None):
         self.n_iterations = n_iterations
         self.batch_size = batch_size
         self.valid_size = valid_size
+        self.fixed_augmentation = fixed_augmentation
+        self.train_scores = [np.inf]
+        self.valid_scores = [np.inf]
 
+    #: does it matter that these are class variables?
     x = T.matrix()
     y = T.lvector()
     i = T.lscalar()
 
     #: sign flipped for plankton
     #: how to handle init in general case?
-    train_scores = [np.inf]
-    valid_scores = [np.inf]
 
     def compile_train_function(self, model, X, y):
         if y is None:
@@ -75,7 +77,7 @@ class Iterative(object):
             #: for plankton competition
             from deep.costs import NegativeLogLikelihood
             score = NegativeLogLikelihood()(model._symbolic_predict_proba(self.x), self.y)
-            #score = model._symbolic_score(self.x, self.y)
+            score = model._symbolic_score(self.x, self.y)
 
             updates = model.updates(self.x, self.y)
             givens = supervised_givens(self.i, self.x, X, self.y, y, self.batch_size)
@@ -92,10 +94,8 @@ class Iterative(object):
                 layer.corruption = None
 
             #: for plankton competition
-            from deep.costs import NegativeLogLikelihood
-            score = NegativeLogLikelihood()(model._symbolic_predict_proba(self.x), self.y)
-            #score = model._symbolic_score(self.x, self.y)
-
+            #from deep.costs import NegativeLogLikelihood
+            #score = NegativeLogLikelihood()(model._symbolic_predict_proba(self.x), self.y)
             givens = supervised_givens(self.i, self.x, X, self.y, y, self.batch_size)
         return function([self.i], score, None, None, givens)
 
@@ -104,7 +104,10 @@ class Iterative(object):
             X_train, X_valid = train_test_split(X, test_size=self.valid_size)
             y_train, y_valid = None, None
         else:
-            X_train, X_valid, y_train, y_valid = train_test_split(X, y)
+            X_train, X_valid, y_train, y_valid = train_test_split(X, y, test_size=self.valid_size)
+
+        if self.fixed_augmentation is not None:
+            X_train, y_train = self.fixed_augmentation(X_train, y_train)
 
         n_train_batches = len(X_train) / self.batch_size
         n_valid_batches = len(X_valid) / self.batch_size
