@@ -66,10 +66,12 @@ class Fit(object):
 
 class Iterative(Fit):
 
-    def __init__(self, n_iterations=100, batch_size=128, valid_size=0.1):
+    def __init__(self, n_iterations=100, batch_size=128, valid_size=0.1,
+                 save=False):
         self.n_iterations = n_iterations
         self.batch_size = batch_size
         self.valid_size = valid_size
+        self.save = save
 
     x = T.matrix()
     y = T.lvector()
@@ -79,6 +81,12 @@ class Iterative(Fit):
     #: how to handle init in general case?
     train_scores = [np.inf]
     valid_scores = [np.inf]
+
+    def save_best(self, model, score):
+        #: This only works NLL, or when we want to
+        if self.save and score < self.valid_scores[-1]:
+            model.save()
+
 
     def compile_train_function(self, model, X, y):
         if y is None:
@@ -144,10 +152,10 @@ class Iterative(Fit):
 
             train_cost = np.mean(train_costs)
             valid_cost = np.mean(valid_costs)
+            self.save_best(model, valid_cost)
 
             self.train_scores.append(train_cost)
             self.valid_scores.append(valid_cost)
-
             elapsed = time.time() - begin
 
             _print_iter(iteration, train_cost, valid_cost, elapsed)

@@ -9,15 +9,15 @@ X_test = [i.reshape(28, 28) for i in X_test]
 
 
 from deep.augmentation import Reshape, RandomPatch
-X_patch = Reshape(28).fit_transform(X)
+# X_patch = Reshape(28).fit_transform(X)
 X_test = Reshape(26).fit_transform(X_test)
 X = Reshape(26).fit_transform(X)
-X_patch = RandomPatch(26).fit_transform(X_patch)
+# X_patch = RandomPatch(26).fit_transform(X_patch)
 
 
 import numpy as np
-X = np.vstack((X, X_patch))
-y = np.append(y, y)
+# X = np.vstack((X, X_patch))
+# y = np.append(y, y)
 X = np.vstack((X, X_test))
 # from deep.augmentation import Reshape
 # X = Reshape(26).fit_transform(orX)
@@ -48,9 +48,7 @@ from deep.updates import Momentum
 from deep.regularizers import L2
 from deep.fit import Iterative
 from deep.plot.base import plot_training
-nn = NN(layers, .01, Momentum(.9), fit=Iterative(10), regularize=L2(.0005))
+nn = NN(layers, .01, Momentum(.9), fit=Iterative(10, save=True), regularize=L2(.0005))
 nn.fit(X, y)
 print nn.score(X_test, y_test)
-import pdb; pdb.set_trace()
-
 plot_training(nn, 'General')

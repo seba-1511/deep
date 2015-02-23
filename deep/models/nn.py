@@ -11,14 +11,17 @@
     :license: BSD, see LICENSE for more details.
 """
 
+import gzip
 import numpy as np
 
+import cPickle as pk
 import theano.tensor as T
 from theano import function
 
 from deep.fit.base import Iterative
 from deep.costs.base import NegativeLogLikelihood, PredictionError
 from deep.updates.base import GradientDescent
+
 
 class NN(object):
 
@@ -39,6 +42,10 @@ class NN(object):
     @property
     def params(self):
         return [param for layer in self.layers for param in layer.params]
+
+    def save(self, name='best_model'):
+        with gzip.open(name + '.pkl', 'wb') as best_model:
+            pk.dump(self, best_model, protocol=pk.HIGHEST_PROTOCOL)
 
     #: can we move this to updates?
     def updates(self, x, y):
@@ -70,7 +77,8 @@ class NN(object):
     def predict_proba(self, X):
         #: compile these in fit method
         if not self._predict_proba_function:
-            self._predict_proba_function = function([self.x], self._symbolic_predict_proba(self.x))
+            self._predict_proba_function = function(
+                [self.x], self._symbolic_predict_proba(self.x))
         return self._predict_proba_function(X)
 
     def score(self, X, y):
