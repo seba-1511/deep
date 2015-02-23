@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
+
 #: train 0.94, valid 1.16
 
 print 'Loading Planktons...'
@@ -7,11 +8,20 @@ from deep.datasets.load import load_plankton
 X, y = load_plankton()
 X_test, y_test = load_plankton(test=True)
 
-from deep.augmentation import Reshape
-X = Reshape(48).fit_transform(X)
+# X = [i.reshape(28, 28) for i in X]
+# X_test = [i.reshape(28, 28) for i in X_test]
+
+print 'Augmenting Data...'
+from deep.augmentation import Reshape, RandomPatch
+X_patch = Reshape(56).fit_transform(X)
 X_test = Reshape(48).fit_transform(X_test)
+X = Reshape(48).fit_transform(X)
+X_patch = RandomPatch(48).fit_transform(X_patch)
+
 
 import numpy as np
+X = np.vstack((X, X_patch))
+y = np.append(y, y)
 X = np.vstack((X, X_test))
 
 from sklearn.preprocessing import StandardScaler
