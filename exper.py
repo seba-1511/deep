@@ -1,3 +1,7 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+#: train 0.94, valid 1.16
+
 print 'Loading Planktons...'
 from deep.datasets.load import load_plankton
 X, y = load_plankton()
@@ -21,17 +25,17 @@ from deep.layers import Layer, PreConv, ConvolutionLayer, Pooling, PostConv
 from deep.activations.base import RectifiedLinear, Softmax
 from deep.corruptions import Dropout
 layers = [
-    PreConv(),
-    ConvolutionLayer(48, 3, RectifiedLinear(), Dropout(.2)),
-    ConvolutionLayer(96, 3, RectifiedLinear(), Dropout(.4)),
-    Pooling(3, 3),
-    ConvolutionLayer(128, 5, RectifiedLinear(), Dropout(.4)),
-    Pooling(3, 2),
-    PostConv(),
-    Layer(3000, RectifiedLinear(), Dropout(.68)),
-    Layer(2500, RectifiedLinear(), Dropout(.68)),
-    Layer(121, Softmax(), Dropout(.5))
-]
+        PreConv(),
+        ConvolutionLayer(48, 3, RectifiedLinear(), Dropout(.2)),
+        ConvolutionLayer(96, 3, RectifiedLinear(), Dropout(.4)),
+        Pooling(3, 3),
+        ConvolutionLayer(128, 5, RectifiedLinear(), Dropout(.4)),
+        Pooling(3, 2),
+        PostConv(),
+        Layer(3000, RectifiedLinear(), Dropout(.68)),
+        Layer(2500, RectifiedLinear(), Dropout(.68)),
+        Layer(121, Softmax(), Dropout(.5))
+    ]
 
 print 'Learning...'
 from deep.models import NN
