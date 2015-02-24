@@ -145,7 +145,13 @@ class Iterative(object):
 
 class EarlyStopping(Iterative):
 
+    def __init__(self, patience=1, n_iterations=100, batch_size=128, valid_size=0.1, fixed_augmentation=None):
+        super(EarlyStopping, self).__init__(n_iterations, batch_size, valid_size, fixed_augmentation)
+        self.patience = patience
+
     @property
     def finished(self):
-        return self.valid_scores[-1] > self.valid_scores[-2]
-
+        if len(self.valid_scores) <= self.patience:
+            return False
+        else:
+            return self.valid_scores[-1] > self.valid_scores[-(self.patience+1)]
