@@ -34,17 +34,20 @@ X = X[:-len(X_test)]
 from deep.layers import Layer, PreConv, ConvolutionLayer, Pooling, PostConv
 from deep.activations.base import RectifiedLinear, Softmax
 from deep.corruptions import Dropout
+from deep.initialization.base import Normal, Xavier, MSR
 layers = [
         PreConv(),
-        ConvolutionLayer(48, 3, RectifiedLinear(), Dropout(.2)),
-        ConvolutionLayer(96, 3, RectifiedLinear(), Dropout(.4)),
+        ConvolutionLayer(48, 3, RectifiedLinear(), Dropout(.2), initialize=Xavier()),
+        ConvolutionLayer(96, 3, RectifiedLinear(), Dropout(.4), initialize=Xavier()),
         Pooling(3, 3),
-        ConvolutionLayer(128, 5, RectifiedLinear(), Dropout(.4)),
+        ConvolutionLayer(96, 2, RectifiedLinear(), Dropout(.4), initialize=Xavier()),
+        ConvolutionLayer(128, 5, RectifiedLinear(), Dropout(.4), initialize=Xavier()),
         Pooling(3, 2),
         PostConv(),
-        Layer(3000, RectifiedLinear(), Dropout(.68)),
-        Layer(2500, RectifiedLinear(), Dropout(.68)),
-        Layer(121, Softmax(), Dropout(.5))
+        Layer(3000, RectifiedLinear(), Dropout(.68), initialize=MSR()),
+        Layer(2500, RectifiedLinear(), Dropout(.68), initialize=MSR()),
+        Layer(2500, RectifiedLinear(), Dropout(.68), initialize=MSR()),
+        Layer(121, Softmax(), Dropout(.5), initialize=Xavier())
     ]
 
 print 'Learning...'
@@ -53,7 +56,7 @@ from deep.updates import Momentum, NesterovMomentum
 from deep.regularizers import L2
 from deep.fit import Iterative
 from deep.plot.base import plot_training
-nn = NN(layers, .01, NesterovMomentum(.9), fit=Iterative(135), regularize=L2(.0005))
+nn = NN(layers, .01, NesterovMomentum(.9), fit=Iterative(100), regularize=L2(.0005))
 nn.fit(X, y)
 
 
