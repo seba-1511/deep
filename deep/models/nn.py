@@ -77,14 +77,14 @@ class NN(object):
     def score(self, X, y):
         return np.mean(self.predict(X) == y)
 
-    def fit(self, X, y=None):
+    def fit(self, X, y=None, X_valid=None, y_valid=None):
         x = X[:1]
         for layer in self.layers:
             x = layer.fit_transform(x)
 
         print self
 
-        return self.fit_method.fit(self, X, y)
+        return self.fit_method.fit(self, X, y, X_valid, y_valid)
 
     def __str__(self):
         hyperparams = ("""

@@ -16,8 +16,6 @@ import numpy as np
 import theano.tensor as T
 from theano import function, shared, config
 
-from sklearn.cross_validation import train_test_split
-
 
 def _print_header():
     print("""
@@ -50,11 +48,9 @@ def unsupervised_givens(i, x, X, batch_size):
 
 class Iterative(object):
 
-    def __init__(self, n_iterations=100, batch_size=128, valid_size=0.1, fixed_augmentation=None):
+    def __init__(self, n_iterations=100, batch_size=128):
         self.n_iterations = n_iterations
         self.batch_size = batch_size
-        self.valid_size = valid_size
-        self.fixed_augmentation = fixed_augmentation
         self.train_scores = [np.inf]
         self.valid_scores = [np.inf]
 
@@ -68,9 +64,7 @@ class Iterative(object):
             score = model._symbolic_score(self.x)
             updates = model.updates(self.x)
             givens = unsupervised_givens(self.i, self.x, X, self.batch_size)
-
         else:
-
             #: for plankton competition
             from deep.costs import NegativeLogLikelihood
             score = NegativeLogLikelihood()(model._symbolic_predict_proba(self.x), self.y)
@@ -85,7 +79,6 @@ class Iterative(object):
             score = model._symbolic_score(self.x)
             givens = unsupervised_givens(self.i, self.x, X, self.batch_size)
         else:
-
             #: hacky dropout fix to get clean valid predictions
             for layer in model.layers:
                 layer.corruption = None
@@ -96,21 +89,14 @@ class Iterative(object):
             givens = supervised_givens(self.i, self.x, X, self.y, y, self.batch_size)
         return function([self.i], score, None, None, givens)
 
-    def fit(self, model, X, y=None):
-        if y is None:
-            X_train, X_valid = train_test_split(X, test_size=self.valid_size)
-            y_train, y_valid = None, None
-        else:
-            X_train, X_valid, y_train, y_valid = train_test_split(X, y, test_size=self.valid_size)
+    def fit(self, model, X, y=None, X_valid=None, y_valid=None):
 
-        if self.fixed_augmentation is not None:
-            X_train, y_train = self.fixed_augmentation(X_train, y_train)
+        n_train_batches = len(X) / self.batch_size
+        train_function = self.compile_train_function(model, X, y)
 
-        n_train_batches = len(X_train) / self.batch_size
-        n_valid_batches = len(X_valid) / self.batch_size
-
-        train_function = self.compile_train_function(model, X_train, y_train)
-        valid_function = self.compile_valid_function(model, X_valid, y_valid)
+        if X_valid is not None:
+            n_valid_batches = len(X_valid) / self.batch_size
+            valid_function = self.compile_valid_function(model, X_valid, y_valid)
 
         _print_header()
 
@@ -118,12 +104,13 @@ class Iterative(object):
             begin = time.time()
 
             train_costs = [train_function(batch) for batch in range(n_train_batches)]
-            valid_costs = [valid_function(batch) for batch in range(n_valid_batches)]
-
             train_cost = np.mean(train_costs)
-            valid_cost = np.mean(valid_costs)
-
             self.train_scores.append(train_cost)
+
+            valid_cost = np.inf
+            if X_valid is not None:
+                valid_costs = [valid_function(batch) for batch in range(n_valid_batches)]
+                valid_cost = np.mean(valid_costs)
             self.valid_scores.append(valid_cost)
 
             elapsed = time.time() - begin
@@ -145,8 +132,8 @@ class Iterative(object):
 
 class EarlyStopping(Iterative):
 
-    def __init__(self, patience=1, n_iterations=100, batch_size=128, valid_size=0.1, fixed_augmentation=None):
-        super(EarlyStopping, self).__init__(n_iterations, batch_size, valid_size, fixed_augmentation)
+    def __init__(self, patience=1, n_iterations=100, batch_size=128):
+        super(EarlyStopping, self).__init__(n_iterations, batch_size)
         self.patience = patience
 
     @property
