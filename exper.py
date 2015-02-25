@@ -16,16 +16,17 @@ X_test, y_test = load_plankton(test=True)
 from sklearn.cross_validation import train_test_split
 X, X_valid, y, y_valid = train_test_split(X, y, test_size=.1)
 
-
+IMG_SIZE = 32
+CROP_SIZE = 36
 import numpy as np
 from deep.augmentation import Reshape, RandomPatch, HorizontalReflection
-X_test = Reshape(48).fit_transform(X_test)
-X_valid = Reshape(48).fit_transform(X_valid)
+X_test = Reshape(IMG_SIZE).fit_transform(X_test)
+X_valid = Reshape(IMG_SIZE).fit_transform(X_valid)
 
 #: Augment data
-X_patch = Reshape(56).fit_transform(X)
-X_patch = RandomPatch(48).fit_transform(X_patch)
-X = Reshape(48).fit_transform(X)
+X_patch = Reshape(CROP_SIZE).fit_transform(X)
+X_patch = RandomPatch(IMG_SIZE).fit_transform(X_patch)
+X = Reshape(IMG_SIZE).fit_transform(X)
 X_reflec = HorizontalReflection().fit_transform(X)
 
 #: Merge the augmentations
@@ -51,14 +52,10 @@ from deep.corruptions import Dropout
 from deep.initialization.base import Xavier, MSR
 layers = [
     PreConv(),
-    ConvolutionLayer(48, 3, RectifiedLinear(), initialize=Xavier()),
-    ConvolutionLayer(96, 3, RectifiedLinear(), Dropout(.40), initialize=Xavier()),
-    Pooling(3, 3),
-    ConvolutionLayer(128, 5, RectifiedLinear(), Dropout(.40), initialize=Xavier()),
+    ConvolutionLayer(64, 3, RectifiedLinear(), Dropout(.35), initialize=Xavier()),
     Pooling(3, 2),
     PostConv(),
-    Layer(3000, RectifiedLinear(), Dropout(.68), initialize=MSR()),
-    Layer(2500, RectifiedLinear(), Dropout(.68), initialize=MSR()),
+    Layer(3000, RectifiedLinear(), Dropout(.4), initialize=MSR()),
     Layer(121, Softmax(), Dropout(.5), initialize=MSR())
 ]
 

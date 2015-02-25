@@ -134,14 +134,14 @@ class Iterative(Fit):
         for iteration in xrange(1, self.n_iterations + 1):
             begin = time.time()
             train_costs = [train_function(batch)
-                           for batch in range(n_train_batches)]
+                           for batch in xrange(n_train_batches)]
             train_cost = np.mean(train_costs)
             self.train_scores.append(train_cost)
 
             valid_cost = np.inf
             if X_valid is not None:
                 valid_costs = [valid_function(batch)
-                               for batch in range(n_valid_batches)]
+                               for batch in xrange(n_valid_batches)]
                 valid_cost = np.mean(valid_costs)
                 self.save_best(model, valid_cost)
             self.valid_scores.append(valid_cost)
