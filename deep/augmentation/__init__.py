@@ -1,6 +1,7 @@
-from base import CenterPatch, RandomPatch, RandomRotation90, Resize, Reshape
+from base import Augmentation, CenterPatch, RandomPatch, RandomRotation90, Resize, Reshape
 
-__all__ = ['CenterPatch',
+__all__ = ['Augmentation',
+           'CenterPatch',
            'RandomPatch',
            'RandomRotation90',
            'Resize',

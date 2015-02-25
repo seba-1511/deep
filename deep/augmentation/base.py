@@ -14,6 +14,7 @@
 import numpy as np
 
 from scipy.misc import imresize
+from sklearn.preprocessing import StandardScaler
 
 
 #: unit test to check that augmentations return
@@ -23,14 +24,20 @@ from scipy.misc import imresize
 class Augmentation(object):
 
     #: so these are compatible with sklearn preprocessing
+
     def fit(self, X):
         return self
 
     def transform(self, X):
         return X
 
-    def fit_transform(self, X):
-        return self.fit(X).transform(X)
+    #: Remove this Scaler-horror
+    def fit_transform(self, X, scaler=StandardScaler()):
+        return scaler.fit_transform(self.fit(X).transform(X))
+
+    def __call__(self, X):
+        return self.fit_transform(X)
+
 
 class CenterPatch(Augmentation):
 
@@ -52,8 +59,8 @@ class CenterPatch(Augmentation):
             height_offset = (height - self.patch_size) / 2
             width_offset = (width - self.patch_size) / 2
 
-            patches.append(x[height_offset:height_offset+self.patch_size,
-                     width_offset:width_offset+self.patch_size])
+            patches.append(x[height_offset:height_offset + self.patch_size,
+                             width_offset:width_offset + self.patch_size])
 
         return np.asarray(patches).reshape(n_samples, -1)
 
@@ -77,8 +84,8 @@ class RandomPatch(Augmentation):
             height_offset = np.random.randint(height - self.patch_size + 1)
             width_offset = np.random.randint(width - self.patch_size + 1)
 
-            patches.append(x[height_offset:height_offset+self.patch_size,
-                     width_offset:width_offset+self.patch_size])
+            patches.append(x[height_offset:height_offset + self.patch_size,
+                             width_offset:width_offset + self.patch_size])
 
         return np.asarray(patches).reshape(n_samples, -1)
 
@@ -97,7 +104,8 @@ class RandomRotation(Augmentation):
 
             from scipy.ndimage.interpolation import rotate
             angle = np.random.randint(360)
-            order = np.random.randint(6) #: orders greater than 1 change background color
+            # : orders greater than 1 change background color
+            order = np.random.randint(6)
 
             r = rotate(x, angle, reshape=False, order=order, mode='reflect')
 
@@ -109,6 +117,7 @@ class RandomRotation(Augmentation):
 
 
 class RandomRotation90(Augmentation):
+
     """
 
     :param examples: list of 2d numpy arrays
@@ -130,6 +139,7 @@ class RandomRotation90(Augmentation):
 
 
 class Resize(Augmentation):
+
     """
 
     :param examples: list of 2d numpy arrays
@@ -156,6 +166,7 @@ class Resize(Augmentation):
 
 
 class Reshape(Augmentation):
+
     """
 
     :param examples: list of 2d numpy arrays
