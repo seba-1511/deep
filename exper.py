@@ -51,12 +51,24 @@ from deep.activations.base import RectifiedLinear, Softmax
 from deep.corruptions import Dropout
 from deep.initialization.base import Xavier, MSR
 layers = [
+    #: Big net
     PreConv(),
-    ConvolutionLayer(64, 3, RectifiedLinear(), Dropout(.35), initialize=Xavier()),
+    ConvolutionLayer(48, 3, RectifiedLinear(), initialize=Xavier()),
+    ConvolutionLayer(96, 3, RectifiedLinear(), Dropout(.40), initialize=Xavier()),
+    Pooling(3, 3),
+    ConvolutionLayer(128, 5, RectifiedLinear(), Dropout(.40), initialize=Xavier()),
     Pooling(3, 2),
     PostConv(),
-    Layer(3000, RectifiedLinear(), Dropout(.4), initialize=MSR()),
+    Layer(3000, RectifiedLinear(), Dropout(.68), initialize=MSR()),
+    Layer(2500, RectifiedLinear(), Dropout(.68), initialize=MSR()),
     Layer(121, Softmax(), Dropout(.5), initialize=MSR())
+    #: Small net
+    # PreConv(),
+    # ConvolutionLayer(64, 3, RectifiedLinear(), Dropout(.35), initialize=Xavier()),
+    # Pooling(3, 2),
+    # PostConv(),
+    # Layer(3000, RectifiedLinear(), Dropout(.4), initialize=MSR()),
+    # Layer(121, Softmax(), Dropout(.5), initialize=MSR())
 ]
 
 print 'Learning...'
