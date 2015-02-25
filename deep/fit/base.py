@@ -70,6 +70,7 @@ class Iterative(Fit):
         self.batch_size = batch_size
         self.train_scores = [np.inf]
         self.valid_scores = [np.inf]
+        self.save = save
 
     #: does it matter that these are class variables?
     x = T.matrix()

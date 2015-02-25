@@ -64,4 +64,5 @@ def plot_training(model, name='training'):
     index = [i for i, _ in enumerate(valid)]
     train = (index, train)
     valid = (index, valid)
-    plotLines((train, valid), title=name, xlabel='Iterations', ylabel='Score')
+    plotLines((train, valid), title=name, xlabel='Iterations',
+              ylabel='Score', yscale='log')

@@ -12,7 +12,6 @@
 """
 
 import gzip
-import collections
 import numpy as np
 
 import cPickle as pk
@@ -22,21 +21,18 @@ from theano import function
 from deep.fit.base import Iterative
 from deep.costs.base import NegativeLogLikelihood, PredictionError
 from deep.updates.base import GradientDescent
-from deep.augmentation import Augmentation
 
 
 class NN(object):
 
     def __init__(self, layers, learning_rate=10, update=GradientDescent(),
-                 fit=Iterative(), cost=NegativeLogLikelihood(),
-                 regularize=None, fixed_augmentation=Augmentation()):
+                 fit=Iterative(), cost=NegativeLogLikelihood(), regularize=None):
         self.layers = layers
         self.learning_rate = learning_rate
         self.update = update
         self.fit_method = fit
         self.cost = cost
         self.regularize = regularize
-        self.fixed_augmentation = fixed_augmentation
 
     #: this is only used to compile predict_proba
     #: do this in fit?
@@ -50,16 +46,6 @@ class NN(object):
     def save(self, name='best_model'):
         with gzip.open(name + '.pkl', 'wb') as best_model:
             pk.dump(self, best_model, protocol=pk.HIGHEST_PROTOCOL)
-
-    def augment_data(self, X, y):
-        if not isinstance(self.fixed_augmentation, collections.Iterable):
-            X = self.fixed_augmentation.fit_transform(X)
-            return (X, y)
-        X_new = np.concatenate([augment(X)
-                                for augment in self.fixed_augmentation])
-        y = np.tile(y, len(self.fixed_augmentation))
-        return (X_new, y)
-
 
     #: can we move this to updates?
     def updates(self, x, y):
@@ -100,13 +86,10 @@ class NN(object):
         return np.mean(self.predict(X) == y)
 
     def fit(self, X, y=None, X_valid=None, y_valid=None):
-        X, y = self.augment_data(X, y)
         x = X[:1]
         for layer in self.layers:
             x = layer.fit_transform(x)
-
         print self
-
         return self.fit_method.fit(self, X, y, X_valid, y_valid)
 
     def __str__(self):
@@ -145,4 +128,3 @@ class NN(object):
             ))
 
         return hyperparams + layers
-
