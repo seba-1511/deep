@@ -57,7 +57,7 @@ from deep.regularizers import L2
 from deep.fit import Iterative
 from deep.plot.base import plot_training
 nn = NN(layers, .01, NesterovMomentum(.9), fit=Iterative(100), regularize=L2(.0005))
-nn.fit(X, y)
+nn.fit(X, y, save=True)
 
 #: move this to fit
 n_batches = len(X_test) / 100
