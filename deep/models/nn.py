@@ -14,7 +14,7 @@
 import gzip
 import numpy as np
 
-import cPickle as pk
+import pickle as pk
 import theano.tensor as T
 from theano import function
 
@@ -44,7 +44,7 @@ class NN(object):
         return [param for layer in self.layers for param in layer.params]
 
     def save(self, name='best_model'):
-        with gzip.open(name + '.pkl', 'wb') as best_model:
+        with gzip.open(name + '.pkl.gzip', 'wb') as best_model:
             pk.dump(self, best_model, protocol=pk.HIGHEST_PROTOCOL)
 
     #: can we move this to updates?

@@ -79,7 +79,6 @@ class Iterative(Fit):
     i = T.lscalar()
 
     def save_best(self, model, score):
-        #: This only works NLL, or when we want to
         if self.save and score < self.valid_scores[-1]:
             model.save()
 
