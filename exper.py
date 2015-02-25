@@ -1,3 +1,8 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+
+#: train 0.94, valid 1.16
+
 print 'Loading Planktons...'
 from deep.datasets.load import load_plankton
 X, y = load_plankton()
@@ -29,30 +34,30 @@ X = X[:-len(X_test)]
 from deep.layers import Layer, PreConv, ConvolutionLayer, Pooling, PostConv
 from deep.activations.base import RectifiedLinear, Softmax
 from deep.corruptions import Dropout
+from deep.initialization.base import Normal, Xavier, MSR
 layers = [
-    PreConv(),
-    ConvolutionLayer(48, 3, RectifiedLinear()),
-    ConvolutionLayer(96, 3, RectifiedLinear(), Dropout(.4)),
-    Pooling(3, 3),
-    ConvolutionLayer(128, 5, RectifiedLinear(), Dropout(.4)),
-    Pooling(3, 2),
-    PostConv(),
-    Layer(3000, RectifiedLinear(), Dropout(.68)),
-    Layer(2500, RectifiedLinear(), Dropout(.68)),
-    Layer(121, Softmax(), Dropout(.5))
-]
+        PreConv(),
+        ConvolutionLayer(48, 3, RectifiedLinear(), Dropout(.2), initialize=Xavier()),
+        ConvolutionLayer(96, 3, RectifiedLinear(), Dropout(.4), initialize=Xavier()),
+        Pooling(3, 3),
+        ConvolutionLayer(96, 2, RectifiedLinear(), Dropout(.4), initialize=Xavier()),
+        ConvolutionLayer(128, 5, RectifiedLinear(), Dropout(.4), initialize=Xavier()),
+        Pooling(3, 2),
+        PostConv(),
+        Layer(3000, RectifiedLinear(), Dropout(.68), initialize=MSR()),
+        Layer(2500, RectifiedLinear(), Dropout(.68), initialize=MSR()),
+        Layer(2500, RectifiedLinear(), Dropout(.68), initialize=MSR()),
+        Layer(121, Softmax(), Dropout(.5), initialize=Xavier())
+    ]
 
 print 'Learning...'
 from deep.models import NN
-from deep.updates import Momentum
+from deep.updates import Momentum, NesterovMomentum
 from deep.regularizers import L2
 from deep.fit import Iterative
 from deep.plot.base import plot_training
-#: Use NesterovMomentum or no ?
-nn = NN(layers, .01, Momentum(.9), fit=Iterative(135), regularize=L2(.0005))
+nn = NN(layers, .01, NesterovMomentum(.9), fit=Iterative(100), regularize=L2(.0005))
 nn.fit(X, y)
-plot_training(nn)
-
 
 #: move this to fit
 n_batches = len(X_test) / 100
@@ -79,3 +84,8 @@ with open('test_submission.csv', 'wb') as submission:
     for prediction, y in zip(predictions, y_test):
         line = str(y) + ',' + ','.join([str(format(i, 'f')) for i in prediction]) + '\n'
         submission.write(line)
+
+
+
+from deep.plot.base import plot_training
+plot_training(nn)
