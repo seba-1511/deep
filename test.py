@@ -53,7 +53,7 @@ from deep.updates import Momentum
 from deep.regularizers import L2
 from deep.fit import Iterative
 from deep.plot.base import plot_training
-nn = NN(layers, .01, Momentum(.9), fit=Iterative(10), regularize=L2(.0005))
+nn = NN(layers, .01, Momentum(.9), fit=Iterative(10, save=True), regularize=L2(.0005))
 nn.fit(X, y, X_valid, y_valid)
 print nn.score(X_test, y_test)
 plot_training(nn)
