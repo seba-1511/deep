@@ -13,18 +13,19 @@ X, X_valid, y, y_valid = train_test_split(X, y, test_size=.1)
 
 
 import numpy as np
-from deep.augmentation import Reshape, RandomPatch
+from deep.augmentation import Reshape, RandomPatch, HorizontalReflection
 X_test = Reshape(26).fit_transform(X_test)
 X_valid = Reshape(26).fit_transform(X_valid)
 
 #: Augment data
 X_patch = Reshape(28).fit_transform(X)
-X = Reshape(26).fit_transform(X)
 X_patch = RandomPatch(26).fit_transform(X_patch)
+X = Reshape(26).fit_transform(X)
+X_reflec = HorizontalReflection().fit_transform(X)
 
 #: Merge the augmentations
-X = np.vstack((X, X_patch))
-y = np.append(y, y)
+X = np.vstack((X, X_patch, X_reflec))
+y = np.tile(y, 3)
 
 #: Standardize data
 X = np.vstack((X, X_valid, X_test))
