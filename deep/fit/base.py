@@ -15,6 +15,7 @@ import time
 import numpy as np
 import theano.tensor as T
 from theano import function, shared, config
+from deep.augmentation import Augmentation
 
 
 def _print_header():
@@ -65,7 +66,7 @@ class Fit(object):
 class Iterative(Fit):
 
     def __init__(self, n_iterations=100, batch_size=128, valid_size=0.1,
-                 save=False):
+                 save=False, augmentation=Augmentation):
         self.n_iterations = n_iterations
         self.batch_size = batch_size
         self.train_scores = [np.inf]
@@ -81,6 +82,9 @@ class Iterative(Fit):
         #: This only works NLL, or when we want to
         if self.save and score < self.valid_scores[-1]:
             model.save()
+
+    def augment_data(self, X):
+        pass
 
     def compile_train_function(self, model, X, y):
         if y is None:

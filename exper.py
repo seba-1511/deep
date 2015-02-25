@@ -67,8 +67,8 @@ from deep.models import NN
 from deep.updates import Momentum, NesterovMomentum
 from deep.regularizers import L2
 from deep.fit import Iterative
-nn = NN(layers, .01, NesterovMomentum(.9), fit=Iterative(135), regularize=L2(.0005))
-nn.fit(X, y, save=True)
+nn = NN(layers, .01, NesterovMomentum(.9), fit=Iterative(135, save=True), regularize=L2(.0005))
+nn.fit(X, y)
 
 #: move this to fit
 n_batches = len(X_test) / 100
