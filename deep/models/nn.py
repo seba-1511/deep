@@ -14,7 +14,7 @@
 import gzip
 import numpy as np
 
-import pickle as pk
+import dill as pk
 import theano.tensor as T
 from theano import function
 
