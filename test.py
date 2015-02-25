@@ -16,13 +16,14 @@ X = StandardScaler().fit_transform(X)
 X_test = X[-len(X_test):]
 X = X[:-len(X_test)]
 
-
 X = np.array([x.reshape(28, 28) for x in X])
 X_test = np.array([x.reshape(28, 28) for x in X_test])
 
 X = Reshape(26).fit_transform(X)
 X_test = Reshape(26).fit_transform(X_test)
 
+from sklearn.cross_validation import train_test_split
+X, X_valid, y, y_valid = train_test_split(X, y, test_size=0.15)
 
 print 'Defining Net...'
 from deep.layers import Layer, PreConv, ConvolutionLayer, Pooling, PostConv
