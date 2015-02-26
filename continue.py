@@ -61,7 +61,7 @@ layers[6].corruption = Dropout(.68)
 layers[7].corruption = Dropout(.68)
 layers[8].corruption = Dropout(.5)
 
-nn = NN(layers, .01, NesterovMomentum(.85), fit=Iterative(100, save=True), regularize=L2(.0005))
+nn = NN(layers, .01, NesterovMomentum(.85), fit=Iterative(120, save=True), regularize=L2(.0005))
 nn.fit(X, y, X_valid, y_valid)
 
 #: move this to fit
@@ -96,3 +96,4 @@ with open('test_submission.csv', 'wb') as submission:
 
 # from deep.plot.base import plot_training
 # plot_training(nn)
+

@@ -53,10 +53,10 @@ from deep.initialization.base import Xavier, MSR
 layers = [
     #: Big net
     PreConv(),
-    ConvolutionLayer(48, 3, RectifiedLinear(), initialize=Xavier()),
-    ConvolutionLayer(96, 3, RectifiedLinear(), Dropout(.40), initialize=Xavier()),
+    ConvolutionLayer(64, 3, RectifiedLinear(), initialize=Xavier()),
+    ConvolutionLayer(126, 3, RectifiedLinear(), Dropout(.40), initialize=Xavier()),
     Pooling(3, 3),
-    ConvolutionLayer(128, 5, RectifiedLinear(), Dropout(.40), initialize=Xavier()),
+    ConvolutionLayer(169, 5, RectifiedLinear(), Dropout(.40), initialize=Xavier()),
     Pooling(3, 2),
     PostConv(),
     Layer(3000, RectifiedLinear(), Dropout(.68), initialize=MSR()),
@@ -76,7 +76,7 @@ from deep.models import NN
 from deep.updates import Momentum, NesterovMomentum
 from deep.regularizers import L2
 from deep.fit import Iterative
-nn = NN(layers, .01, NesterovMomentum(.9), fit=Iterative(135, save=True), regularize=L2(.0005))
+nn = NN(layers, .01, NesterovMomentum(.9), fit=Iterative(200, save=True), regularize=L2(.0005))
 nn.fit(X, y, X_valid, y_valid)
 
 #: move this to fit
