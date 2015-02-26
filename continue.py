@@ -1,8 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-#: Scoring: train:1.37, valid:1.12, test:1.18
-
 print 'Loading Planktons...'
 from deep.datasets.load import load_plankton
 X, y = load_plankton()
@@ -44,39 +42,26 @@ X_test = X[-len(X_test):]
 X_valid = X[-(len(X_test) + len(X_valid)):-len(X_test)]
 X = X[:-(len(X_test) + len(X_valid))]
 
+import dill as pk
+import gzip
 
-print 'Defining Net...'
-from deep.layers import Layer, PreConv, ConvolutionLayer, Pooling, PostConv
-from deep.activations.base import RectifiedLinear, Softmax
-from deep.corruptions import Dropout
-from deep.initialization.base import Xavier, MSR
-layers = [
-    #: Big net
-    PreConv(),
-    ConvolutionLayer(48, 3, RectifiedLinear(), initialize=Xavier()),
-    ConvolutionLayer(96, 3, RectifiedLinear(), Dropout(.40), initialize=Xavier()),
-    Pooling(3, 3),
-    ConvolutionLayer(128, 5, RectifiedLinear(), Dropout(.40), initialize=Xavier()),
-    Pooling(3, 2),
-    PostConv(),
-    Layer(3000, RectifiedLinear(), Dropout(.68), initialize=MSR()),
-    Layer(2500, RectifiedLinear(), Dropout(.68), initialize=MSR()),
-    Layer(121, Softmax(), Dropout(.5), initialize=MSR())
-    #: Small net
-    # PreConv(),
-    # ConvolutionLayer(64, 3, RectifiedLinear(), Dropout(.35), initialize=Xavier()),
-    # Pooling(3, 2),
-    # PostConv(),
-    # Layer(3000, RectifiedLinear(), Dropout(.4), initialize=MSR()),
-    # Layer(121, Softmax(), Dropout(.5), initialize=MSR())
-]
+model = pk.load(gzip.open('best_original.pkl.gzip', 'rb'))
+layers = model.layers
 
 print 'Learning...'
 from deep.models import NN
 from deep.updates import Momentum, NesterovMomentum
 from deep.regularizers import L2
 from deep.fit import Iterative
-nn = NN(layers, .01, NesterovMomentum(.9), fit=Iterative(135, save=True), regularize=L2(.0005))
+from deep.corruptions import Dropout
+
+layers[2].corruption = Dropout(.4)
+layers[3].corruption = Dropout(.4)
+layers[6].corruption = Dropout(.68)
+layers[7].corruption = Dropout(.68)
+layers[8].corruption = Dropout(.5)
+
+nn = NN(layers, .01, NesterovMomentum(.85), fit=Iterative(100, save=True), regularize=L2(.0005))
 nn.fit(X, y, X_valid, y_valid)
 
 #: move this to fit
@@ -109,5 +94,5 @@ with open('test_submission.csv', 'wb') as submission:
         submission.write(line)
 
 
-from deep.plot.base import plot_training
-plot_training(nn)
+# from deep.plot.base import plot_training
+# plot_training(nn)
